@@ -42,7 +42,8 @@ class CommonController extends BaseController
             }
 
             Session::set('is_agent', 0);
-            Session::set('google_auth_secret', $adminUser);
+            //Session::set('google_auth_secret', $adminUser);
+            Session::set('admin_user', $adminUser);
 
             return out(['is_agent' => 0]);
         }
