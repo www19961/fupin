@@ -48,7 +48,8 @@ class OrderController extends AuthController
             $pay_amount = round($project['single_amount']*$req['buy_num'], 2);
             $pay_integral = 0;
 
-            if ($req['pay_method'] == 1 && $pay_amount > $user['balance']) {
+            //if ($req['pay_method'] == 1 && $pay_amount > $user['balance']) {
+            if ($req['pay_method'] == 0 && $pay_amount > $user['balance']) {
                 exit_out(null, 10002, '余额不足');
             }
             if ($req['pay_method'] == 5) {
@@ -58,11 +59,11 @@ class OrderController extends AuthController
                 }
             }
 
-            if (in_array($req['pay_method'], [2,3,4,6])) {
-                $type = $req['pay_method'] - 1;
-                if ($req['pay_method'] == 6) {
+            if (in_array($req['pay_method'], [1,2,3,4,6])) {
+                $type = $req['pay_method'];
+/*                 if ($req['pay_method'] == 6) {
                     $type = 4;
-                }
+                } */
                 $paymentConf = PaymentConfig::userCanPayChannel($req['payment_config_id'], $type, $pay_amount);
             }
 
