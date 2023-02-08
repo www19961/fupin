@@ -54,6 +54,7 @@ class EquityRecordController extends AuthController
         $data['list'] = $list;
         $data['today_equity_price'] = $todayPrice;
         $data['sum'] = $sum;
+        $data['sum_price'] = bcmul($todayPrice,$sum,2);
         return out($data);
     }
 
