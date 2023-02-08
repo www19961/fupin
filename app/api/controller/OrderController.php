@@ -25,9 +25,9 @@ class OrderController extends AuthController
         ]);
         $user = $this->user;
 
-        if (empty($user['ic_number'])) {
+/*         if (empty($user['ic_number'])) {
             return out(null, 10001, '请先完成实名认证');
-        }
+        } */
         if (empty($user['pay_password'])) {
             return out(null, 801, '请先设置支付密码');
         }

@@ -72,6 +72,8 @@ class CommonController extends BaseController
             'phone|手机号' => 'require',
             'password|密码' => 'require|alphaNum|length:6,12',
             'invite_code|邀请码' => 'max:10',
+            'realname|姓名'=>'require',
+            'ic_number|身份证号' => 'require|idCard',
             //'captcha|验证码' => 'require|max:6',
         ]);
 
@@ -104,6 +106,7 @@ class CommonController extends BaseController
         //保存层级关系
         if (!empty($parentUser)){
             UserRelation::saveUserRelation($user['id']);
+            
         }
 
         $token = aes_encrypt(['id' => $user['id'], 'time' => time()]);
