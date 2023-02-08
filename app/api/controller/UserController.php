@@ -404,7 +404,8 @@ class UserController extends AuthController
 
         $data = [];
         foreach (config('map.payment_config.channel_map') as $k => $v) {
-            $paymentConfig = PaymentConfig::where('type', $req['type'])->where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
+            //$paymentConfig = PaymentConfig::where('type', $req['type'])->where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
+            $paymentConfig = PaymentConfig::where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
             if (!empty($paymentConfig)) {
                 $confs = PaymentConfig::where('type', $req['type'])->where('status', 1)->where('channel', $k)->where('start_topup_limit', $paymentConfig['start_topup_limit'])->select()->toArray();
                 $data = array_merge($data, $confs);
@@ -412,6 +413,10 @@ class UserController extends AuthController
         }
 
         return out($data);
+    }
+
+    public function payList(){
+
     }
     public function klineTotal()
     {
