@@ -398,7 +398,7 @@ class UserController extends AuthController
     public function payChannelList()
     {
         $req = $this->validate(request(), [
-            'type' => 'require|number|in:1,2,3,4,5',
+            //'type' => 'require|number|in:1,2,3,4,5',
         ]);
         $user = $this->user;
 
