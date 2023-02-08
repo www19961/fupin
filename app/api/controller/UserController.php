@@ -42,6 +42,8 @@ class UserController extends AuthController
         }
         return out($user);
     }
+
+
     
     public function hongbao(){
         $user = $this->user;
@@ -299,6 +301,61 @@ class UserController extends AuthController
         return out($data);
     }
 
+
+    public function team(){
+        $user = $this->user;
+        $data['level1_total'] = UserRelation::where('user_id', $user['id'])->where('level', 1)->count();
+        $data['level2_total'] = UserRelation::where('user_id', $user['id'])->where('level', 2)->count();
+        $data['realname'] = $user['realname'];
+        $data['parent_name'] = User::where('id',$user['up_user_id'])->value('realname');
+        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.level',1)->where('r.user_id',1)->order('u.equity_amount','desc')->limit(10)->select();
+
+        $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
+                                                ->field('l.created_at,change_balance,single_amount,buy_num,project_name,o.user_id')
+                                                ->where('l.type',9)
+                                                ->where('l.user_id',$user['id'])
+                                                ->order('l.created_at','desc')
+                                                ->limit(10)
+                                                //->fetchSql(true)
+                                                ->select();
+                                                
+                                                
+        //echo $invite_bonus;
+        //exit;
+        foreach($invite_bonus as $key=>$item){
+        
+            $orderPrice = bcmul($item['single_amount'],$item['buy_num'],2);
+            $invite_bonus[$key]['text'] = "推荐{$item['realname']}投资$orderPrice,奖励{$item['change_balance']}";
+            $invite_bonus[$key]['realname'] = User::where($item['user_id'])->value('realname');
+        }                                
+        $data['invite_bonus'] = $invite_bonus;
+        return out($data);
+    }
+
+    public function inviteBonus(){
+        $user = $this->user;
+        $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
+                                                ->field('l.created_at,change_balance,single_amount,buy_num,project_name,o.user_id')
+                                                ->where('l.type',9)
+                                                ->where('l.user_id',$user['id'])
+                                                ->order('l.created_at','desc')
+                                                ->limit(10)
+                                                //->fetchSql(true)
+                                                ->paginate();
+                                                
+                                                
+        //echo $invite_bonus;
+        //exit;
+        foreach($invite_bonus as $key=>$item){
+        
+            $orderPrice = bcmul($item['single_amount'],$item['buy_num'],2);
+            $invite_bonus[$key]['text'] = "推荐{$item['realname']}投资$orderPrice,奖励{$item['change_balance']}";
+            $invite_bonus[$key]['realname'] = User::where($item['user_id'])->value('realname');
+        }                                     
+        $data['list'] = $invite_bonus;
+        return out($data);
+    }
+
     public function teamRankList()
     {
         $req = $this->validate(request(), [
@@ -307,17 +364,18 @@ class UserController extends AuthController
         $user = $this->user;
 
         $total_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->count();
-        $active_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->where('is_active', 1)->count();
+        //$active_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->where('is_active', 1)->count();
 
         $sub_user_ids = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->column('sub_user_id');
-        $list = User::field('id,avatar,phone,invest_amount,level,is_active,created_at')->whereIn('id', $sub_user_ids)->order('invest_amount', 'desc')->paginate();
+        $list = User::field('id,avatar,phone,invest_amount,equity_amount,level,is_active,created_at')->whereIn('id', $sub_user_ids)->order('equity_amount', 'desc')->paginate();
 
         return out([
             'total_num' => $total_num,
-            'active_num' => $active_num,
+            //'active_num' => $active_num,
             'list' => $list,
         ]);
     }
+
 
     public function payChannelList()
     {

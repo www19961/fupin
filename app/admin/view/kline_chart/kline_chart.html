@@ -15,8 +15,8 @@
                 <div class="table-head">
                     <div style="width:5%">ID</div>
                     <div style="width:10%">日期</div>
-                    <div style="width:3%">9:30</div>
-                    <div style="width:3%">9:40</div>
+                    <div style="width:3%">价格</div>
+<!--                     <div style="width:3%">9:40</div>
                     <div style="width:3%">9:50</div>
                     <div style="width:3%">10:00</div>
                     <div style="width:3%">10:10</div>
@@ -39,7 +39,7 @@
                     <div style="width:3%">14:30</div>
                     <div style="width:3%">14:40</div>
                     <div style="width:3%">14:50</div>
-                    <div style="width:3%">15:00</div>
+                    <div style="width:3%">15:00</div> -->
                     <div style="width:10%">操作</div>
                 </div>
                 <?php if(!empty($data)){foreach($data as $v){?>
@@ -47,7 +47,7 @@
                     <div style="width:5%">{$v['id']}</div>
                     <div style="width:10%">{$v['date']}</div>
                     <div style="width:3%">{$v['price1']}</div>
-                    <div style="width:3%">{$v['price2']}</div>
+    <!--                 <div style="width:3%">{$v['price2']}</div>
                     <div style="width:3%">{$v['price3']}</div>
                     <div style="width:3%">{$v['price4']}</div>
                     <div style="width:3%">{$v['price5']}</div>
@@ -70,7 +70,7 @@
                     <div style="width:3%">{$v['price22']}</div>
                     <div style="width:3%">{$v['price23']}</div>
                     <div style="width:3%">{$v['price24']}</div>
-                    <div style="width:3%">{$v['price25']}</div>
+                    <div style="width:3%">{$v['price25']}</div> -->
                     <div style="width:10%">
                         <a class="btn btn-flat btn-info btn-xs" href="{:url('admin/KlineChart/showKline', ['id' => $v['id']])}"><i class="fa fa-edit"></i>编辑</a>
                     </div>
