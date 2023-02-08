@@ -71,6 +71,7 @@ class CommonController extends BaseController
         $req = $this->validate(request(), [
             'phone|手机号' => 'require',
             'password|密码' => 'require|alphaNum|length:6,12',
+            're_password|重复密码'=>'require|confirm:password',
             'invite_code|邀请码' => 'max:10',
             'realname|姓名'=>'require',
             'ic_number|身份证号' => 'require|idCard',
