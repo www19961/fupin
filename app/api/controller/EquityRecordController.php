@@ -26,7 +26,7 @@ class EquityRecordController extends AuthController
         if($req['type']==2){
             $txtName = '期权';
         }
-        $list = $builder->order('give_time', 'desc')->paginate(100,false,['query'=>request()->param()])->each(function($item, $key) use($txtName){
+        $list = $builder->order('give_time', 'desc')->paginate(10,false,['query'=>request()->param()])->each(function($item, $key) use($txtName){
 /*             if($item['exchange_time'] == 0){
                 $item['is_exchange'] = 0;//显示兑换
             }else{
