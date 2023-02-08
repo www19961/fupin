@@ -7,6 +7,7 @@ use app\model\Order;
 use app\model\User;
 use Exception;
 use think\facade\Db;
+use app\model\KlineChartNew;
 
 class EquityRecordController extends AuthController
 {
@@ -16,13 +17,17 @@ class EquityRecordController extends AuthController
             'type' => 'in:1,2',
         ]);
         $user = $this->user;
-
+        $todayPrice = KlineChartNew::getTodayPrice();
         $builder = EquityYuanRecord::where('user_id', $user['id'])->where('status', '>', 1);
         if (!empty($req['type'])) {
             $builder->where('type', $req['type']);
         }
-        $data = $builder->order('give_time', 'desc')->append(['exchange_date'])->paginate(100,false,['query'=>request()->param()])->each(function($item, $key){
-            if($item['exchange_time'] == 0){
+        $txtName = '股权';
+        if($req['type']==2){
+            $txtName = '期权';
+        }
+        $list = $builder->order('give_time', 'desc')->paginate(100,false,['query'=>request()->param()])->each(function($item, $key) use($txtName){
+/*             if($item['exchange_time'] == 0){
                 $item['is_exchange'] = 0;//显示兑换
             }else{
                 $item['is_exchange'] = 1;//显示审核
@@ -33,9 +38,22 @@ class EquityRecordController extends AuthController
            }else{
                 $item['show_exchange'] = 1;//显示兑换
            }
-            $item['is_active'] = User::where('id',$item['user_id'])->value('is_active');//是否激活
+            $item['is_active'] = User::where('id',$item['user_id'])->value('is_active');//是否激活 */
+            $order = Order::where('id',$item['relation_id'])->field('id,project_name,single_amount,buy_num,order_sn')->find();
+            $item['price']= $item['text'] = $item['order_sn']='';
+            if($order){
+                $item['price'] = bcmul($order['single_amount']*$order['buy_num'],2);
+                $item['text'] = "投资{$order['project_name']}{$item['price']}元赠送{$item['num']}份$txtName";
+                $item['order_sn'] = $order['order_sn'];
+            }else{
+                $item['text'] = "注册赠送{$item['num']}份$txtName";
+            }
             return $item;
         });
+        $sum = round(EquityYuanRecord::where('user_id', $user['id'])->where('status', 2)->where('type', $req['type'])->sum('num'), 2);
+        $data['list'] = $list;
+        $data['today_equity_price'] = $todayPrice;
+        $data['sum'] = $sum;
         return out($data);
     }
 
