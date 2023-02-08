@@ -27,6 +27,7 @@ class UserController extends AuthController
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
         unset($user['password'], $user['pay_password']);
         $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
+
         
         //检测用户升级 投资金额达到 或者  直属下级激活人数达到
         //$user = User::where('id', $user['id'])->find();
@@ -308,8 +309,10 @@ class UserController extends AuthController
         $data['level2_total'] = UserRelation::where('user_id', $user['id'])->where('level', 2)->count();
         $data['realname'] = $user['realname'];
         $data['parent_name'] = User::where('id',$user['up_user_id'])->value('realname');
-        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.level',1)->where('r.user_id',1)->order('u.equity_amount','desc')->limit(10)->select();
+        $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('type', 9)->sum('change_balance');
 
+        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.level',1)->where('r.user_id',1)->order('u.equity_amount','desc')->limit(10)->select();
+        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.level',2)->where('r.user_id',1)->order('u.equity_amount','desc')->limit(10)->select();
         $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
                                                 ->field('l.created_at,change_balance,single_amount,buy_num,project_name,o.user_id')
                                                 ->where('l.type',9)
@@ -325,8 +328,15 @@ class UserController extends AuthController
         foreach($invite_bonus as $key=>$item){
         
             $orderPrice = bcmul($item['single_amount'],$item['buy_num'],2);
-            $invite_bonus[$key]['text'] = "推荐{$item['realname']}投资$orderPrice,奖励{$item['change_balance']}";
-            $invite_bonus[$key]['realname'] = User::where($item['user_id'])->value('realname');
+            $realname = User::where($item['user_id'])->value('realname');
+            $invite_bonus[$key]['realname'] = $realname;
+            $level = UserRelation::where('user_id',$user['id'])->where('sub_user_id',$item['user_id'])->value('level');
+            $levelText = [
+                '1'=>"一级",
+                '2'=>'二级',
+                '3'=>'三级',
+            ];
+            $invite_bonus[$key]['text'] = "推荐{$levelText[$level]}用户 $realname 投资 $orderPrice ,奖励 {$item['change_balance']} ";
         }                                
         $data['invite_bonus'] = $invite_bonus;
         return out($data);
@@ -349,8 +359,16 @@ class UserController extends AuthController
         foreach($invite_bonus as $key=>$item){
         
             $orderPrice = bcmul($item['single_amount'],$item['buy_num'],2);
-            $invite_bonus[$key]['text'] = "推荐{$item['realname']}投资$orderPrice,奖励{$item['change_balance']}";
-            $invite_bonus[$key]['realname'] = User::where($item['user_id'])->value('realname');
+            $realname = User::where($item['user_id'])->value('realname');
+            $invite_bonus[$key]['realname'] = $realname;
+            $level = UserRelation::where('user_id',$user['id'])->where('sub_user_id',$item['user_id'])->value('level');
+            $levelText = [
+                '1'=>"一级",
+                '2'=>'二级',
+                '3'=>'三级',
+            ];
+            $invite_bonus[$key]['text'] = "推荐{$levelText[$level]}用户 $realname 投资 $orderPrice ,奖励 {$item['change_balance']} ";
+
         }                                     
         $data['list'] = $invite_bonus;
         return out($data);

@@ -33,6 +33,8 @@ class User extends Model
         return '';
     }
 
+
+
     public function upUser()
     {
         return $this->belongsTo(User::class, 'up_user_id');
@@ -43,6 +45,14 @@ class User extends Model
     {
         if (!empty($data['id'])) {
             return round(EquityYuanRecord::where('user_id', $data['id'])->where('status', 2)->where('type', 1)->sum('num'), 2);
+        }
+        return 0;
+    }
+
+    //推荐奖励总计
+    public function getInviteBonus($value,$data){
+        if (!empty($data['id'])) {
+            return round(UserBalanceLog::where('user_id', $data['id'])->where('type', 9)->sum('change_balance'), 2);
         }
         return 0;
     }
