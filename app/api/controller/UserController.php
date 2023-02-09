@@ -131,6 +131,33 @@ class UserController extends AuthController
 
     }
 
+    public function wallet(){
+        $user = $this->user;
+        $umodel = new User();
+        $user['invite_bonus'] = $umodel->getInviteBonus(0,$user);
+        $user['total_balance'] = bcadd($user['topup_balance'],$user['invite_bonus'],2);
+        $map = config('map.user_balance_log')['type_map'];
+        $list = UserBalanceLog::where('user_id',$user['id'])->where('log_type',1)->whereIn('type',[1,2,3])->paginate(10)->each(function($item,$key) use ($map){
+            $typeText = $map[$item['type']];
+            if($item['type']==3){
+                $projectName = Order::where('id',$item['relation_id'])->value('project_name');
+                $typeText=$typeText.$projectName;
+            }
+            $item['teype_text'] = $typeText;
+            return $item;
+        });
+        $u=[
+            'topup_balance'=>$user['topup_balance'],
+            'total_balance'=>$user['total_balance'],
+            'invite_bonus'=>$user['total_balance'],
+        ];
+        $data['wallet']=$u;
+        $data['list'] = $list;
+        return out($data);
+
+
+    }
+
     //转账
     public function transferAccounts(){
         $req = $this->validate(request(), [
