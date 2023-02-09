@@ -116,9 +116,9 @@ class CapitalController extends AuthController
         }
         // 每天提现时间为9：00-18：00
         $timeNum = (int)date('Hi');
-        if ($timeNum < 900 || $timeNum > 1800) {
+/*         if ($timeNum < 900 || $timeNum > 1800) {
             return out(null, 10001, '每天提现时间为9：00-18：00');
-        }
+        } */
         Db::startTrans();
         try {
             // 判断余额
