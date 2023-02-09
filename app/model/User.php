@@ -52,7 +52,8 @@ class User extends Model
     //推荐奖励总计
     public function getInviteBonus($value,$data){
         if (!empty($data['id'])) {
-            return round(UserBalanceLog::where('user_id', $data['id'])->where('type', 9)->sum('change_balance'), 2);
+           // return round(UserBalanceLog::where('user_id', $data['id'])->where('type', 9)->sum('change_balance'), 2);
+           return $data['invite_bonus'];
         }
         return 0;
     }
@@ -310,6 +311,33 @@ class User extends Model
         }
 
         return true;
+    }
+
+    public static function changeInc($user_id,$amount,$field,$type,$relation_id = 0,$log_type = 1, $remark = ''){
+        $user = User::where('id', $user_id)->find();
+        $after_balance = $user[$field]+$amount;
+        Db::startTrans();
+        try {
+            $ret = User::where('id',$user_id)->inc($field,$amount)->update();
+            UserBalanceLog::create([
+                'user_id' => $user_id,
+                'type' => $type,
+                'log_type' => $log_type,
+                'relation_id' => $relation_id,
+                'before_balance' => $user[$field],
+                'change_balance' => $amount,
+                'after_balance' => $after_balance,
+                'remark' => $remark,
+                'admin_user_id' => 0,
+                'status' => 1,
+            ]);
+            Db::commit();
+            return 'success';
+        }catch(\Exception $e){
+            Db::rollback();
+            //return $e->getMessage();
+            throw $e;
+        }
     }
 
     // 获取用户的上3级的用户id

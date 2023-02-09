@@ -314,7 +314,9 @@ class Order extends Model
             $levelConfig = LevelConfig::where('level', $now_level)->find();
             if (!empty($levelConfig['direct_recommend_reward_ratio'])) {
                 $reward = round($levelConfig['direct_recommend_reward_ratio']/100*$order['buy_amount'], 2);
-                User::changeBalance($up_user_id, $reward, 9, $order_id);
+                
+                //User::changeBalance($up_user_id, $reward, 9, $order_id);
+                User::changeInc($up_user_id,$reward,'invite_bonus',9,$order_id,3,'推荐奖励');
             }
             // 给上3级团队奖
             $relation = UserRelation::where('sub_user_id', $order['user_id'])->select();
@@ -322,7 +324,8 @@ class Order extends Model
             $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', ];
             foreach ($relation as $v) {
                 $reward = round(dbconfig($map[$v['level']])/100*$order['buy_amount'], 2);
-                User::changeBalance($v['user_id'], $reward, 8, $order_id);
+                //User::changeBalance($v['user_id'], $reward, 8, $order_id);
+                User::changeInc($up_user_id,$reward,'invite_bonus',8,$order_id,3,'推荐奖励');
             }
         }
 

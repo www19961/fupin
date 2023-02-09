@@ -161,7 +161,7 @@ class UserController extends AuthController
     //转账
     public function transferAccounts(){
         $req = $this->validate(request(), [
-            'type' => 'require|in:2',//2 转账余额（充值金额）
+            'type' => 'require|in:1,2',//1推荐给奖励,2 转账余额（充值金额）
             'realname|对方姓名' => 'require',
             'account|对方账号' => 'require',
             'money|转账金额' => 'require|number',
@@ -195,44 +195,46 @@ class UserController extends AuthController
                 exit_out(null, 10002, '请收款用户先完成实名认证');
             }
 
-            if ($req['type'] == 2 && $req['money'] > $user['topup_balance']) {
+            $field = $req['type']==1 ? 'invite_bonus':'topup_balance';
+            $fieldText =  $req['type']==1 ? '推荐奖励':'充值余额';
+
+            if ($req['money'] > $user[$field]) {
                 exit_out(null, 10002, '转账余额不足');
             }
             //转出金额  扣金额 可用金额 转账金额
             $change_balance = 0 - $req['money'];
-            if($req['type']==2){
+            
 
-                //2 转账余额（充值金额加他人转账的金额）
-                User::where('id', $user['id'])->inc('balance', $change_balance)->inc('topup_balance', $change_balance)->update();
-                //User::changeBalance($user['id'], $change_balance, 18, 0, 1,'转账余额转账给'.$take['realname']);
-                //增加资金明细
-                UserBalanceLog::create([
-                    'user_id' => $user['id'],
-                    'type' => 18,
-                    'log_type' => 1,
-                    'relation_id' => 0,
-                    'before_balance' => $user['topup_balance'],
-                    'change_balance' => $change_balance,
-                    'after_balance' =>  $user['topup_balance']-$req['money'],
-                    'remark' => '转账余额转账给'.$take['realname'],
-                    'admin_user_id' => 0,
-                    'status' => 2,
-                    'project_name' => ''
-                ]);
-            }
+            //2 转账余额（充值金额加他人转账的金额）
+            User::where('id', $user['id'])->inc('balance', $change_balance)->inc($field, $change_balance)->update();
+            //User::changeBalance($user['id'], $change_balance, 18, 0, 1,'转账余额转账给'.$take['realname']);
+            //增加资金明细
+            UserBalanceLog::create([
+                'user_id' => $user['id'],
+                'type' => 18,
+                'log_type' => 1,
+                'relation_id' => $take['id'],
+                'before_balance' => $user[$field],
+                'change_balance' => $change_balance,
+                'after_balance' =>  $user[$field]-$req['money'],
+                'remark' => '转账'.$fieldText.'转账给'.$take['realname'],
+                'admin_user_id' => 0,
+                'status' => 2,
+                'project_name' => ''
+            ]);
 
             //收到金额  加金额 转账金额
-            User::where('id', $take['id'])->inc('balance', $req['money'])->inc('topup_balance', $req['money'])->update();
+            User::where('id', $take['id'])->inc('balance', $req['money'])->inc($field, $req['money'])->update();
             //User::changeBalance($take['id'], $req['money'], 18, 0, 1,'接收转账来自'.$user['realname']);
             UserBalanceLog::create([
                 'user_id' => $take['id'],
-                'type' => 18,
+                'type' => 19,
                 'log_type' => 1,
-                'relation_id' => 0,
-                'before_balance' => $take['topup_balance'],
+                'relation_id' => $user['id'],
+                'before_balance' => $take[$field],
                 'change_balance' => $req['money'],
-                'after_balance' =>  $take['topup_balance']+$req['money'],
-                'remark' => '接收转账来自'.$user['realname'],
+                'after_balance' =>  $take[$field]+$req['money'],
+                'remark' => '接收'.$fieldText.'来自'.$user['realname'],
                 'admin_user_id' => 0,
                 'status' => 2,
                 'project_name' => ''
@@ -248,12 +250,12 @@ class UserController extends AuthController
     public function transferList()
     {
         $req = $this->validate(request(), [
-            'status' => 'number',
-            'search_type' => 'number',
+            //'status' => 'number',
+            //'search_type' => 'number',
         ]);
         $user = $this->user;
 
-        $builder = UserBalanceLog::where('user_id', $user['id'])->where('type', 18)->select();
+        $builder = UserBalanceLog::where('user_id', $user['id'])->whereIn('type', [18,19])->order('created_at','desc')->limit(10)->select();
             //->paginate(15,false,['query'=>request()->param()]);
 
         return out($builder);
