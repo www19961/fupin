@@ -23,13 +23,15 @@ class UserController extends AuthController
         $user = $this->user;
 
         $user = User::where('id', $user['id'])->append(['equity', 'digital_yuan', 'my_bonus', 'total_bonus', 'profiting_bonus', 'exchange_equity', 'exchange_digital_yuan', 'passive_total_income', 'passive_receive_income', 'passive_wait_income', 'subsidy_total_income', 'team_user_num', 'team_performance', 'can_withdraw_balance'])->find()->toArray();
-
+    
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
         unset($user['password'], $user['pay_password']);
         $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         $todayPrice = KlineChartNew::getTodayPrice();
 
         $user['today_equity_price'] = $todayPrice;
+        $umodel = new User();
+        $user['invite_bonus'] = $umodel->getInviteBonus(0,$user);
         //检测用户升级 投资金额达到 或者  直属下级激活人数达到
         //$user = User::where('id', $user['id'])->find();
         $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');

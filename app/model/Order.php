@@ -318,7 +318,8 @@ class Order extends Model
             }
             // 给上3级团队奖
             $relation = UserRelation::where('sub_user_id', $order['user_id'])->select();
-            $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
+            //$map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
+            $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', ];
             foreach ($relation as $v) {
                 $reward = round(dbconfig($map[$v['level']])/100*$order['buy_amount'], 2);
                 User::changeBalance($v['user_id'], $reward, 8, $order_id);
@@ -326,7 +327,7 @@ class Order extends Model
         }
 
         // 检测用户升级
-        if (in_array($order['pay_method'], [1,2,3,4])) {
+        if (in_array($order['pay_method'], [1,2,3,4,6])) {
         //if (in_array($order['pay_method'], [2, 3, 4, 6])) {
             $user = User::where('id', $order['user_id'])->find();
             $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
@@ -367,6 +368,7 @@ class Order extends Model
                     $data['digital_yuan_status'] = 2;
                     $data['equity_certificate_no'] = $zs;
                     $data['is_admin_confirm'] = 0;
+                    $data['is_gift'] = 1;
                     $oid = Order::create($data)->getLastInsID();
                     if($pro['class'] == 1){
                        PassiveIncomeRecord::create([

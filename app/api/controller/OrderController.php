@@ -278,6 +278,22 @@ class OrderController extends AuthController
 
             $item['price'] = bcmul($item['single_amount'],$item['buy_num'],2);
             $item['text'] = "投资{$item['price']}元{$item['project_name']}项目固定分红{$item['sum_amount']}";
+
+            return $item;
+        });
+        $data['list'] = $list;
+        return out($data);
+    }
+
+    public function investmentList(){
+        $user = $this->user;
+        $list = Order::where('user_id', $user['id'])->where('status', '>', 1)->where('is_gift',0)->field('id,project_id,single_amount,buy_num,project_name,sum_amount,sum_amount2,order_sn,daily_bonus_ratio,period,created_at')->order('created_at','desc')->paginate(5)->each(function($item,$key){
+            $bonusMultiple = Project::where('id',$item['project_id'])->value('bonus_multiple');
+            $item['bonus_multiple'] = $bonusMultiple;
+            $item['price'] = bcmul($item['single_amount'],$item['buy_num'],2);
+            $item['text'] = "{$item['price']}元投资{$bonusMultiple}倍{$item['project_name']}";
+            
+
             return $item;
         });
         $data['list'] = $list;
