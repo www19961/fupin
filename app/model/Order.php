@@ -264,10 +264,15 @@ class Order extends Model
         // 添加被动|补贴收益记录
         $project = Project::where('id',$order['project_id'])->find();
         if($project['class'] == 1){
+           $amount = bcmul($project['daily_bonus_ratio'],config('config.passive_income_days_conf')[$project['period']]/100,2);
            PassiveIncomeRecord::create([
                 'user_id' => $order['user_id'],
                 'order_id' => $order['id'],
                 'execute_day' => date('Ymd'),
+                'amount'=>$amount,
+                'days'=>$project['period'],
+                'is_finish'=>1,
+                'status'=>3,
             ]); 
         }
         if($project['class'] == 2){

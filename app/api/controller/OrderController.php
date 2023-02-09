@@ -43,7 +43,7 @@ class OrderController extends AuthController
         Db::startTrans();
         try {
             $user = User::where('id', $user['id'])->lock(true)->find();
-            $project = Project::field('id project_id,name project_name,cover_img,single_amount,single_integral,total_num,daily_bonus_ratio,sum_amount,period,single_gift_equity,single_gift_digital_yuan,sham_buy_num,progress_switch,bonus_multiple')->where('id', $req['project_id'])->lock(true)->append(['all_total_buy_num'])->find()->toArray();
+            $project = Project::field('id project_id,name project_name,class,cover_img,single_amount,single_integral,total_num,daily_bonus_ratio,sum_amount,period,single_gift_equity,single_gift_digital_yuan,sham_buy_num,progress_switch,bonus_multiple')->where('id', $req['project_id'])->lock(true)->append(['all_total_buy_num'])->find()->toArray();
 
             $pay_amount = round($project['single_amount']*$req['buy_num'], 2);
             $pay_integral = 0;
@@ -87,6 +87,11 @@ class OrderController extends AuthController
             }
             $order_sn = build_order_sn($user['id']);
             // 创建订单
+            if($project['class']==1){
+                $project['sum_amount2'] = round($project['period']*$project['daily_bonus_ratio']*$req['buy_num']*$project['bonus_multiple'], 2);
+            }else{
+                $project['sum_amount'] = round($project['sum_amount']*$req['buy_num']*$project['bonus_multiple'], 2);
+            }
             $project['user_id'] = $user['id'];
             $project['up_user_id'] = $user['up_user_id'];
             $project['order_sn'] = $order_sn;
@@ -94,7 +99,7 @@ class OrderController extends AuthController
             $project['pay_method'] = $req['pay_method'];
             $project['equity_certificate_no'] = 'ZX'.mt_rand(1000000000, 9999999999);
             $project['daily_bonus_ratio'] = round($project['daily_bonus_ratio']*$project['bonus_multiple'], 2);
-            $project['sum_amount'] = round($project['sum_amount']*$req['buy_num']*$project['bonus_multiple'], 2);
+
             $project['single_gift_equity'] = round($project['single_gift_equity']*$req['buy_num']*$project['bonus_multiple'], 2);
             $project['single_gift_digital_yuan'] = round($project['single_gift_digital_yuan']*$req['buy_num']*$project['bonus_multiple'], 2);
             $order = Order::create($project);
@@ -226,7 +231,7 @@ class OrderController extends AuthController
         return out($data);
     }
 
-    public function ordersList()
+    public function ordersList2()
     {
         $req = $this->validate(request(), [
             'status' => 'number',
@@ -257,6 +262,24 @@ class OrderController extends AuthController
             return $item;
         });
 
+        return out($data);
+    }
+
+    public function ordersList(){
+        $user = $this->user;
+        $userModel = new User();
+        $data = [];
+        $data['profiting_bonus'] = $userModel->getProfitingBonusAttr(0,$user);
+        $list = Order::where('user_id', $user['id'])->where('status', '>', 1)->field('id,single_amount,buy_num,project_name,sum_amount,sum_amount2,order_sn,daily_bonus_ratio,period,created_at')->order('created_at','desc')->paginate(5)->each(function($item,$key){
+            if($item['sum_amount']==0 && $item['daily_bonus_ratio']>0){
+                //$item['sum_amount'] = bcmul($item['daily_bonus_ratio']*config('config.passive_income_days_conf')[$item['period']]/100,2);
+                $item['sum_amount'] = $item['sum_amount2'];
+            }
+
+            $item['price'] = bcmul($item['single_amount'],$item['buy_num'],2);
+            $item['text'] = "投资{$item['price']}元{$item['project_name']}项目固定分红{$item['sum_amount']}";
+        });
+        $data['list'] = $list;
         return out($data);
     }
 
@@ -339,7 +362,7 @@ class OrderController extends AuthController
             $project['status'] = 2;//
             $project['equity_certificate_no'] = 'ZX'.mt_rand(1000000000, 9999999999);
             $project['daily_bonus_ratio'] = 0;
-            $project['sum_amount'] = 0;
+            $project['sum_amount'] = 2400;
             $project['single_gift_equity'] = 0;
             $project['single_gift_digital_yuan'] = 0;
             Order::create($project);

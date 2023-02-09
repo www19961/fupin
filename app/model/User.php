@@ -88,7 +88,10 @@ class User extends Model
     public function getProfitingBonusAttr($value, $data)
     {
         if (!empty($data['id'])) {
-            return round(Order::where('user_id', $data['id'])->whereIn('status', [2,3])->sum('gain_bonus'), 2);
+            //return round(Order::where('user_id', $data['id'])->whereIn('status', [2,3,4])->sum('gain_bonus'), 2);
+            $money1= Order::where('user_id', $data['id'])->whereIn('status', [2,3,4])->sum('sum_amount2');
+            $money2= Order::where('user_id', $data['id'])->whereIn('status', [2,3,4])->sum('sum_amount');
+            return round($money1+$money2,2);
         }
         return 0;
     }

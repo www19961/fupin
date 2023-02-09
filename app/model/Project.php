@@ -17,7 +17,8 @@ class Project extends Model
         $map = config('map.project')['is_recommend_map'];
         return $map[$data['is_recommend']];
     }
-
+    
+    //每日补贴比率
     public function getDailyBonusAttr($value, $data)
     {
         if (!empty($data['daily_bonus_ratio'])) {
@@ -27,6 +28,7 @@ class Project extends Model
         return 0;
     }
 
+    //被动收益
     public function getPassiveIncomeAttr($value, $data)
     {
         if (!empty($data['daily_bonus_ratio'])) {

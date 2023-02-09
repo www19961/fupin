@@ -12,10 +12,24 @@ use think\facade\Db;
 
 class PassiveIncomeController extends AuthController
 {
+
     public function passiveIncomeList()
     {
         $user = $this->user;
-        $data = PassiveIncomeRecord::with('orders')->where('user_id', $user['id'])->where('status', '>', 1)->order('id', 'desc')->order('is_finish','asc')->paginate(15,false,['query'=>request()->param()])->each(function($item, $key){
+        $sum = PassiveIncomeRecord::where('user_id',$user['id'])->where('status','>',1)->sum('amount');
+        $list = PassiveIncomeRecord::with('orders')->where('user_id', $user['id'])->where('status', '>', 1)->order('id', 'desc')->order('is_finish','asc')->paginate(5,false,['query'=>request()->param()])->each(function($item, $key){
+            return $item;
+        });
+        
+        $data['list'] = $list;
+        $data['passive_income_sum']=$sum;
+        return out($data);
+    }
+
+    public function passiveIncomeList2()
+    {
+        $user = $this->user;
+        $data = PassiveIncomeRecord::with('orders')->where('user_id', $user['id'])->where('status', '>', 1)->order('id', 'desc')->order('is_finish','asc')->paginate(5,false,['query'=>request()->param()])->each(function($item, $key){
             $uid = $item["user_id"];
             $item['is_active'] = User::where('id', $uid)->value('is_active');
             $item['is_finish'] = PassiveIncomeRecord::where('id',$item['id'])->value('is_finish');

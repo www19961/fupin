@@ -20,6 +20,6 @@ class PassiveIncomeRecord extends Model
 
     public function orders()
     {
-        return $this->belongsTo(Order::class)->field('id,project_name,status,daily_bonus_ratio,single_amount,buy_num');
+        return $this->belongsTo(Order::class)->field('id,project_name,status,daily_bonus_ratio,single_amount,buy_num,order_sn');
     }
 }
