@@ -246,7 +246,7 @@ class Order extends Model
                 'give_time' => time(),
                 'equity_certificate_no' => 'ZX'.mt_rand(1000000000, 9999999999),
             ]);
-            User::where('id', $order['user_id'])->inc('equity', $order['equity'])->update();
+            User::where('id', $order['user_id'])->inc('equity', $order['equity'])->inc('equity_amount')->update();
         }
         if ($order['single_gift_digital_yuan'] > 0) {
             EquityYuanRecord::create([

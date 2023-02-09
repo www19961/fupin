@@ -48,6 +48,9 @@ class UserController extends AuthController
     }
 
 
+    public function invite(){
+        
+    }
     
     public function hongbao(){
         $user = $this->user;
