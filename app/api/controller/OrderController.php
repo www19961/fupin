@@ -271,13 +271,14 @@ class OrderController extends AuthController
         $data = [];
         $data['profiting_bonus'] = $userModel->getProfitingBonusAttr(0,$user);
         $list = Order::where('user_id', $user['id'])->where('status', '>', 1)->field('id,single_amount,buy_num,project_name,sum_amount,sum_amount2,order_sn,daily_bonus_ratio,period,created_at')->order('created_at','desc')->paginate(5)->each(function($item,$key){
-            if($item['sum_amount']==0 && $item['daily_bonus_ratio']>0){
+            if($item['sum_amount']==0 && $item['sum_amount2']>0){
                 //$item['sum_amount'] = bcmul($item['daily_bonus_ratio']*config('config.passive_income_days_conf')[$item['period']]/100,2);
                 $item['sum_amount'] = $item['sum_amount2'];
             }
 
             $item['price'] = bcmul($item['single_amount'],$item['buy_num'],2);
             $item['text'] = "投资{$item['price']}元{$item['project_name']}项目固定分红{$item['sum_amount']}";
+            return $item;
         });
         $data['list'] = $list;
         return out($data);
