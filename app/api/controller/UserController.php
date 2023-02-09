@@ -143,13 +143,13 @@ class UserController extends AuthController
                 $projectName = Order::where('id',$item['relation_id'])->value('project_name');
                 $typeText=$typeText.$projectName;
             }
-            $item['teype_text'] = $typeText;
+            $item['type_text'] = $typeText;
             return $item;
         });
         $u=[
             'topup_balance'=>$user['topup_balance'],
             'total_balance'=>$user['total_balance'],
-            'invite_bonus'=>$user['total_balance'],
+            'invite_bonus'=>$user['invite_bonus'],
         ];
         $data['wallet']=$u;
         $data['list'] = $list;
