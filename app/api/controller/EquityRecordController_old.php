@@ -10,6 +10,7 @@ use think\facade\Db;
 
 class EquityRecordController extends AuthController
 {
+
     public function recordList()
     {
         $req = $this->validate(request(), [
@@ -53,7 +54,7 @@ class EquityRecordController extends AuthController
                 exit_out(null, 10001, '暂时不能兑换股权');
             }
             if ($req['type'] == 2 && dbconfig('digital_yuan_switch') == 0) {
-                exit_out(null, 10001, '暂时不能兑换数字人民币');
+                exit_out(null, 10001, '暂时不能兑换期权');
             }
 
             if ($record['relation_type'] == 1 && !empty($record['relation_id'])) {
@@ -65,7 +66,7 @@ class EquityRecordController extends AuthController
                     exit_out(null, 10001, '订单状态异常，不能兑换股权');
                 }
                 if ($req['type'] == 2 && $order['digital_yuan_status'] != 2) {
-                    exit_out(null, 10001, '订单状态异常，不能兑换数字人民币');
+                    exit_out(null, 10001, '订单状态异常，不能兑换期权');
                 }
             }
 

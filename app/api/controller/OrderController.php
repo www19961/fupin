@@ -102,6 +102,7 @@ class OrderController extends AuthController
 
             $project['single_gift_equity'] = round($project['single_gift_equity']*$req['buy_num']*$project['bonus_multiple'], 2);
             $project['single_gift_digital_yuan'] = round($project['single_gift_digital_yuan']*$req['buy_num']*$project['bonus_multiple'], 2);
+            $project['price'] = $pay_amount;
             $order = Order::create($project);
 
             if (in_array($req['pay_method'], [1, 5])) {
@@ -175,7 +176,7 @@ class OrderController extends AuthController
     //                 $up['daily_bonus_ratio'] =  $v['buy_num']*$v['pratio'];
     //             }
     //             Order::where('id',$v['id'])->update($up);
-    //             $a .= 'id:'.$v['id'].'<br>'.'总补贴:'.$v['buy_num']*$v['psum'].'<br>'.'赠送股权:'.$v['buy_num']*$v['pequity'].'<br>'.'赠送数字人民币:'. $v['buy_num']*$v['pyuan'].'<br>'.'分红:'.$v['buy_num']*$v['pratio'].'_______________<br>';
+    //             $a .= 'id:'.$v['id'].'<br>'.'总补贴:'.$v['buy_num']*$v['psum'].'<br>'.'赠送股权:'.$v['buy_num']*$v['pequity'].'<br>'.'赠送期权:'. $v['buy_num']*$v['pyuan'].'<br>'.'分红:'.$v['buy_num']*$v['pratio'].'_______________<br>';
     //         }
     //     }
     //     return $a;

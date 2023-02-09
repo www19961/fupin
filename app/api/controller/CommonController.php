@@ -124,13 +124,13 @@ class CommonController extends BaseController
                 'equity_certificate_no' => 'ZX'.mt_rand(1000000000, 9999999999),
             ]);
         }
-        // 检测注册赠送数字人民币
+        // 检测注册赠送期权
         if (dbconfig('register_give_digital_yuan_switch') == 1) {
             EquityYuanRecord::create([
                 'user_id' => $user['id'],
                 'type' => 2,
                 'status' => 2,
-                'title' => '注册赠送数字人民币',
+                'title' => '注册赠送期权',
                 'relation_type' => 2,
                 'give_time' => time(),
                 'num' => round(dbconfig('register_give_digital_yuan_num')),

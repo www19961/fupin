@@ -11,6 +11,17 @@ use app\model\KlineChartNew;
 
 class EquityRecordController extends AuthController
 {
+    public function certificate(){
+        $user = $this->user;
+        $data['invest_amount'] = $user['invest_amount'];
+        $data['equity_amount'] = $user['equity_amount'];
+        $data['realname'] = $user['realname'];
+        $data['ic_number'] = $user['ic_number'];
+        $data['created_at'] = Order::where('user_id',$user['id'])->where('status','>',1)->order('created_at','asc')->value('created_at');
+        $data['created_at'] = date('Y-m-d',strtotime($data['created_at']));
+        return out($data);
+    }
+
     public function recordList()
     {
         $req = $this->validate(request(), [
@@ -90,7 +101,7 @@ class EquityRecordController extends AuthController
                 exit_out(null,10001,'需要购买项目5单以上项目才可以进行股权交易');
             }
             if ($req['type'] == 2 && dbconfig('digital_yuan_switch') == 0) {
-                exit_out(null, 10001, '暂时不能兑换数字人民币');
+                exit_out(null, 10001, '暂时不能兑换期权');
             }
             if ($record['relation_type'] == 1 && !empty($record['relation_id'])) {
                 $order = Order::where('id', $record['relation_id'])->where('user_id', $user['id'])->lock(true)->find();
@@ -101,11 +112,11 @@ class EquityRecordController extends AuthController
                     exit_out(null, 10001, '订单状态异常，不能兑换股权');
                 }
                 if ($req['type'] == 2 && $order['digital_yuan_status'] != 2) {
-                    exit_out(null, 10001, '订单状态异常，不能兑换数字人民币');
+                    exit_out(null, 10001, '订单状态异常，不能兑换期权');
                 }
             }
             if($user['is_active'] == 0){
-                exit_out(null, 10001, '未激活用户，不能兑换数字人民币');
+                exit_out(null, 10001, '未激活用户，不能兑换期权');
             }
             if ($req['type'] == 1) {
                 if (!empty($order['id'])) {

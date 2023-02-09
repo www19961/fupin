@@ -58,7 +58,7 @@ class User extends Model
         return 0;
     }
 
-    // 持有数字人民币
+    // 持有期权
     public function getDigitalYuanAttr($value, $data)
     {
         if (!empty($data['id'])) {
@@ -106,7 +106,7 @@ class User extends Model
         return 0;
     }
 
-    // 已兑换数字人民币
+    // 已兑换期权
     public function getExchangeDigitalYuanAttr($value, $data)
     {
         if (!empty($data['id'])) {

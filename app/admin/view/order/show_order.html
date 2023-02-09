@@ -160,10 +160,10 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">单份赠送数字人民币</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">单份赠送期权</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <input type="text" name="single_gift_digital_yuan" class="form-control"
-                                   placeholder="请输入单份赠送数字人民币" value="{$data['single_gift_digital_yuan']??''}">
+                                   placeholder="请输入单份赠送期权" value="{$data['single_gift_digital_yuan']??''}">
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
                     </div>
@@ -250,7 +250,7 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">数字人民币兑换状态</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">期权兑换状态</label>
                         <div class="col-xs-8 col-sm-6 col-md-4 col-lg-4">
                             <select name="digital_yuan_status" class="form-control">
                                 <?php foreach (config('map.order')['digital_yuan_status_map'] as $k => $v) { ?>
@@ -275,9 +275,9 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">数字人民币兑换时间</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">期权兑换时间</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
-                            <input type="text" name="exchange_yuan_time" class="form-control" placeholder="请输入数字人民币兑换时间"
+                            <input type="text" name="exchange_yuan_time" class="form-control" placeholder="请输入期权兑换时间"
                                    value="{$data['exchange_yuan_time']??''}">
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
