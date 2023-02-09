@@ -10,7 +10,7 @@ class KlineChartNew extends Model
         $today = date("Y-m-d");
         $todayPrice=KlineChartNew::Where('date',$today)->value('price1');
         if(!$todayPrice){
-            $todayPrice = KlineChartNew::order('date','desc')->find();
+            $todayPrice = KlineChartNew::order('date','desc')->value('price1');
         }
         return $todayPrice;
     }

@@ -55,7 +55,8 @@ class ChartController extends AuthController
                 $a['price24'] = $v['price24'];
                 $a['price25'] = $v['price25']; */
                 if(strtotime($v['date']) < time()){
-                    $data[$v['date']][] = $v['price1'];
+                    //$data[$v['date']][] = $v['price1'];
+                    $data[] = ['time'=>$v['date'],'price'=>$v['price1']];
 /*                     $data[$v['date']][] = $v['price25'];
                     $data[$v['date']][] = min($a);
                     $data[$v['date']][] = max($a); */
