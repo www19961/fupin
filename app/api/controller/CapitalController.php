@@ -216,8 +216,9 @@ class CapitalController extends AuthController
             return out(null, 10001, '支付宝提现通道暂未开启');
         }
 
-        if (PayAccount::where('user_id', $user['id'])->where('pay_type', $req['pay_type'])->count()) {
-            PayAccount::where('user_id', $user['id'])->where('pay_type', $req['pay_type'])->update($req);
+        if (PayAccount::where('user_id', $user['id'])->where('pay_type', $req['pay_type'])->count()>2) {
+            //PayAccount::where('user_id', $user['id'])->where('pay_type', $req['pay_type'])->update($req);
+            return out(null, 10001, '银行卡数量超过限制');
         }
         else {
             $req['user_id'] = $user['id'];
@@ -225,6 +226,15 @@ class CapitalController extends AuthController
         }
 
         return out();
+    }
+
+    public function payAccountDel(){
+        $req = $this->validate(request(), [
+            'id' => 'require|number',
+        ]);
+        $ret = PayAccount::where('id',$req['id'])->delete();
+        return out();
+
     }
 
     public function capitalRecord()
