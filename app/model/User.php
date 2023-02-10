@@ -2,6 +2,7 @@
 
 namespace app\model;
 
+use Exception;
 use think\Model;
 use think\facade\Db;
 
@@ -313,9 +314,12 @@ class User extends Model
         return true;
     }
 
-    public static function changeInc($user_id,$amount,$field,$type,$relation_id = 0,$log_type = 1, $remark = ''){
+    public static function changeInc($user_id,$amount,$field,$type,$relation_id = 0,$log_type = 1, $remark = '',$admin_user_id=0,$status=1){
         $user = User::where('id', $user_id)->find();
         $after_balance = $user[$field]+$amount;
+        if($amount<0 && $user[$field]<abs($amount)){
+            throw new Exception('余额不足');
+        }
         Db::startTrans();
         try {
             $ret = User::where('id',$user_id)->inc($field,$amount)->update();
@@ -328,8 +332,8 @@ class User extends Model
                 'change_balance' => $amount,
                 'after_balance' => $after_balance,
                 'remark' => $remark,
-                'admin_user_id' => 0,
-                'status' => 1,
+                'admin_user_id' =>$admin_user_id,
+                'status' => $status,
             ]);
             Db::commit();
             return 'success';

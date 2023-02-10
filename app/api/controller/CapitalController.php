@@ -25,7 +25,11 @@ class CapitalController extends AuthController
         if ($req['pay_channel'] == 5 && empty($req['pay_voucher_img_url'])) {
             return out(null, 10001, '请上传支付凭证图片');
         }
-        $type = $req['pay_channel'] - 1;
+        if($req['pay_channel']==6){
+            $type = 4;
+        }else{
+            $type = $req['pay_channel'] - 1;
+        }
         $paymentConf = PaymentConfig::userCanPayChannel($req['payment_config_id'], $type, $req['amount']);
 
         Db::startTrans();
@@ -52,7 +56,7 @@ class CapitalController extends AuthController
                 'product_type' => 2,
                 'capital_id' => $capital['id'],
                 'payment_config_id' => $paymentConf['id'],
-                'channel' => $paymentConf['channel'],
+                'channel' => $type,
                 'mark' => $paymentConf['mark'],
                 'type' => $paymentConf['type'],
                 'card_info' => $card_info,
@@ -84,6 +88,7 @@ class CapitalController extends AuthController
             'amount|提现金额' => 'require|number',
             'pay_channel|收款渠道' => 'require|number',
             'pay_password|支付密码' => 'require',
+            'bank_id|银行卡'=>'require|number',
         ]);
         $user = $this->user;
 
@@ -94,7 +99,7 @@ class CapitalController extends AuthController
             return out(null, 801, '请先设置支付密码');
         }
         $pay_type = $req['pay_channel'] - 1;
-        $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', $pay_type)->find();
+        $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', $pay_type)->where('id',$req['bank_id'])->find();
         if (empty($payAccount)) {
             return out(null, 802, '请先设置此收款方式');
         }
@@ -123,7 +128,7 @@ class CapitalController extends AuthController
         try {
             // 判断余额
             $user = User::where('id', $user['id'])->lock(true)->find();
-            if ($user['can_withdraw_balance'] < $req['amount']) {
+            if ($user['invite_bonus'] < $req['amount']) {
                 return out(null, 10001, '可提现余额不足');
             }
             // 判断每天最大提现次数
@@ -136,12 +141,14 @@ class CapitalController extends AuthController
             $change_amount = 0 - $req['amount'];
             $withdraw_fee = round(dbconfig('withdraw_fee_ratio')/100*$req['amount'], 2);
             $withdraw_amount = round($req['amount'] - $withdraw_fee, 2);
+
+            $payMethod = $req['pay_channel'] == 4 ? 1 : $req['pay_channel'];
             // 保存提现记录
             $capital = Capital::create([
                 'user_id' => $user['id'],
                 'capital_sn' => $capital_sn,
                 'type' => 2,
-                'pay_channel' => $req['pay_channel'],
+                'pay_channel' => $payMethod,
                 'amount' => $change_amount,
                 'withdraw_amount' => $withdraw_amount,
                 'withdraw_fee' => $withdraw_fee,
@@ -153,7 +160,8 @@ class CapitalController extends AuthController
                 'bank_branch' => $payAccount['bank_branch'],
             ]);
             // 扣减用户余额
-            User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
+            User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
+            //User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
 
             Db::commit();
         } catch (Exception $e) {

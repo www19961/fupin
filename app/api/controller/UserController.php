@@ -140,13 +140,14 @@ class UserController extends AuthController
         $user['invite_bonus'] = $umodel->getInviteBonus(0,$user);
         $user['total_balance'] = bcadd($user['topup_balance'],$user['invite_bonus'],2);
         $map = config('map.user_balance_log')['type_map'];
-        $list = UserBalanceLog::where('user_id',$user['id'])->where('log_type',1)->whereIn('type',[1,2,3])->paginate(10)->each(function($item,$key) use ($map){
+        $list = UserBalanceLog::where('user_id',$user['id'])->where('log_type',1)->whereIn('type',[1,2,3,13])->order('created_at','desc')->paginate(10)->each(function($item,$key) use ($map){
             $typeText = $map[$item['type']];
+            $item['type_text'] = $typeText;
             if($item['type']==3){
                 $projectName = Order::where('id',$item['relation_id'])->value('project_name');
-                $typeText=$typeText.$projectName;
+                $item['type_text']=$typeText.$projectName;
             }
-            $item['type_text'] = $typeText;
+            
             return $item;
         });
         $u=[
@@ -346,8 +347,8 @@ class UserController extends AuthController
         $data['parent_name'] = User::where('id',$user['up_user_id'])->value('realname');
         $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('type', 9)->sum('change_balance');
 
-        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.level',1)->where('r.user_id',1)->order('u.equity_amount','desc')->limit(10)->select();
-        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.level',2)->where('r.user_id',1)->order('u.equity_amount','desc')->limit(10)->select();
+        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.equity_amount','desc')->limit(10)->select();
+        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.equity_amount','desc')->limit(10)->select();
         $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
                                                 ->field('l.created_at,change_balance,single_amount,buy_num,project_name,o.user_id')
                                                 ->where('l.type',9)

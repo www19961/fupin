@@ -99,17 +99,17 @@ class Capital extends Model
         if ($capital['type'] != 2) {
             exit_out(null, 10002, '审核记录异常');
         }
-        if ($is_batch && $status == 4 && $capital['pay_channel'] == 1) {
+/*         if ($is_batch && $status == 4 && $capital['pay_channel'] == 1) {
             $status = 2;
-        }
+        } */
         // 当是手动出金的审核，并且审核通过了 要判断余额是否充足
-        if ($capital['pay_channel'] == 1 && $status == 2) {
+/*         if ($capital['pay_channel'] == 1 && $status == 2) {
             $user = User::where('id', $capital['user_id'])->find();
             $change_amount = 0 - $capital['amount'];
             if ($user['balance'] < $change_amount) {
                 exit_out(null, 10001, '用户余额不足，不能审核通过');
             }
-        }
+        } */
         $update = [
             'status' => $status,
             'audit_time' => time(),
@@ -128,14 +128,15 @@ class Capital extends Model
             if ($capital['pay_channel'] == 1) {
                 // 审核通过就扣余额
                 if ($status == 2) {
-                    User::changeBalance($capital['user_id'],  $capital['amount'], 16, $capital['id'], 1, $audit_remark??'', $admin_user_id);
+                    //User::changeBalance($capital['user_id'],  $capital['amount'], 16, $capital['id'], 1, $audit_remark??'', $admin_user_id);
                 }
             }
             else {
                 // 审核拒绝把余额加回去
                 if ($status == 3) {
                     $change = 0 - $capital['amount'];
-                    User::changeBalance($capital['user_id'], $change, 13, $id, 1, $audit_remark ?? '', $admin_user_id);
+                    //User::changeBalance($capital['user_id'], $change, 13, $id, 1, $audit_remark ?? '', $admin_user_id);
+                    User::changeInc($capital['user_id'], $change,'invite_bonus', 13, $id, 1, $audit_remark ?? '', $admin_user_id);
                 }
                 else {
                     // 审核通过把资金日志的提现记录变为已完成
