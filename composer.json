@@ -29,7 +29,8 @@
         "psr/container": "1.1.1",
         "guzzlehttp/guzzle": "^7.4",
         "phpoffice/phpspreadsheet": "1.22.0",
-        "maennchen/zipstream-php": "2.1.0"
+        "maennchen/zipstream-php": "2.1.0",
+        "endroid/qr-code": "^4.6"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

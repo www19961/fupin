@@ -14,7 +14,10 @@ use app\model\KlineChartNew;
 
 use think\facade\Db;
 use Exception;
-
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Encoding\Encoding;
+use think\facade\App;
 
 class UserController extends AuthController
 {
@@ -49,7 +52,47 @@ class UserController extends AuthController
 
 
     public function invite(){
-        
+        $user = $this->user;
+        $host = env('app.host', '');
+        $url = "$host/#/pages/main_pages/urg?invite_code={$user['invite_code']}";
+        $img = $user['invite_img'];
+        if($img==''){
+            $qrCode = QrCode::create($url)
+            // 内容编码
+            ->setEncoding(new Encoding('UTF-8'))
+            // 内容区域大小
+            ->setSize(200)
+            // 内容区域外边距
+            ->setMargin(10);
+            // 生成二维码数据对象
+            $result = (new PngWriter)->write($qrCode);
+            // 直接输出在浏览器中
+            // ob_end_clean(); //处理在TP框架中显示乱码问题
+            // header('Content-Type: ' . $result->getMimeType());
+            // echo $result->getString();
+            // 将二维码图片保存到本地服务器
+            $today = date("Y-m-d");
+            $basePath = App::getRootPath()."public/";
+            $path =  "storage/qrcode/$today";
+            if(!is_dir($basePath.$path)){
+                mkdir($basePath.$path);
+            }   
+            $name = "{$user['id']}.png";
+            $filePath = $basePath.$path.'/'.$name;
+            $result->saveToFile($filePath);
+            $img = $path.'/'.$name;
+            User::where('id',$user['id'])->update(['invite_img'=>$img]);
+        }else{
+        }
+        $img = $host.'/'.$img;
+        // 返回 base64 格式的图片
+        //$dataUri = $result->getDataUri();
+        //echo "<img src='{$dataUri}'>";
+        $data=[
+            'url'=>$url,
+            'img'=>$img,
+        ];
+        return out($data);
     }
     
     public function hongbao(){
