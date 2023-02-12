@@ -157,7 +157,10 @@ class CommonController extends BaseController
 
         $banner = Banner::where('status', 1)->order('sort', 'asc')->select();
         $setting = Setting::select();
-
+        $setting_conf =[];
+        foreach($setting as $item){
+            $setting_conf[$item['key']] = $item['value'];
+        }
         $paymentConfRes = [];
         for ($type = 1; $type <= 4; $type++) {
             $paymentConf = PaymentConfig::where('status', 1)->where('type', $type)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
@@ -221,7 +224,7 @@ class CommonController extends BaseController
 
         $system = $builder->order('id', 'desc')->select();
 
-        return out(['banner' => $banner, 'setting' => $setting, 'system' => $system, 'paymentConfig' => $paymentConfRes]);
+        return out(['banner' => $banner, 'setting' => $setting,'setting_conf'=>$setting_conf, 'system' => $system, 'paymentConfig' => $paymentConfRes]);
     }
 
     public function payNotify()
