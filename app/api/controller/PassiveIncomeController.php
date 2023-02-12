@@ -18,6 +18,7 @@ class PassiveIncomeController extends AuthController
         $user = $this->user;
         $sum = PassiveIncomeRecord::where('user_id',$user['id'])->where('status','>',1)->sum('amount');
         $list = PassiveIncomeRecord::with('orders')->where('user_id', $user['id'])->where('status', '>', 1)->order('id', 'desc')->order('is_finish','asc')->paginate(5,false,['query'=>request()->param()])->each(function($item, $key){
+            $item['order_sn'] = $item['orders']['order_sn'];
             return $item;
         });
         

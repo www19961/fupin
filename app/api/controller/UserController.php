@@ -271,16 +271,16 @@ class UserController extends AuthController
             ]);
 
             //收到金额  加金额 转账金额
-            User::where('id', $take['id'])->inc('balance', $req['money'])->inc($field, $req['money'])->update();
+            User::where('id', $take['id'])->inc('balance', $req['money'])->inc('topup_balance', $req['money'])->update();
             //User::changeBalance($take['id'], $req['money'], 18, 0, 1,'接收转账来自'.$user['realname']);
             UserBalanceLog::create([
                 'user_id' => $take['id'],
                 'type' => 19,
                 'log_type' => 1,
                 'relation_id' => $user['id'],
-                'before_balance' => $take[$field],
+                'before_balance' => $take['topup_balance'],
                 'change_balance' => $req['money'],
-                'after_balance' =>  $take[$field]+$req['money'],
+                'after_balance' =>  $take['topup_balance']+$req['money'],
                 'remark' => '接收'.$fieldText.'来自'.$user['realname'],
                 'admin_user_id' => 0,
                 'status' => 2,
