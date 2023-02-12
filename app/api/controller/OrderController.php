@@ -195,7 +195,7 @@ class OrderController extends AuthController
         }
         $upData = [
             'pay_voucher_img_url' => $req['pay_voucher_img_url'],
-            'agent_name'=>isset($req['remark'])?$req['remark']:'',
+            'agent_name'=>$req['remark'],
         ];
         Payment::where('order_id', $req['order_id'])->where('user_id', $user['id'])->update($upData);
 
