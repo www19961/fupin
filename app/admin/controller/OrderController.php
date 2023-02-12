@@ -73,7 +73,7 @@ class OrderController extends AuthController
         $this->assign('total_gift_digital_yuan', $total_gift_digital_yuan);
 
         $data = $builder->paginate(['query' => $req]);
-
+        //var_dump($data);
         $this->assign('req', $req);
         $this->assign('data', $data);
 

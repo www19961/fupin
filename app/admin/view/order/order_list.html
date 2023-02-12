@@ -62,7 +62,6 @@
                             <th>周期</th>
                             <th>赠送股权</th>
                             <th>赠送期权</th>
-                            <th>代付</th>
 <!--                             <th>股权兑换状态</th>
                             <th>期权兑换状态</th>
                             <th>股权兑换单价</th>
@@ -86,14 +85,13 @@
                                 <td>{$v['buy_num']}</td>
                                 <td>{$v['buy_amount']}</td>
                                 <td>{$v['buy_integral']}</td>
-                                <td>{$v['pay_method_text']}<?php if (!empty($v['payment']['channel_text'])) { ?>（{$v['payment']['channel_text']??''}-{$v['payment']['mark']??''}）<?php } ?></td>
+                                <td>{$v['pay_method_text']}<?php if (!empty($v['payment']['channel_text'])) { ?>（{$v['payment']['channel_text']??''}-{$v['payment']['mark']??''}-{$v['payment']['agent_name']??''}）<?php } ?></td>
                                 <td><?php if ($v['pay_method'] == 6) { ?> 银行：{$v['payment']['card_info']['bank_name']??''}<br>卡号：{$v['payment']['card_info']['card_number']??''}<br>分行：{$v['payment']['card_info']['bank_branch']??''}<br>持卡人：{$v['payment']['card_info']['realname']??''} <?php } ?></td>
                                 <td><?php if (!empty($v['payment']['pay_voucher_img_url'])) { ?><img src="{$v['payment']['pay_voucher_img_url']}" onclick="seePhoto('{$v["payment"]["pay_voucher_img_url"]}')" style="max-width: 80px;"> <?php } ?></td>
                                 <td>{$v['daily_bonus']}</td>
                                 <td>{$v['period']}</td>
                                 <td>{$v['equity']}</td>
                                 <td>{$v['digital_yuan']}</td>
-                                <td>{$v['remark']}</td>
 <!--                                 <td>{$v['equity_status_text']}</td>
                                 <td>{$v['digital_yuan_status_text']}</td>
                                 <td>{$v['equity_exchange_price']}</td>
