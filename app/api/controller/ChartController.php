@@ -32,7 +32,7 @@ class ChartController extends AuthController
         if(!empty($k)){
             foreach($k as $v){
                 $a['price1'] = $v['price1'];
-/*                 $a['price2'] = $v['price2'];
+                $a['price2'] = $v['price2'];
                 $a['price3'] = $v['price3'];
                 $a['price4'] = $v['price4'];
                 $a['price5'] = $v['price5'];
@@ -55,12 +55,19 @@ class ChartController extends AuthController
                 $a['price22'] = $v['price22'];
                 $a['price23'] = $v['price23'];
                 $a['price24'] = $v['price24'];
-                $a['price25'] = $v['price25']; */
+                $a['price25'] = $v['price25'];
                 if(strtotime($v['date']) < time()){
                     //$data[$v['date']][] = $v['price1'];
                     //$data[] = ['time'=>$v['date'],'price'=>$v['price1']];
                     $time[]=$v['date'];
-                    $price[] = $v['price1'];
+                    
+                    $p=[];
+                    $p[0] = $v['price1'];
+                    $p[1] = $v['price25'];
+                    $p[2] = min($a);
+                    $p[3] = max($a);
+                    $price[] =$p;
+
 /*                     $data[$v['date']][] = $v['price25'];
                     $data[$v['date']][] = min($a);
                     $data[$v['date']][] = max($a); */
