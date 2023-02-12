@@ -57,7 +57,7 @@
                                     <video src="{$data['video_url']}" controls="controls">您的浏览器不支持 video 标签。</video>
                                 <?php } ?>
                             </div>
-                            <input type="text" class="form-control" name="video_url" id="video_url1" value="{$data['video_url']}" placeholder="http://n.monex.info/video/aaa.mp4">
+                            <input style="width:100% ;" type="text" class="form-control" name="video_url" id="video_url1" value="{if(!empty($data['video_url']))}{$data['video_url']}{/if}" placeholder="http://n.monex.info/video/aaa.mp4">
                         </div>
                     </div>
                 </div>
