@@ -66,7 +66,7 @@ class ChartController extends AuthController
                     $p[1] = $v['price25'];
                     $p[2] = min($a);
                     $p[3] = max($a);
-                    //$price[] =$p;
+                    $price[] =$p;
 
 /*                     $data[$v['date']][] = $v['price25'];
                     $data[$v['date']][] = min($a);
