@@ -146,9 +146,10 @@ class SystemInfoController extends AuthController
         if ($cover_img = upload_file('cover_img', false)) {
             $req['cover_img'] = $cover_img;
         }
-        if ($video_url = upload_file('video_url', false)) {
+/*         if ($video_url = upload_file('video_url', false)) {
             $req['video_url'] = $video_url;
-        }
+        } */
+        $req['video_url'] = request()->param('video_url');
         SystemInfo::where('id', $req['id'])->update($req);
 
         return out();

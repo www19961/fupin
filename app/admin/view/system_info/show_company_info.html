@@ -57,7 +57,7 @@
                                     <video src="{$data['video_url']}" controls="controls">您的浏览器不支持 video 标签。</video>
                                 <?php } ?>
                             </div>
-                            <input type="file" class="form-control" name="video_url" id="video_url1" onchange="selectVideo(1)">
+                            <input type="text" class="form-control" name="video_url" id="video_url1" value="{$data['video_url']}" placeholder="http://n.monex.info/video/aaa.mp4">
                         </div>
                     </div>
                 </div>
