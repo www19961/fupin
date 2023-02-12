@@ -193,7 +193,11 @@ class OrderController extends AuthController
         if (!Payment::where('order_id', $req['order_id'])->where('user_id', $user['id'])->count()) {
             return out(null, 10001, '订单不存在');
         }
-        Payment::where('order_id', $req['order_id'])->where('user_id', $user['id'])->update(['pay_voucher_img_url' => $req['pay_voucher_img_url']]);
+        $upData = [
+            'pay_voucher_img_url' => $req['pay_voucher_img_url'],
+            'agent_name'=>isset($req['remark'])?$req['remark']:'',
+        ];
+        Payment::where('order_id', $req['order_id'])->where('user_id', $user['id'])->update($upData);
 
         return out();
     }
