@@ -36,6 +36,7 @@
                         <tr>
                             <th>ID</th>
                             <th>类型</th>
+                            <th>封面图</th>
                             <th>状态</th>
                             <th>标题</th>
                             <th>内容</th>
@@ -46,6 +47,7 @@
                             <tr>
                                 <td>{$v['id']}</td>
                                 <td>{$v['type_text']}</td>
+                                <td><img src="{$v['cover_img']}" onclick="seePhoto('{$v["cover_img"]}')" style="max-width: 80px;"></td>
                                 <td>
                                     <div class="switch">
                                         <div class="onoffswitch">

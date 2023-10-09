@@ -9,7 +9,7 @@ class ProjectController extends AuthController
 {
     public function projectList()
     {
-        $data = Project::where('status', 1)->where('class',1)->order(['sort' => 'asc', 'id' => 'desc'])->append(['total_amount', 'daily_bonus', 'passive_income', 'progress'])->paginate();
+        $data = Project::where('status', 1)->where('class',1)->group('project_group_id')->order(['sort' => 'asc', 'id' => 'desc'])->append(['total_amount', 'daily_bonus', 'passive_income', 'progress'])->paginate();
         return out($data);
     }
     
@@ -40,6 +40,19 @@ class ProjectController extends AuthController
                 }
             }
         }
+
+        return out($data);
+    }
+    
+    public function projectGroupList()
+    {
+        $req = $this->validate(request(), [
+            'project_group_id' => 'require|number'
+        ]);
+        $user = $this->user;
+
+        $data = Project::where('project_group_id', $req['project_group_id'])->where('status', 1)->append(['total_amount', 'daily_bonus', 'passive_income', 'progress','day_amount'])->select()->toArray();
+
 
         return out($data);
     }

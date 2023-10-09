@@ -11,6 +11,7 @@ use app\model\User;
 use app\model\UserBalanceLog;
 use app\model\UserRelation;
 use app\model\KlineChartNew;
+use app\model\Capital;
 
 use think\facade\Db;
 use Exception;
@@ -181,10 +182,10 @@ class UserController extends AuthController
     public function wallet(){
         $user = $this->user;
         $umodel = new User();
-        $user['invite_bonus'] = $umodel->getInviteBonus(0,$user);
-        $user['total_balance'] = bcadd($user['topup_balance'],$user['invite_bonus'],2);
+        //$user['invite_bonus'] = $umodel->getInviteBonus(0,$user);
+        $user['total_balance'] = bcadd($user['topup_balance'],$user['balance'],2);
         $map = config('map.user_balance_log')['type_map'];
-        $list = UserBalanceLog::where('user_id',$user['id'])->where('log_type',1)->whereIn('type',[1,2,3,13])->order('created_at','desc')->paginate(10)->each(function($item,$key) use ($map){
+        $list = UserBalanceLog::where('user_id',$user['id'])->where('log_type',1)->whereIn('type',[1,2,3,13,18,19])->order('created_at','desc')->paginate(10)->each(function($item,$key) use ($map){
             $typeText = $map[$item['type']];
             $item['type_text'] = $typeText;
             if($item['type']==3){
@@ -197,7 +198,7 @@ class UserController extends AuthController
         $u=[
             'topup_balance'=>$user['topup_balance'],
             'total_balance'=>$user['total_balance'],
-            'invite_bonus'=>$user['invite_bonus'],
+            'balance'=>$user['balance'],
         ];
         $data['wallet']=$u;
         $data['list'] = $list;
@@ -209,7 +210,7 @@ class UserController extends AuthController
     //转账
     public function transferAccounts(){
         $req = $this->validate(request(), [
-            'type' => 'require|in:1,2',//1推荐给奖励,2 转账余额（充值金额）
+            'type' => 'require|in:1,2,3',//1推荐给奖励,2 转账余额（充值金额）3 可提现余额
             'realname|对方姓名' => 'require',
             'account|对方账号' => 'require',
             'money|转账金额' => 'require|number',
@@ -226,8 +227,11 @@ class UserController extends AuthController
         if (!empty($req['pay_password']) && $user['pay_password'] !== sha1(md5($req['pay_password']))) {
             return out(null, 10001, '支付密码错误');
         }
-        if (!in_array($req['type'], [1,2])) {
+        if (!in_array($req['type'], [1,2,3])) {
             return out(null, 10001, '不支持该支付方式');
+        }
+        if ($user['phone'] == $req['account']) {
+            return out(null, 10001, '不能转帐给自己');
         }
 
         Db::startTrans();
@@ -242,9 +246,18 @@ class UserController extends AuthController
             if (empty($take['ic_number'])) {
                 exit_out(null, 10002, '请收款用户先完成实名认证');
             }
+            
+            if($req['type'] ==1){
+                $field = 'invite_bonus';
+                $fieldText = '推荐奖励';
+            }elseif($req['type'] ==2){
+                $field = 'topup_balance';
+                $fieldText = '充值余额';
+            }else{
+                $field = 'balance';
+                $fieldText = '可提现余额';
+            }
 
-            $field = $req['type']==1 ? 'invite_bonus':'topup_balance';
-            $fieldText =  $req['type']==1 ? '推荐奖励':'充值余额';
 
             if ($req['money'] > $user[$field]) {
                 exit_out(null, 10002, '转账余额不足');
@@ -254,7 +267,8 @@ class UserController extends AuthController
             
 
             //2 转账余额（充值金额加他人转账的金额）
-            User::where('id', $user['id'])->inc('balance', $change_balance)->inc($field, $change_balance)->update();
+            //User::where('id', $user['id'])->inc('balance', $change_balance)->inc($field, $change_balance)->update();
+            User::where('id', $user['id'])->inc($field, $change_balance)->update();
             //User::changeBalance($user['id'], $change_balance, 18, 0, 1,'转账余额转账给'.$take['realname']);
             //增加资金明细
             UserBalanceLog::create([
@@ -272,16 +286,17 @@ class UserController extends AuthController
             ]);
 
             //收到金额  加金额 转账金额
-            User::where('id', $take['id'])->inc('balance', $req['money'])->inc('topup_balance', $req['money'])->update();
+            //User::where('id', $take['id'])->inc('balance', $req['money'])->inc('topup_balance', $req['money'])->update();
+            User::where('id', $take['id'])->inc($field, $req['money'])->update();
             //User::changeBalance($take['id'], $req['money'], 18, 0, 1,'接收转账来自'.$user['realname']);
             UserBalanceLog::create([
                 'user_id' => $take['id'],
                 'type' => 19,
                 'log_type' => 1,
                 'relation_id' => $user['id'],
-                'before_balance' => $take['topup_balance'],
+                'before_balance' => $take[$field],
                 'change_balance' => $req['money'],
-                'after_balance' =>  $take['topup_balance']+$req['money'],
+                'after_balance' =>  $take[$field]+$req['money'],
                 'remark' => '接收'.$fieldText.'来自'.$user['realname'],
                 'admin_user_id' => 0,
                 'status' => 2,
@@ -305,7 +320,12 @@ class UserController extends AuthController
 
         $builder = UserBalanceLog::where('user_id', $user['id'])->whereIn('type', [18,19])->order('created_at','desc')->limit(10)->select();
             //->paginate(15,false,['query'=>request()->param()]);
-
+        if($builder){
+            foreach($builder as $k => $v){
+                $builder[$k]['phone'] = User::where('id', $v['relation_id'])->value('phone');
+            } 
+        }    
+        
         return out($builder);
     }
 
@@ -334,6 +354,12 @@ class UserController extends AuthController
 
         // 把注册赠送的股权给用户
         EquityYuanRecord::where('user_id', $user['id'])->where('type', 1)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
+        
+                // 把注册赠送的数字人民币给用户
+        EquityYuanRecord::where('user_id', $user['id'])->where('type', 2)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
+
+        // 把注册赠送的贫困补助金给用户
+        EquityYuanRecord::where('user_id', $user['id'])->where('type', 3)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
 
         return out();
     }
@@ -368,7 +394,7 @@ class UserController extends AuthController
     public function userBalanceLog()
     {
         $req = $this->validate(request(), [
-            'log_type' => 'require|in:1,2',
+            'log_type' => 'require|in:1,2,3,4',
             'type' => 'number',
         ]);
         $user = $this->user;
@@ -387,20 +413,23 @@ class UserController extends AuthController
         $user = $this->user;
         $data['level1_total'] = UserRelation::where('user_id', $user['id'])->where('level', 1)->count();
         $data['level2_total'] = UserRelation::where('user_id', $user['id'])->where('level', 2)->count();
+        $data['level3_total'] = UserRelation::where('user_id', $user['id'])->where('level', 3)->count();
         $data['realname'] = $user['realname'];
         $data['parent_name'] = User::where('id',$user['up_user_id'])->value('realname');
-        $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('type', 9)->sum('change_balance');
+        $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('log_type',4)->whereIn('type', '8,9')->sum('change_balance');
 
-        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.equity_amount','desc')->limit(10)->select();
-        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.equity_amount')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.equity_amount','desc')->limit(10)->select();
+        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve3_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',3)->order('u.invite_bonus','desc')->limit(10)->select();
         $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
-                                                ->field('l.created_at,change_balance,single_amount,buy_num,project_name,o.user_id')
-                                                ->where('l.type',9)
+                                                ->field('l.created_at,l.type,l.remark,change_balance,single_amount,buy_num,project_name,o.user_id')
+                                                ->whereIn('l.type','8,9')
+                                                ->where('l.log_type',4)
                                                 ->where('l.user_id',$user['id'])
                                                 ->order('l.created_at','desc')
                                                 ->limit(10)
                                                 //->fetchSql(true)
-                                                ->select();
+                                                ->paginate();
                                                 
                                                 
         //echo $invite_bonus;
@@ -408,7 +437,7 @@ class UserController extends AuthController
         foreach($invite_bonus as $key=>$item){
         
             $orderPrice = bcmul($item['single_amount'],$item['buy_num'],2);
-            $realname = User::where($item['user_id'])->value('realname');
+            $realname = User::where('id',$item['user_id'])->value('realname');
             $invite_bonus[$key]['realname'] = $realname;
             $level = UserRelation::where('user_id',$user['id'])->where('sub_user_id',$item['user_id'])->value('level');
             $levelText = [
@@ -416,7 +445,14 @@ class UserController extends AuthController
                 '2'=>'二级',
                 '3'=>'三级',
             ];
-            $invite_bonus[$key]['text'] = "推荐{$levelText[$level]}用户 $realname 投资 $orderPrice ,奖励 {$item['change_balance']} ";
+            if($item['type'] == 8){
+                $remark = $item['remark'];
+            }elseif($item['type'] == 9){
+                $remark = $item['remark'];
+            }else{
+                $remark = '奖励';
+            }
+            $invite_bonus[$key]['text'] = "推荐{$levelText[$level]}用户 $realname 投资 $orderPrice ,{$remark} {$item['change_balance']} ";
         }                                
         $data['invite_bonus'] = $invite_bonus;
         return out($data);
@@ -425,7 +461,7 @@ class UserController extends AuthController
     public function inviteBonus(){
         $user = $this->user;
         $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
-                                                ->field('l.created_at,change_balance,single_amount,buy_num,project_name,o.user_id')
+                                                ->field('l.created_at,l.type,l.remark,change_balance,single_amount,buy_num,project_name,o.user_id')
                                                 ->where('l.type',9)
                                                 ->where('l.user_id',$user['id'])
                                                 ->order('l.created_at','desc')
@@ -447,7 +483,14 @@ class UserController extends AuthController
                 '2'=>'二级',
                 '3'=>'三级',
             ];
-            $invite_bonus[$key]['text'] = "推荐{$levelText[$level]}用户 $realname 投资 $orderPrice ,奖励 {$item['change_balance']} ";
+            if($item['type'] == 8){
+                $remark = $item['remark'];
+            }elseif($item['type'] == 9){
+                $remark = $item['remark'];
+            }else{
+                $remark = '奖励';
+            }
+            $invite_bonus[$key]['text'] = "推荐{$levelText[$level]}用户 $realname 投资 $orderPrice ,{$remark} {$item['change_balance']} ";
 
         }                                     
         $data['list'] = $invite_bonus;
@@ -464,8 +507,15 @@ class UserController extends AuthController
         $total_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->count();
         //$active_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->where('is_active', 1)->count();
 
-        $sub_user_ids = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->column('sub_user_id');
-        $list = User::field('id,avatar,phone,invest_amount,equity_amount,level,is_active,created_at')->whereIn('id', $sub_user_ids)->order('equity_amount', 'desc')->paginate();
+        $list = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->field('sub_user_id')->paginate();
+        if($list){
+            foreach ($list as $k =>$v){
+                $user = User::field('id,avatar,phone,realname,invite_bonus,invest_amount,equity_amount,level,is_active,created_at')->where('id', $v['sub_user_id'])->find();
+                $list[$k] = $user;
+            }  
+        }
+        
+        // $list = User::field('id,avatar,phone,invest_amount,equity_amount,level,is_active,created_at')->whereIn('id', $sub_user_ids)->order('equity_amount', 'desc')->paginate();
 
         return out([
             'total_num' => $total_num,
@@ -504,5 +554,75 @@ class UserController extends AuthController
         $k = KlineChartNew::where('date',date("Y-m-d",strtotime("-1 day")))->field('price25')->order('id desc')->find();
         $data['klineTotal'] = $k['price25'];
         return out($data);
+    }
+    
+    public function balanceLog()
+    {
+        $user = $this->user;
+        $req = $this->validate(request(), [
+            //'type' => 'require|number|in:1,2,3,4,5',
+            'log_type' => 'require|number|in:1,2,3',
+        ]);
+        $map = config('map.user_balance_log')['type_map'];
+        $log_type = $req['log_type'];
+        $list = UserBalanceLog::where('user_id', $user['id'])->where('log_type', $log_type)->order('created_at', 'desc')->paginate(10)->each(function ($item, $key) use ($map) {
+            $typeText = $map[$item['type']];
+            $item['type_text'] = $typeText;
+            if ($item['type'] == 3) {
+                $projectName = Order::where('id', $item['relation_id'])->value('project_name');
+                $item['type_text'] = $typeText . $projectName;
+            }
+
+            return $item;
+        });
+
+        $temp = $list->toArray();
+        $data = [
+            'current_page' => $temp['current_page'],
+            'last_page' => $temp['last_page'],
+            'total' => $temp['total'],
+            'per_page' => $temp['per_page'],
+        ];
+        $datas = [];
+        $sort_key = [];
+        foreach($list as $v)
+        {
+            $in = [
+                'after_balance' => $v['after_balance'],
+                'before_balance' => $v['before_balance'],
+                'change_balance' => $v['change_balance'],
+                'type' => $v['type'],
+                'status' => $v['status'],
+                'type_text' => $v['type_text'],
+                'created_at' => $v['created_at'],
+            ];
+            array_push($sort_key,$v['created_at']);
+            array_push($datas,$in);
+        }
+        if($log_type == 1)
+        {
+            $builder = Capital::where('user_id', $user['id'])->order('id', 'desc');
+            $builder->where('type', 1)->where('status',1);
+            $list= $builder->append(['audit_date'])->paginate(10);
+            foreach($list as $v)
+            {
+                $in = [
+                    'after_balance' => $user['balance'],
+                    'before_balance' => $user['balance'],
+                    'type' => 1,
+                    'change_balance' => $v['amount'],
+                    'status' => $v['status'],
+                    'type_text' => "充值",
+                    'created_at' => $v['created_at'],
+                ];
+                array_push($sort_key,$v['created_at']);
+                array_push($datas,$in);
+            }
+        }
+
+        array_multisort($sort_key,SORT_DESC,$datas);
+        $data['data'] = $datas;
+        return out($data);
+       
     }
 }

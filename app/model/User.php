@@ -59,11 +59,19 @@ class User extends Model
         return 0;
     }
 
-    // 持有期权
+    // 持有数字人民币
     public function getDigitalYuanAttr($value, $data)
     {
         if (!empty($data['id'])) {
             return round(EquityYuanRecord::where('user_id', $data['id'])->where('status', 2)->where('type', 2)->sum('num'), 2);
+        }
+        return 0;
+    }
+    // 持有贫困补助金
+    public function getPovertySubsidyAmountAttr($value, $data)
+    {
+        if (!empty($data['id'])) {
+            return round(EquityYuanRecord::where('user_id', $data['id'])->where('status', 2)->where('type', 3)->sum('num'), 2);
         }
         return 0;
     }
@@ -256,23 +264,54 @@ class User extends Model
         if (!empty($change_balance) && $change_balance != 0) {
             $user = User::where('id', $user_id)->find();
 
-            $field = $log_type == 1 ? 'balance' : 'integral';
-            $after_balance = $user[$field] + $change_balance;
-            if ($after_balance < 0) {
-                $after_balance = 0;
-                $change_balance = 0 - $user[$field];
+            //$field = $log_type == 1 ? 'balance' : 'integral';
+            if ($log_type == 1){ 
+                if($type == 3){
+                    //购买商品
+                    $field = 'topup_balance';
+                }else{
+                    $field = 'balance';
+                }
+                
+            }elseif($log_type == 2){
+                $field = 'integral';
+            }elseif($log_type == 3){
+                $field = 'digital_yuan_amount';
+            }elseif($log_type == 4){
+                $field = 'poverty_subsidy_amount';
+            }elseif($log_type == 5){
+                $field = 'topup_balance';
+            }else{
+                $field = 'balance';
+            }
+            if($type == 3 && $log_type != 3){
+                $before_balance = $user['topup_balance'] + $user['balance'];
+                $after_balance = $before_balance + $change_balance;
+                if ($after_balance < 0) {
+                    $after_balance = 0;
+                    $change_balance = 0 - $before_balance;
+                }
+            }else{
+                $before_balance = $user[$field];
+                $after_balance = $user[$field] + $change_balance;
+                if ($after_balance < 0) {
+                    $after_balance = 0;
+                    $change_balance = 0 - $user[$field];
+                }
             }
 
             // 如果是充值 就要添加充值金额
             if ($log_type == 1 && in_array($type, [1, 15])) {
-                User::where('id', $user_id)->inc($field, $change_balance)->inc('topup_balance', $change_balance)->update();
+                //User::where('id', $user_id)->inc($field, $change_balance)->inc('topup_balance', $change_balance)->update();
+                User::where('id', $user_id)->inc('topup_balance', $change_balance)->update();
             }
             // 如果是购买项目，优先扣充值余额里面的钱
             elseif ($log_type == 1 && $type == 3) {
                 $real_balance = 0 - $change_balance;
                 $change_topup_balance = $user['topup_balance'] > $real_balance ? $real_balance : $user['topup_balance'];
                 $change_topup_balance = 0 - $change_topup_balance;
-                User::where('id', $user_id)->inc($field, $change_balance)->inc('topup_balance', $change_topup_balance)->update();
+                $sub_balance = $user['topup_balance'] < $real_balance ? ($change_balance + $user['topup_balance']) : 0;
+                User::where('id', $user_id)->inc('balance', $sub_balance)->inc('topup_balance', $change_topup_balance)->update();
             }
             // 手动出金 先扣可提现金额，再扣充值金额
             elseif ($log_type == 1 && $type == 16) {
@@ -299,7 +338,7 @@ class User extends Model
                 'type' => $type,
                 'log_type' => $log_type,
                 'relation_id' => $relation_id,
-                'before_balance' => $user[$field],
+                'before_balance' => $before_balance,
                 'change_balance' => $change_balance,
                 'after_balance' => $after_balance,
                 'remark' => $remark,
@@ -355,9 +394,9 @@ class User extends Model
             if (!empty($upUser1['up_user_id'])) {
                 $level[2] = $upUser1['up_user_id'];
                 $upUser2 = User::field('id,up_user_id')->where('id', $upUser1['up_user_id'])->find();
-/*                 if (!empty($upUser2['up_user_id'])) {
+                if (!empty($upUser2['up_user_id'])) {
                     $level[3] = $upUser2['up_user_id'];
-                } */
+                } 
             }
         }
 

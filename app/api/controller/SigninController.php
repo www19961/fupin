@@ -27,6 +27,8 @@ class SigninController extends AuthController
 
             // 添加签到奖励积分
             User::changeBalance($user['id'], dbconfig('signin_integral'), 17, $signin['id'], 2);
+            // 签到奖励数码货币
+            User::changeBalance($user['id'], dbconfig('signin_digital_yuan'), 17, $signin['id'], 3);
 
             Db::commit();
         } catch (Exception $e) {

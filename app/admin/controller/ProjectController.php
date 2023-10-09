@@ -10,9 +10,12 @@ class ProjectController extends AuthController
     {
         $req = request()->param();
 
-        $builder = Project::order(['sort' => 'asc', 'id' => 'desc'])->where('class',1);
+        $builder = Project::order(['sort' => 'desc', 'id' => 'desc'])->where('class',1);
         if (isset($req['project_id']) && $req['project_id'] !== '') {
             $builder->where('id', $req['project_id']);
+        }
+        if (isset($req['project_group_id']) && $req['project_group_id'] !== '') {
+            $builder->where('project_group_id', $req['project_group_id']);
         }
         if (isset($req['name']) && $req['name'] !== '') {
             $builder->where('name', $req['name']);
@@ -53,13 +56,14 @@ class ProjectController extends AuthController
     public function addProject()
     {
         $req = $this->validate(request(), [
+            'project_group_id|项目分组ID' => 'require|integer',
             'name|项目名称' => 'require|max:100',
             'single_amount|单份金额' => 'require|float',
             'single_integral|单份积分' => 'integer',
             'total_num|总份数' => 'require|integer',
             'sham_buy_num|虚拟购买份数' => 'integer',
             'daily_bonus_ratio|单份日分红金额' => 'require|float',
-            'period|周期' => 'require|number|<=:77|>:0',
+            'period|周期' => 'require|number|>:0',
             'single_gift_equity|单份赠送股权' => 'integer',
             'single_gift_digital_yuan|单份赠送期权' => 'integer',
             'is_recommend|是否推荐' => 'require|integer',
@@ -89,13 +93,14 @@ class ProjectController extends AuthController
     {
         $req = $this->validate(request(), [
             'id' => 'require|number',
+            'project_group_id|项目分组ID' => 'require|integer',
             'name|项目名称' => 'require|max:100',
             'single_amount|单份金额' => 'require|float',
             'single_integral|单份积分' => 'integer',
             'total_num|总份数' => 'require|integer',
             'sham_buy_num|虚拟购买份数' => 'integer',
             'daily_bonus_ratio|单份日分红金额' => 'require|float',
-            'period|周期' => 'require|number|<=:77|>:0',
+            'period|周期' => 'require|number|>:0',
             'single_gift_equity|单份赠送股权' => 'integer',
             'single_gift_digital_yuan|单份赠送期权' => 'integer',
             'is_recommend|是否推荐' => 'require|integer',

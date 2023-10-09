@@ -15,6 +15,16 @@
             <div class="box box-body">
                 <div class="row dd_input_group">
                     <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">项目分组ID</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="project_group_id" class="form-control" placeholder="请输入项目分组ID"
+                                   value="{$data['project_group_id']??''}">
+                        </div>
+                        <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">项目名称</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <input type="text" name="name" class="form-control" placeholder="请输入项目名称"
@@ -82,9 +92,9 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">单份日分红金额</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">日分红比例(%)</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
-                            <input type="text" name="daily_bonus_ratio" class="form-control" placeholder="请输入单份日分红金额"
+                            <input type="text" name="daily_bonus_ratio" class="form-control" placeholder="请输入日分红比例(单位%)"
                                    value="{$data['daily_bonus_ratio']??''}">
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
@@ -92,7 +102,17 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">周期</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">分红周期(时间)</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="dividend_cycle" class="form-control" placeholder="请输入分红周期(时间)"
+                                   value="{$data['dividend_cycle']??''}">
+                        </div>
+                        <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">分红总次数(天)</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <input type="text" name="period" class="form-control" placeholder="请输入周期"
                                    value="{$data['period']??''}">
@@ -102,19 +122,19 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">单份赠送股权</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">总收益金额</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
-                            <input type="text" name="single_gift_equity" class="form-control" placeholder="请输入单份赠送股权"
-                                   value="{$data['single_gift_equity']??''}">
+                            <input type="text" name="sum_amount" class="form-control" placeholder="请输入总收益金额"
+                                   value="{$data['sum_amount']??''}">
                         </div>
                     </div>
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">单份赠送期权</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">赠送数字人民币</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <input type="text" name="single_gift_digital_yuan" class="form-control"
-                                   placeholder="请输入单份赠送期权" value="{$data['single_gift_digital_yuan']??''}">
+                                   placeholder="请输入赠送数字人民币" value="{$data['single_gift_digital_yuan']??''}">
                         </div>
                     </div>
                 </div>

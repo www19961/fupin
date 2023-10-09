@@ -223,11 +223,13 @@ class Order extends Model
     {
         $order = Order::where('id', $order_id)->find();
         // 更新订单
-        $next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+1 day')));
+        $dividend_cycle = explode(' ',$order['dividend_cycle']);
+        $next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['dividend_cycle'])));
+        $end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.($dividend_cycle[0] * $order['period']).' '.$dividend_cycle[1])));
         Order::where('id', $order['id'])->update([
             'status' => 2,
             'pay_time' => time(),
-            'end_time' => $next_bonus_time + $order['period']*24*3600,
+            'end_time' => $end_time,    //$next_bonus_time + $order['period']*24*3600,
             'gain_bonus' => 0,
             'next_bonus_time' => $next_bonus_time,
             'equity_status' => 2,
@@ -260,21 +262,31 @@ class Order extends Model
                 'give_time' => time(),
             ]);
         }
-
         // 添加被动|补贴收益记录
         $project = Project::where('id',$order['project_id'])->find();
-        if($project['class'] == 1){
-           $amount = bcmul($project['daily_bonus_ratio'],config('config.passive_income_days_conf')[$project['period']]/100,2);
-           PassiveIncomeRecord::create([
-                'user_id' => $order['user_id'],
-                'order_id' => $order['id'],
-                'execute_day' => date('Ymd'),
-                'amount'=>$amount,
-                'days'=>$project['period'],
-                'is_finish'=>1,
-                'status'=>3,
-            ]); 
-        }
+        // if($project['class'] == 1){
+        //   //$amount = bcmul($project['daily_bonus_ratio'],config('config.passive_income_days_conf')[$project['period']]/100,2);
+        //   $amount = bcmul($order['single_amount'],$order['daily_bonus_ratio']/100,2);
+        //   $amount = bcmul($amount, $order['buy_num'],2);
+        //   PassiveIncomeRecord::create([
+        //         'user_id' => $order['user_id'],
+        //         'order_id' => $order['id'],
+        //         'execute_day' => date('Ymd'),
+        //         'amount'=>$amount,
+        //         'days'=> 0,
+        //         'is_finish'=>0,
+        //         'status'=>1,
+        //     ]); 
+        //     // PassiveIncomeRecord::create([
+        //     //     'user_id' => $order['user_id'],
+        //     //     'order_id' => $order['id'],
+        //     //     'execute_day' => date('Ymd'),
+        //     //     'amount'=>$amount,
+        //     //     'days'=>$project['period'],
+        //     //     'is_finish'=>1,
+        //     //     'status'=>3,
+        //     // ]); 
+        // }
         if($project['class'] == 2){
             SubsidyIncomeRecord::create([
                 'user_id' => $order['user_id'],
@@ -314,18 +326,24 @@ class Order extends Model
             $levelConfig = LevelConfig::where('level', $now_level)->find();
             if (!empty($levelConfig['direct_recommend_reward_ratio'])) {
                 $reward = round($levelConfig['direct_recommend_reward_ratio']/100*$order['buy_amount'], 2);
-                
-                //User::changeBalance($up_user_id, $reward, 9, $order_id);
-                User::changeInc($up_user_id,$reward,'invite_bonus',9,$order_id,3,'推荐奖励');
+                if($reward > 0){
+                    //User::changeBalance($up_user_id, $reward, 9, $order_id);
+                    User::changeInc($up_user_id,$reward,'invite_bonus',9,$order_id,4,'推荐奖励',0,2);
+                    User::changeInc($up_user_id,$reward,'balance',9,$order_id,1,'推荐奖励',0,2);
+                }
             }
             // 给上3级团队奖
             $relation = UserRelation::where('sub_user_id', $order['user_id'])->select();
-            //$map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
-            $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', ];
+            $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
+            //$map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', ];
             foreach ($relation as $v) {
                 $reward = round(dbconfig($map[$v['level']])/100*$order['buy_amount'], 2);
-                //User::changeBalance($v['user_id'], $reward, 8, $order_id);
-                User::changeInc($up_user_id,$reward,'invite_bonus',8,$order_id,3,'推荐奖励');
+                if($reward > 0){
+                    //User::changeBalance($v['user_id'], $reward, 8, $order_id);
+                    //User::changeInc($up_user_id,$reward,'invite_bonus',8,$order_id,3,'推荐奖励');
+                    User::changeInc($v['user_id'],$reward,'invite_bonus',8,$order_id,4,'团队奖励',0,2);
+                    User::changeInc($v['user_id'],$reward,'balance',8,$order_id,1,'团队奖励',0,2);
+                }
             }
         }
 

@@ -44,8 +44,9 @@ class BannerController extends AuthController
     public function addBanner()
     {
         $req = $this->validate(request(), [
+            'title|标题' => 'require',
             'sort|排序号' => 'integer',
-            'jump_url|跳转链接' => 'url',
+            'jump_url|跳转链接' => 'max:255',
         ]);
 
         $req['img_url'] = upload_file('img_url');
@@ -58,8 +59,9 @@ class BannerController extends AuthController
     {
         $req = $this->validate(request(), [
             'id' => 'require|number',
+            'title|标题' => 'require',
             'sort|排序号' => 'integer',
-            'jump_url|跳转链接' => 'url',
+            'jump_url|跳转链接' => 'max:255',
         ]);
 
         if ($img_url = upload_file('img_url', false)) {

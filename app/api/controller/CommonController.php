@@ -22,6 +22,7 @@ use app\model\UserBalanceLog;
 use app\model\UserRelation;
 use Exception;
 use think\facade\Db;
+use think\facade\Cache;
 
 class CommonController extends BaseController
 {
@@ -46,6 +47,13 @@ class CommonController extends BaseController
             echo "ok";die;
         }
     }
+    
+     public function getversion(){
+        
+        return out(['version_apk' => dbconfig('version_apk'),'apk_download_url' => dbconfig('apk_download_url')]);
+        
+    } 
+    
     public function login()
     {
         $req = $this->validate(request(), [
@@ -73,7 +81,7 @@ class CommonController extends BaseController
             'password|密码' => 'require|alphaNum|length:6,12',
             're_password|重复密码'=>'require|confirm:password',
             'invite_code|邀请码' => 'max:10',
-            'realname|姓名'=>'require',
+            'realname|姓名'=>'require|min:2',
             'ic_number|身份证号' => 'require|idCard',
             //'captcha|验证码' => 'require|max:6',
         ]);
@@ -90,9 +98,13 @@ class CommonController extends BaseController
         if (User::where('phone', $req['phone'])->count()) {
             return out(null, 10002, '该手机号已注册，请登录');
         }
+        
+        if (User::where('ic_number', $req['ic_number'])->count()) {
+            return out(null, 10002, '该身份证号已注册，请登录');
+        }
 
-        if (!empty($req['invite_code'])){
-            $parentUser = User::field('id')->where('invite_code', $req['invite_code'])->find();
+        if (!empty(trim($req['invite_code']))){
+            $parentUser = User::field('id')->where('invite_code', trim($req['invite_code']))->find();
             if (empty($parentUser)) {
                 return out(null, 10003, '邀请码不存在');
             }
@@ -124,16 +136,28 @@ class CommonController extends BaseController
                 'equity_certificate_no' => 'ZX'.mt_rand(1000000000, 9999999999),
             ]);
         }
-        // 检测注册赠送期权
+        // 检测注册赠送数字人民币
         if (dbconfig('register_give_digital_yuan_switch') == 1) {
             EquityYuanRecord::create([
                 'user_id' => $user['id'],
                 'type' => 2,
                 'status' => 2,
-                'title' => '注册赠送期权',
+                'title' => '注册赠送数字人民币',
                 'relation_type' => 2,
                 'give_time' => time(),
                 'num' => round(dbconfig('register_give_digital_yuan_num')),
+            ]);
+        }
+        // 检测注册赠送贫困补助金
+        if (dbconfig('register_give_poverty_subsidy_amount_switch') == 1) {
+            EquityYuanRecord::create([
+                'user_id' => $user['id'],
+                'type' => 3,
+                'status' => 2,
+                'title' => '注册赠送贫困补助金',
+                'relation_type' => 2,
+                'give_time' => time(),
+                'num' => round(dbconfig('register_give_poverty_subsidy_amount_num')),
             ]);
         }
 
@@ -154,20 +178,46 @@ class CommonController extends BaseController
             'type' => 'number'
         ]);
         $user = User::getUserByToken();
-
-        $banner = Banner::where('status', 1)->order('sort', 'asc')->select();
-        $setting = Setting::select();
+        
+        $banner = Cache::get('banner','');
+        if($banner == '' || $banner == null){
+            $banner = Banner::where('status', 1)->order('sort', 'desc')->order('created_at', 'desc')->select();
+            Cache::set('banner', json_decode(json_encode($banner, JSON_UNESCAPED_UNICODE),true), 300);
+        }
+        
+        $setting = Cache::get('setting','');
+        if($setting == '' || $setting == null){
+            $setting = Setting::select();
+            Cache::set('setting', json_decode(json_encode($setting, JSON_UNESCAPED_UNICODE),true), 300);
+        }
         $setting_conf =[];
-        foreach($setting as $item){
-            $setting_conf[$item['key']] = $item['value'];
-        }
-        $paymentConfRes = [];
-        for ($type = 1; $type <= 4; $type++) {
-            $paymentConf = PaymentConfig::where('status', 1)->where('type', $type)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
-            if (!empty($paymentConf)) {
-                $paymentConfRes[] = $paymentConf->toArray();
+        $setting_conf = Cache::get('setting_conf',[]);
+        if(empty($setting_conf) || $setting_conf == null){
+            foreach($setting as $item){
+                $setting_conf[$item['key']] = $item['value'];
             }
+            Cache::set('setting_conf', json_decode(json_encode($setting_conf, JSON_UNESCAPED_UNICODE),true), 300);
         }
+        
+        $paymentConfRes =[];
+        $paymentConfRes = Cache::get('paymentConfRes',[]);
+        if(empty($paymentConfRes) || $paymentConfRes == null){
+            for ($type = 1; $type <= 4; $type++) {
+                $paymentConf = PaymentConfig::where('status', 1)->where('type', $type)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
+                if (!empty($paymentConf)) {
+                    $paymentConfRes[] = $paymentConf->toArray();
+                }
+            }
+            Cache::set('paymentConfRes', json_decode(json_encode($paymentConfRes, JSON_UNESCAPED_UNICODE),true), 300);
+        }
+        
+        // $paymentConfRes = [];
+        // for ($type = 1; $type <= 4; $type++) {
+        //     $paymentConf = PaymentConfig::where('status', 1)->where('type', $type)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
+        //     if (!empty($paymentConf)) {
+        //         $paymentConfRes[] = $paymentConf->toArray();
+        //     }
+        // }
 
         /*$paymentConfRes = [];
         $paymentConf = PaymentConfig::where('status', 1)->where('start_topup_limit', '<=', $user['total_topup_amount'])->order('start_topup_limit', 'desc')->find();
@@ -213,16 +263,22 @@ class CommonController extends BaseController
                 }
             }
         }*/
-
-        $builder =  SystemInfo::where('status', 1);
-        if (!empty($req['type'])) {
-            $builder->where('type', $req['type']);
-            if ($req['type'] == 2) {
-                $builder->order('sort', 'asc');
+        
+        $system =[];
+        $system = Cache::get('system_'.$req['type'],[]);
+        if(empty($system) || $system == null){
+            $builder =  SystemInfo::where('status', 1);
+            if (!empty($req['type'])) {
+                $builder->where('type', $req['type']);
+                if ($req['type'] == 2) {
+                    $builder->order('sort', 'asc');
+                }
             }
+    
+            $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->select();
+            Cache::set('system_'.$req['type'], json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 300);
         }
-
-        $system = $builder->order('id', 'desc')->select();
+        
 
         return out(['banner' => $banner, 'setting' => $setting,'setting_conf'=>$setting_conf, 'system' => $system, 'paymentConfig' => $paymentConfRes]);
     }
@@ -428,5 +484,47 @@ class CommonController extends BaseController
             $token = aes_encrypt(['id' => $req['user_id'], 'time' => time()]);
             return out($token);
         }
+    }
+    
+    public function systemInfoList()
+    {
+        $req = request()->post();
+        $this->validate($req, [
+            'type' => 'number'
+        ]);
+        //$user = User::getUserByToken();
+        
+        $system =[];
+        //$system = Cache::get('system_'.$req['type'],[]);
+        
+        if(empty($system) || $system == null){
+            $builder =  SystemInfo::where('status', 1);
+            if (!empty($req['type'])) {
+                $builder->where('type', $req['type']);
+                if ($req['type'] == 2) {
+                    $builder->order('sort', 'asc');
+                }
+            }
+            $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->append(['total_amount', 'daily_bonus', 'passive_income', 'progress','day_amount'])->paginate();
+            foreach($system as $k =>$v){
+                 $system[$k]['created_at'] = date("Y-m-d",strtotime($v['created_at']));
+            }
+            Cache::set('system_'.$req['type'], json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 10);
+        }
+        return out($system);
+    }
+    
+    public function systemInfoDetail()
+    {
+        $req = $this->validate(request(), [
+            'id' => 'require|number',
+        ]);
+        $user = User::getUserByToken();
+
+        $builder =  SystemInfo::where('status', 1);
+
+        $data = $builder->where('id', $req['id'])->find();
+        $data['created_at'] = date("Y-m-d",strtotime($data['created_at']));
+        return out($data);
     }
 }

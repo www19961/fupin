@@ -65,7 +65,15 @@
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">排序号</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
-                            <input type="text" name="sort" class="form-control" placeholder="请输入排序号，从小到大排序" value="{$data['sort']??''}">
+                            <input type="text" name="sort" class="form-control" placeholder="请输入排序号，从小到大排序" value="{$data['sort']??'0'}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">创建时间</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="created_at" class="form-control" placeholder="请输入创建时间" value="{$data['created_at']??''}">
                         </div>
                     </div>
                 </div>

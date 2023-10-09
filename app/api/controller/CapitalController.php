@@ -112,6 +112,9 @@ class CapitalController extends AuthController
         if ($req['pay_channel'] == 3 && dbconfig('alipay_withdrawal_switch') == 0) {
             return out(null, 10001, '暂未开启支付宝提现');
         }
+        if ($req['pay_channel'] == 7 && dbconfig('digital_withdrawal_switch') == 0) {
+            return out(null, 10001, '暂未开启数字人民币提现');
+        }
         // 判断单笔限额
         if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
             return out(null, 10001, '单笔最高提现'.dbconfig('single_withdraw_max_amount').'元');
@@ -128,8 +131,21 @@ class CapitalController extends AuthController
         try {
             // 判断余额
             $user = User::where('id', $user['id'])->lock(true)->find();
-            if ($user['invite_bonus'] < $req['amount']) {
-                return out(null, 10001, '可提现余额不足');
+            // if ($user['invite_bonus'] < $req['amount']) {
+            //     return out(null, 10001, '可提现余额不足');
+            // }
+            if($req['pay_channel'] < 7){
+                $field = 'balance';
+                $log_type = '1';
+                if ($user['balance'] < $req['amount']) {
+                    return out(null, 10001, '可提现余额不足');
+                }
+            }elseif($req['pay_channel'] == 7){
+                $field = 'digital_yuan_amount';
+                $log_type = '3';
+                if ($user['digital_yuan_amount'] < $req['amount']) {
+                    return out(null, 10001, '可提现数字人民币不足');
+                }
             }
             // 判断每天最大提现次数
             $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('pay_channel', '>', 1)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
@@ -160,7 +176,8 @@ class CapitalController extends AuthController
                 'bank_branch' => $payAccount['bank_branch'],
             ]);
             // 扣减用户余额
-            User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
+            User::changeInc($user['id'],$change_amount,$field,2,$capital['id'],$log_type);
+            //User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
             //User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
 
             Db::commit();
@@ -178,12 +195,16 @@ class CapitalController extends AuthController
 
         $bank_withdrawal_switch = dbconfig('bank_withdrawal_switch');
         $alipay_withdrawal_switch = dbconfig('alipay_withdrawal_switch');
+        $digital_withdrawal_switch = dbconfig('digital_withdrawal_switch');
         $pay_type = [];
         if ($bank_withdrawal_switch == 1) {
             $pay_type[] = 3;
         }
         if ($alipay_withdrawal_switch == 1) {
             $pay_type[] = 2;
+        }
+        if ($digital_withdrawal_switch == 1) {
+            $pay_type[] = 6;
         }
         $data = PayAccount::where('user_id', $user['id'])->whereIn('pay_type', $pay_type)->append(['realname'])->select();
 
@@ -205,7 +226,8 @@ class CapitalController extends AuthController
     {
         $req = $this->validate(request(), [
             'pay_type' => 'require|number',
-            'account' => 'require',
+            'name' => 'require',
+            'account' => 'requireIf:pay_type,3',
             'phone' => 'mobile',
             'qr_img' => 'url',
             'bank_name|银行名称' => 'requireIf:pay_type,3',
@@ -213,8 +235,12 @@ class CapitalController extends AuthController
         ]);
         $user = $this->user;
 
-        if (empty($user['ic_number'])) {
+        if (empty($user['ic_number']) || empty($user['realname'])) {
             return out(null, 10001, '请先完成实名认证');
+        }
+        
+        if ($user['realname'] != $req['name']) {
+            return out(null, 10001, '只能绑定本人帐户');
         }
 
         if ($req['pay_type'] == 3 && dbconfig('bank_withdrawal_switch') == 0) {
@@ -248,11 +274,15 @@ class CapitalController extends AuthController
     public function capitalRecord()
     {
         $req = $this->validate(request(), [
-            'type' => 'require|number'
+            'type' => 'number'
         ]);
         $user = $this->user;
-
-        $data = Capital::where('user_id', $user['id'])->where('type', $req['type'])->order('id', 'desc')->append(['audit_date'])->paginate();
+        $builder = Capital::where('user_id', $user['id'])->order('id', 'desc');
+        if(isset($req['type']) && $req['type'] != ''){
+            $builder->where('type', $req['type']);
+        }
+        
+        $data = $builder->append(['audit_date'])->paginate();
 
         return out($data);
     }

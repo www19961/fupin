@@ -4,10 +4,13 @@ namespace app\common\command;
 
 use app\model\Order;
 use app\model\PassiveIncomeRecord;
+use app\model\User;
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
 use think\facade\Db;
+
+use Exception;
 
 
 class CheckBonus extends Command
@@ -18,46 +21,75 @@ class CheckBonus extends Command
     }
 
     protected function execute(Input $input, Output $output)
-    {
-        
-        ini_set ('memory_limit', '1024M');
+    {   
         // 分红收益
-        $data = Order::where('status','>',1)->where('next_bonus_time', '<=', time())->select();
-        
-        foreach ($data as $v) {
-            $new_status = $v['end_time'] <= time() ? 3 : 2;
-            $update = ['status' => $new_status];
-            // if ($new_status == 2) {
-                $update['gain_bonus'] = $v['gain_bonus'] + $v['daily_bonus'];
-                $update['next_bonus_time'] = strtotime(date('Y-m-d 00:00:00')) + 24*3600;
-            // }
-            Order::where('id', $v['id'])->update($update);
-        }
-        
-        // 被动收益
-        $execute_day = date('Ymd');
-        // $a = PassiveIncomeRecord::with('orders')->where('status', '<', 3)->where('execute_day', '<', '20221114')->where('is_finish', 0)->select()->toArray();
-    
-        $data = PassiveIncomeRecord::alias('p')->join('order o','p.order_id = o.id')->field('p.*,o.status as ostatus,o.daily_bonus_ratio')->where('p.status', '<', 3)->where('p.execute_day', '<', $execute_day)->where('p.is_finish', 0)->select();
-        //print_r(Db::name('PassiveIncomeRecord')->getLastSql());die;
-        if (!empty($data)) {
-            foreach ($data as $v) {
-                if ($v['days'] >= 77) {
-                    PassiveIncomeRecord::where('id', $v['id'])->update(['is_finish' => 1]);
-                }
-                else {
-                    $new_days = $v['days'] + 1;
-                    $amount = round($v['daily_bonus_ratio']*config('config.passive_income_days_conf')[$new_days]/100, 2);
-                    PassiveIncomeRecord::where('id', $v['id'])->update([
-                        'status' => 2,
-                        'execute_day' => $execute_day,
-                        'days' => $new_days,
-                        'amount' => $amount,
-                    ]);
-                }
+        $cur_time = strtotime(date('Y-m-d 00:00:00'));
+        $data = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
+        ->chunk(100, function($list) use($cur_time){
+            foreach ($list as $item) {
+                $this->fixedMill($item);
             }
-        }
-
+        });
         return true;
+    }
+    
+    protected function fixedMill($order)
+    {
+        $cur_time = strtotime(date('Y-m-d 00:00:00'));
+        $user = User::where('id',$order->user_id)->where('status',1)->find();
+        if(is_null($user)) {
+            //用户不存在,禁用
+            return;
+        }
+        
+        if($order->end_time < $cur_time){
+            //结束分红
+            Order::where('id',$order->id)->update(['status'=>4]);
+            return;
+        }
+        $max_day = PassiveIncomeRecord::where('order_id',$order['id'])->max('days');
+        if($max_day >= 0){
+            $max_day = $max_day + 1;
+        }else{
+            $max_day = 1;
+        }
+        $amount = bcmul($order['single_amount'],$order['daily_bonus_ratio']/100,2);
+        $amount = bcmul($amount, $order['buy_num'],2);
+        Db::startTrans();
+        try {
+            PassiveIncomeRecord::create([
+                    'user_id' => $order['user_id'],
+                    'order_id' => $order['id'],
+                    'execute_day' => date('Ymd'),
+                    'amount'=>$amount,
+                    'days'=>$max_day,
+                    'is_finish'=>1,
+                    'status'=>3,
+                ]); 
+            if(empty($order['dividend_cycle'])){ 
+                $dividend_cycle = '1 day'; 
+            }else{
+                $dividend_cycle = $order['dividend_cycle']; 
+            }
+            if(empty($order['next_bonus_time']) || $order['next_bonus_time'] == 0){ $order['next_bonus_time'] = $cur_time; }
+            $next_bonus_time = strtotime('+'.$dividend_cycle, strtotime($order['next_bonus_time']));
+            $gain_bonus = bcadd($order['gain_bonus'],$amount,2);
+            Order::where('id', $order['id'])->update(['next_bonus_time'=>$next_bonus_time,'gain_bonus'=>$gain_bonus]);
+            if($order->period <= $max_day){
+                //结束分红
+                Order::where('id',$order->id)->update(['status'=>4]);
+            }
+            if($order['settlement_method'] == 1)
+                User::changeBalance($order['user_id'],$amount,6,$order['id'],3);
+            else
+                User::changeBalance($order['user_id'],$amount,6,$order['id']);
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+        return true;
+        
+
     }
 }

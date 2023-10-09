@@ -43,12 +43,12 @@ class OrderController extends AuthController
         Db::startTrans();
         try {
             $user = User::where('id', $user['id'])->lock(true)->find();
-            $project = Project::field('id project_id,name project_name,class,cover_img,single_amount,single_integral,total_num,daily_bonus_ratio,sum_amount,period,single_gift_equity,single_gift_digital_yuan,sham_buy_num,progress_switch,bonus_multiple')->where('id', $req['project_id'])->lock(true)->append(['all_total_buy_num'])->find()->toArray();
+            $project = Project::field('id project_id,name project_name,class,cover_img,single_amount,single_integral,total_num,daily_bonus_ratio,sum_amount,dividend_cycle,period,single_gift_equity,single_gift_digital_yuan,sham_buy_num,progress_switch,bonus_multiple,settlement_method')->where('id', $req['project_id'])->lock(true)->append(['all_total_buy_num'])->find()->toArray();
 
             $pay_amount = round($project['single_amount']*$req['buy_num'], 2);
             $pay_integral = 0;
 
-            if ($req['pay_method'] == 1 && $pay_amount > $user['balance']) {
+            if ($req['pay_method'] == 1 && $pay_amount > ($user['topup_balance'] + $user['balance'])) {
                 exit_out(null, 10002, '余额不足');
             }
             if ($req['pay_method'] == 5) {
@@ -79,19 +79,22 @@ class OrderController extends AuthController
             }
             if($req['project_id'] == 10){
                 $one = Order::where('user_id',$user['id'])->where('project_id',10)->find();            	    
-		$one != null ? exit_out(null, 10001, '该项目每人限购一份') : '';
+		        
+		        $one != null ? exit_out(null, 10001, '该项目每人限购一份') : '';
 	
             }
             if($req['project_id'] == 10 && $req['buy_num'] != 1){
                 exit_out(null, 10001, '该项目每人限购一份');
             }
             $order_sn = build_order_sn($user['id']);
+
             // 创建订单
             if($project['class']==1){
                 $project['sum_amount2'] = round($project['period']*$project['daily_bonus_ratio']*$req['buy_num']*$project['bonus_multiple'], 2);
             }else{
                 $project['sum_amount'] = round($project['sum_amount']*$req['buy_num']*$project['bonus_multiple'], 2);
             }
+
             $project['user_id'] = $user['id'];
             $project['up_user_id'] = $user['up_user_id'];
             $project['order_sn'] = $order_sn;
@@ -99,19 +102,27 @@ class OrderController extends AuthController
             $project['pay_method'] = $req['pay_method'];
             $project['equity_certificate_no'] = 'ZX'.mt_rand(1000000000, 9999999999);
             $project['daily_bonus_ratio'] = round($project['daily_bonus_ratio']*$project['bonus_multiple'], 2);
+            //$project['monthly_bonus_ratio'] = round($project['monthly_bonus_ratio']*$project['bonus_multiple'], 2);
 
             $project['single_gift_equity'] = round($project['single_gift_equity']*$req['buy_num']*$project['bonus_multiple'], 2);
             $project['single_gift_digital_yuan'] = round($project['single_gift_digital_yuan']*$req['buy_num']*$project['bonus_multiple'], 2);
             $project['price'] = $pay_amount;
+
             $order = Order::create($project);
 
             if (in_array($req['pay_method'], [1, 5])) {
                 // 扣余额或积分
                 $change_balance = $req['pay_method'] == 1 ? (0 - $pay_amount) : (0 - $pay_integral);
-                $log_type = $req['pay_method'] == 1 ? 1 : 2;
+                $log_type = $req['pay_method'] == 1 ? 1 : 2;    //2积分 5充值余额
                 User::changeBalance($user['id'], $change_balance, 3, $order['id'], $log_type);
+                
+                // 累计总收益和赠送数字人民币
+                 User::changeBalance($user['id'], $project['single_gift_digital_yuan'], 3, $order['id'], 3, '项目购买赠送数码港元');
+                //User::where('id', $user['id'])->inc('poverty_subsidy_amount', $project['sum_amount2'])->inc('digital_yuan_amount', $project['single_gift_digital_yuan'])->update();
+                User::where('id', $user['id'])->inc('poverty_subsidy_amount', $project['sum_amount2'])->update();
                 // 订单支付完成
                 Order::orderPayComplete($order['id']);
+
             }
             // 发起第三方支付
             if (in_array($req['pay_method'], [2,3,4,6])) {
@@ -276,14 +287,22 @@ class OrderController extends AuthController
         $userModel = new User();
         $data = [];
         $data['profiting_bonus'] = $userModel->getProfitingBonusAttr(0,$user);
-        $list = Order::where('user_id', $user['id'])->where('status', '>', 1)->field('id,single_amount,buy_num,project_name,sum_amount,sum_amount2,order_sn,daily_bonus_ratio,period,created_at')->order('created_at','desc')->paginate(5)->each(function($item,$key){
+        $list = Order::where('user_id', $user['id'])->where('status', '>', 1)->field('id,cover_img,single_amount,buy_num,project_name,sum_amount,sum_amount2,order_sn,daily_bonus_ratio,dividend_cycle,period,created_at')->order('created_at','desc')->paginate(5)->each(function($item,$key){
             if($item['sum_amount']==0 && $item['sum_amount2']>0){
                 //$item['sum_amount'] = bcmul($item['daily_bonus_ratio']*config('config.passive_income_days_conf')[$item['period']]/100,2);
                 $item['sum_amount'] = $item['sum_amount2'];
             }
-
+            $daily_bonus = bcmul($item['single_amount'],$item['daily_bonus_ratio']/100,2);
+           
+            $daily_bonus = bcmul($daily_bonus,$item['buy_num'],2);
             $item['price'] = bcmul($item['single_amount'],$item['buy_num'],2);
-            $item['text'] = "投资{$item['price']}元{$item['project_name']}项目固定分红{$item['sum_amount']}";
+            if($item['dividend_cycle'] == '1 month'){
+                $day_remark = '每月';
+            }else{
+                $day_remark = '每日';
+            }
+            
+            $item['text'] = "单笔认购{$item['price']}元，{$day_remark}收益{$daily_bonus}元，永久性收益！";
 
             return $item;
         });

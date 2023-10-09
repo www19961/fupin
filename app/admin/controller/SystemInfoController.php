@@ -47,7 +47,11 @@ class SystemInfoController extends AuthController
             'type|类型' => 'require|integer',
             'title|标题' => 'require|max:100',
             'content|内容' => 'require',
+            'sort|排序号' => 'integer',
+            'created_at|创建时间' => 'date',
         ]);
+        
+        $req['cover_img'] = upload_file('cover_img', false);
 
         SystemInfo::create($req);
 
@@ -61,8 +65,12 @@ class SystemInfoController extends AuthController
             'type|类型' => 'require|integer',
             'title|标题' => 'require|max:100',
             'content|内容' => 'require',
+            'sort|排序号' => 'integer',
+            'created_at|创建时间' => 'date',
         ]);
-
+        if ($cover_img = upload_file('cover_img', false)) {
+            $req['cover_img'] = $cover_img;
+        }
         SystemInfo::where('id', $req['id'])->update($req);
 
         return out();
@@ -121,6 +129,7 @@ class SystemInfoController extends AuthController
             'title|标题' => 'require|max:100',
             'content|内容' => 'max:9000000',
             'sort|排序号' => 'integer',
+            'created_at|创建时间' => 'date',
         ]);
 
         $req['type'] = 2;
@@ -140,6 +149,7 @@ class SystemInfoController extends AuthController
             'title|标题' => 'require|max:100',
             'content|内容' => 'max:9000000',
             'sort|排序号' => 'integer',
+            'created_at|创建时间' => 'date',
         ]);
 
         $req['type'] = 2;

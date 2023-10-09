@@ -30,6 +30,19 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">封面图</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <div id="img_preview1">
+                                <?php if (!empty($data['cover_img'])){ ?>
+                                    <img style="max-width: 580px;" src ="{$data['cover_img']}"/>
+                                <?php } ?>
+                            </div>
+                            <input type="file" class="form-control" name="cover_img" id="img_url1" accept="image/gif,image/jpeg,image/jpg,image/png" onchange="selectFile(1)">
+                        </div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">标题</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <input type="text" name="title" class="form-control" placeholder="请输入标题"
@@ -48,6 +61,22 @@
                             </div>
                         </div>
                         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 dd_ts">*</div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">排序号</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="sort" class="form-control" placeholder="请输入排序号，从小到大排序" value="{$data['sort']??'0'}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">创建时间</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="created_at" class="form-control" placeholder="请输入创建时间" value="{$data['created_at']?? date('Y-m-d H:i:s')}">
+                        </div>
                     </div>
                 </div>
                 <div class="row dd_input_group">
@@ -119,12 +148,44 @@
     {
         var content = $('.summernote').summernote('code');
         $('#content').val(content);
-        $.post('<?php echo !empty($data) ? url("admin/SystemInfo/editSystemInfo") : url("admin/SystemInfo/addSystemInfo");?>', $('#commentForm').serialize(), function (res) {
-            if (res.code == '200') {
-                window.location.href = document.referrer;
-            } else {
+        var formData = new FormData($('#commentForm')[0]);
+        $.ajax({
+            url: '<?php echo !empty($data) ? url("admin/SystemInfo/editSystemInfo") : url("admin/SystemInfo/addSystemInfo");?>',
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                if (res.code == '200'){
+                    window.location.href = document.referrer;
+                }
+                else {
+                    layer.msg(res.msg, {icon: 5, time: 3000});
+                }
+            },
+            error: function (res) {
                 layer.msg(res.msg, {icon: 5, time: 3000});
             }
         });
+        
+    }
+    
+    function selectFile(i)
+    {
+        $('#img_preview'+i).html('');
+        var files = document.getElementById('img_url'+i).files;
+        if(files.length == 0){
+            return;
+        }
+        var file = files[0]; //把上传的图片显示出来
+        var reader = new FileReader();
+        reader.readAsBinaryString(file);
+        reader.onload = function(){
+            var result = document.getElementById('img_preview'+i);
+            var src = "data:" + file.type + ";base64," + window.btoa(this.result);
+            result.innerHTML = '<img style="max-width: 580px;" src ="'+src+'"/>';
+        }
     }
 </script>

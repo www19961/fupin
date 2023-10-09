@@ -125,13 +125,14 @@ class Capital extends Model
         Capital::where('id', $id)->update($update);
 
         if ($status != 4) {
+            /*
             if ($capital['pay_channel'] == 1) {
                 // 审核通过就扣余额
                 if ($status == 2) {
                     //User::changeBalance($capital['user_id'],  $capital['amount'], 16, $capital['id'], 1, $audit_remark??'', $admin_user_id);
                 }
             }
-            else {
+            else {*/
                 // 审核拒绝把余额加回去
                 if ($status == 3) {
                     $change = 0 - $capital['amount'];
@@ -142,7 +143,7 @@ class Capital extends Model
                     // 审核通过把资金日志的提现记录变为已完成
                     UserBalanceLog::where('user_id', $capital['user_id'])->where('type', 2)->where('relation_id', $id)->where('log_type', 1)->where('status', 1)->update(['status' => 2]);
                 }
-            }
+            //}
         }
         else {
             // 如果是银联提现，就调用接口自动转账

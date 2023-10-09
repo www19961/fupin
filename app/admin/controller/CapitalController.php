@@ -10,6 +10,7 @@ use app\model\UserBalanceLog;
 use Exception;
 use GuzzleHttp\Client;
 use think\facade\Db;
+use think\facade\Cache;
 
 class CapitalController extends AuthController
 {
@@ -121,7 +122,8 @@ class CapitalController extends AuthController
             'audit_remark' => 'max:200',
         ]);
         $adminUser = $this->adminUser;
-
+        
+        
         Db::startTrans();
         try {
             $withdraw_sn = Capital::auditWithdraw($req['id'], $req['status'], $adminUser['id'], $req['audit_remark'] ?? '');
@@ -144,6 +146,13 @@ class CapitalController extends AuthController
         ]);
         $adminUser = $this->adminUser;
 
+
+        $topup = Cache::get('topup_'.$req['id'],'');
+        if($topup == '1'){
+            return out(null, 10001, '重复操作');
+        }
+        Cache::set('topup_'.$req['id'], 1, 5);
+        
         $capital = Capital::where('id', $req['id'])->find();
         if ($capital['status'] != 1) {
             return out(null, 10001, '该记录状态异常');

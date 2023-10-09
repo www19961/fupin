@@ -2,16 +2,16 @@
 
 return [
     // token加密的key和iv
-    'aes_key' => 'cvJwBf5333bBhr2g',
-    'aes_iv' => 'abC9ReOER123CeUa',
+    'aes_key' => 'cvJwBfr2g5333bBh',
+    'aes_iv' => 'abC9R123CeUaeOER',
 
     'payment_conf' => [
-        'key' => 'zE4nnUholuwRZ3S7pD0N11HnCRVmwCds',
-        'pay_memberid' => '220868642',
+        'key' => 'rHaECVvMDGC8MIXqd8V6mA3rp1c0oY9A',
+        'pay_memberid' => '230937189',
         'pay_notifyurl' => env('app.host').'/common/payNotify',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
-        'payment_url' => 'https://ihongya.xyz/Pay',
-        'query_url' => 'https://ihongya.xyz/Query',
+        'payment_url' => 'https://hy543.top/Pay',
+        'query_url' => 'https://hy543.top/Query',
     ],
 
     'payment_conf2' => [
@@ -24,13 +24,22 @@ return [
     ],
 
     'payment_conf3' => [
-        'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
-        'pay_memberid' => '220986355',
+        'key' => 'p4c92j9ad8egxhdsgoopkwblg9vxurty',
+        'pay_memberid' => '230503942',
         'pay_notifyurl' => env('app.host').'/common/payNotify3',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
-        'payment_url' => 'http://tue.xinlongkeji.top/Pay_Index.html',
-        'query_url' => 'http://tue.xinlongkeji.top/Pay_Trade_query.html',
+        'payment_url' => 'http://tue.pikaqiukeji.top/Pay_Index.html',
+        'query_url' => 'http://tue.pikaqiukeji.top/Pay_Trade_query.html',
     ],
+    
+    // 'payment_conf3' => [
+    //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
+    //     'pay_memberid' => '220986355',
+    //     'pay_notifyurl' => env('app.host').'/common/payNotify3',
+    //     'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+    //     'payment_url' => 'http://tue.xinlongkeji.top/Pay_Index.html',
+    //     'query_url' => 'http://tue.xinlongkeji.top/Pay_Trade_query.html',
+    // ],
 
     // 被动收益
     'passive_income_days_conf' => [

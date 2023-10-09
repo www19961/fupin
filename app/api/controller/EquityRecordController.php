@@ -25,7 +25,7 @@ class EquityRecordController extends AuthController
     public function recordList()
     {
         $req = $this->validate(request(), [
-            'type' => 'in:1,2',
+            'type' => 'in:1,2,3',
         ]);
         $user = $this->user;
         $todayPrice = KlineChartNew::getTodayPrice();
@@ -35,7 +35,10 @@ class EquityRecordController extends AuthController
         }
         $txtName = '股权';
         if($req['type']==2){
-            $txtName = '期权';
+            $txtName = '数字人民币';
+        }
+        if($req['type']==3){
+            $txtName = '贫困补助金';
         }
         $list = $builder->order('give_time', 'desc')->paginate(10,false,['query'=>request()->param()])->each(function($item, $key) use($txtName){
 /*             if($item['exchange_time'] == 0){
