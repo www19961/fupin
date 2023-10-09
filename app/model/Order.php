@@ -224,44 +224,44 @@ class Order extends Model
         $order = Order::where('id', $order_id)->find();
         // 更新订单
         $dividend_cycle = explode(' ',$order['dividend_cycle']);
-        $next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['dividend_cycle'])));
+        //$next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['dividend_cycle'])));
         $end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.($dividend_cycle[0] * $order['period']).' '.$dividend_cycle[1])));
         Order::where('id', $order['id'])->update([
             'status' => 2,
             'pay_time' => time(),
             'end_time' => $end_time,    //$next_bonus_time + $order['period']*24*3600,
             'gain_bonus' => 0,
-            'next_bonus_time' => $next_bonus_time,
-            'equity_status' => 2,
-            'digital_yuan_status' => 2
+            //'next_bonus_time' => $next_bonus_time,
+            //'equity_status' => 2,
+            //'digital_yuan_status' => 2
         ]);
         // 股权和数字人民
-        if ($order['single_gift_equity'] > 0) {
-            EquityYuanRecord::create([
-                'user_id' => $order['user_id'],
-                'type' => 1,
-                'status' => 2,
-                'title' => $order['project_name'],
-                'relation_type' => 1,
-                'relation_id' => $order_id,
-                'num' => round($order['equity']),
-                'give_time' => time(),
-                'equity_certificate_no' => 'ZX'.mt_rand(1000000000, 9999999999),
-            ]);
-            User::where('id', $order['user_id'])->inc('equity', $order['equity'])->inc('equity_amount', $order['equity'])->update();
-        }
-        if ($order['single_gift_digital_yuan'] > 0) {
-            EquityYuanRecord::create([
-                'user_id' => $order['user_id'],
-                'type' => 2,
-                'status' => 2,
-                'title' => $order['project_name'],
-                'relation_type' => 1,
-                'relation_id' => $order_id,
-                'num' => round($order['digital_yuan']),
-                'give_time' => time(),
-            ]);
-        }
+        // if ($order['single_gift_equity'] > 0) {
+        //     EquityYuanRecord::create([
+        //         'user_id' => $order['user_id'],
+        //         'type' => 1,
+        //         'status' => 2,
+        //         'title' => $order['project_name'],
+        //         'relation_type' => 1,
+        //         'relation_id' => $order_id,
+        //         'num' => round($order['equity']),
+        //         'give_time' => time(),
+        //         'equity_certificate_no' => 'ZX'.mt_rand(1000000000, 9999999999),
+        //     ]);
+        //     User::where('id', $order['user_id'])->inc('equity', $order['equity'])->inc('equity_amount', $order['equity'])->update();
+        // }
+        // if ($order['single_gift_digital_yuan'] > 0) {
+        //     EquityYuanRecord::create([
+        //         'user_id' => $order['user_id'],
+        //         'type' => 2,
+        //         'status' => 2,
+        //         'title' => $order['project_name'],
+        //         'relation_type' => 1,
+        //         'relation_id' => $order_id,
+        //         'num' => round($order['digital_yuan']),
+        //         'give_time' => time(),
+        //     ]);
+        // }
         // 添加被动|补贴收益记录
         $project = Project::where('id',$order['project_id'])->find();
         // if($project['class'] == 1){
@@ -287,13 +287,13 @@ class Order extends Model
         //     //     'status'=>3,
         //     // ]); 
         // }
-        if($project['class'] == 2){
-            SubsidyIncomeRecord::create([
-                'user_id' => $order['user_id'],
-                'order_id' => $order['id'],
-                'execute_day' => date('Ymd'),
-            ]); 
-        }
+        // if($project['class'] == 2){
+        //     SubsidyIncomeRecord::create([
+        //         'user_id' => $order['user_id'],
+        //         'order_id' => $order['id'],
+        //         'execute_day' => date('Ymd'),
+        //     ]); 
+        // }
         // 增加投资金额  注意积分兑换的不算投资金额
         if ($order['pay_method'] != 5) {
             User::where('id', $order['user_id'])->inc('invest_amount', $order['buy_amount'])->update();
@@ -383,8 +383,8 @@ class Order extends Model
                     $data['single_gift_digital_yuan'] = $pro['single_gift_digital_yuan'] * $v;
                     $data['pay_method'] = 6;
                     $data['pay_time'] = time();
-                    $data['end_time'] = $next_bonus_time + $pro['period']*24*3600;
-                    $data['next_bonus_time'] = $next_bonus_time;
+                    //$data['end_time'] = $next_bonus_time + $pro['period']*24*3600;
+                    //$data['next_bonus_time'] = $next_bonus_time;
                     $data['equity_status'] = 2;
                     $data['digital_yuan_status'] = 2;
                     $data['equity_certificate_no'] = $zs;
