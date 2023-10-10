@@ -49,7 +49,12 @@ class UserController extends AuthController
         // }elseif($user['level'] < $zhishu_level){
         //     User::where('id', $user['id'])->update(['level' => $zhishu_level]);
         // }
-        $user['up_users']=[];
+        
+        $user['up_users']=[
+            234=>'上级用户1',
+            235=>'上级用户2',
+            236=>'上级用户3',
+        ];
         return out($user);
     }
 
