@@ -58,7 +58,7 @@ class CommonController extends BaseController
     {
         $req = $this->validate(request(), [
             'phone|手机号' => 'require|mobile',
-            'password|密码' => 'require',
+            'password|密码' => 'require|alphaNum|length:6,12',
         ]);
 
         $password = sha1(md5($req['password']));
@@ -185,31 +185,31 @@ class CommonController extends BaseController
             Cache::set('banner', json_decode(json_encode($banner, JSON_UNESCAPED_UNICODE),true), 300);
         }
         
-        $setting = Cache::get('setting','');
-        if($setting == '' || $setting == null){
-            $setting = Setting::select();
-            Cache::set('setting', json_decode(json_encode($setting, JSON_UNESCAPED_UNICODE),true), 300);
-        }
-        $setting_conf =[];
-        $setting_conf = Cache::get('setting_conf',[]);
-        if(empty($setting_conf) || $setting_conf == null){
-            foreach($setting as $item){
-                $setting_conf[$item['key']] = $item['value'];
-            }
-            Cache::set('setting_conf', json_decode(json_encode($setting_conf, JSON_UNESCAPED_UNICODE),true), 300);
-        }
+        // $setting = Cache::get('setting','');
+        // if($setting == '' || $setting == null){
+        //     $setting = Setting::select();
+        //     Cache::set('setting', json_decode(json_encode($setting, JSON_UNESCAPED_UNICODE),true), 300);
+        // }
+        // $setting_conf =[];
+        // $setting_conf = Cache::get('setting_conf',[]);
+        // if(empty($setting_conf) || $setting_conf == null){
+        //     foreach($setting as $item){
+        //         $setting_conf[$item['key']] = $item['value'];
+        //     }
+        //     Cache::set('setting_conf', json_decode(json_encode($setting_conf, JSON_UNESCAPED_UNICODE),true), 300);
+        // }
         
-        $paymentConfRes =[];
-        $paymentConfRes = Cache::get('paymentConfRes',[]);
-        if(empty($paymentConfRes) || $paymentConfRes == null){
-            for ($type = 1; $type <= 4; $type++) {
-                $paymentConf = PaymentConfig::where('status', 1)->where('type', $type)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
-                if (!empty($paymentConf)) {
-                    $paymentConfRes[] = $paymentConf->toArray();
-                }
-            }
-            Cache::set('paymentConfRes', json_decode(json_encode($paymentConfRes, JSON_UNESCAPED_UNICODE),true), 300);
-        }
+        // $paymentConfRes =[];
+        // $paymentConfRes = Cache::get('paymentConfRes',[]);
+        // if(empty($paymentConfRes) || $paymentConfRes == null){
+        //     for ($type = 1; $type <= 4; $type++) {
+        //         $paymentConf = PaymentConfig::where('status', 1)->where('type', $type)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
+        //         if (!empty($paymentConf)) {
+        //             $paymentConfRes[] = $paymentConf->toArray();
+        //         }
+        //     }
+        //     Cache::set('paymentConfRes', json_decode(json_encode($paymentConfRes, JSON_UNESCAPED_UNICODE),true), 300);
+        // }
         
         // $paymentConfRes = [];
         // for ($type = 1; $type <= 4; $type++) {
@@ -280,7 +280,8 @@ class CommonController extends BaseController
         }
         
 
-        return out(['banner' => $banner, 'setting' => $setting,'setting_conf'=>$setting_conf, 'system' => $system, 'paymentConfig' => $paymentConfRes]);
+        //return out(['banner' => $banner, 'setting' => $setting,'setting_conf'=>$setting_conf, 'system' => $system, 'paymentConfig' => $paymentConfRes]);
+        return out(['banner' => $banner,  'system' => $system]);
     }
 
     public function payNotify()
