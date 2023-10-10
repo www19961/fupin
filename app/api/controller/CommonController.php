@@ -190,14 +190,16 @@ class CommonController extends BaseController
         //     $setting = Setting::select();
         //     Cache::set('setting', json_decode(json_encode($setting, JSON_UNESCAPED_UNICODE),true), 300);
         // }
-        // $setting_conf =[];
-        // $setting_conf = Cache::get('setting_conf',[]);
-        // if(empty($setting_conf) || $setting_conf == null){
-        //     foreach($setting as $item){
-        //         $setting_conf[$item['key']] = $item['value'];
-        //     }
-        //     Cache::set('setting_conf', json_decode(json_encode($setting_conf, JSON_UNESCAPED_UNICODE),true), 300);
-        // }
+        $setting_conf =[];
+        $setting_conf = Cache::get('setting_conf',[]);
+        if(empty($setting_conf) || $setting_conf == null){
+            $confArr=['apk_download_url','version_apk'];
+            $setting = Setting::whereIn("key",$confArr)->select();
+            foreach($setting as $item){
+                $setting_conf[$item['key']] = $item['value'];
+            }
+            Cache::set('setting_conf', json_decode(json_encode($setting_conf, JSON_UNESCAPED_UNICODE),true), 300);
+        }
         
         // $paymentConfRes =[];
         // $paymentConfRes = Cache::get('paymentConfRes',[]);
@@ -281,7 +283,7 @@ class CommonController extends BaseController
         
 
         //return out(['banner' => $banner, 'setting' => $setting,'setting_conf'=>$setting_conf, 'system' => $system, 'paymentConfig' => $paymentConfRes]);
-        return out(['banner' => $banner,  'system' => $system]);
+        return out(['banner' => $banner,  'system' => $system,'setting_conf'=>$setting_conf]);
     }
 
     public function payNotify()
