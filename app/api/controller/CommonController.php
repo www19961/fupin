@@ -266,24 +266,22 @@ class CommonController extends BaseController
             }
         }*/
         
-        $system =[];
-        $system = Cache::get('system_'.$req['type'],[]);
-        if(empty($system) || $system == null){
-            $builder =  SystemInfo::where('status', 1);
-            if (!empty($req['type'])) {
-                $builder->where('type', $req['type']);
-                if ($req['type'] == 2) {
-                    $builder->order('sort', 'asc');
-                }
-            }
-    
-            $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->select();
-            Cache::set('system_'.$req['type'], json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 300);
-        }
-        
-
         //return out(['banner' => $banner, 'setting' => $setting,'setting_conf'=>$setting_conf, 'system' => $system, 'paymentConfig' => $paymentConfRes]);
-        return out(['banner' => $banner,  'system' => $system,'setting_conf'=>$setting_conf]);
+        return out(['banner' => $banner, 'setting_conf'=>$setting_conf]);
+    }
+
+    //公告
+    public function bulletin(){
+       
+
+        $system =[];
+        $system = Cache::get('system_1',[]);
+        if(empty($system) || $system == null){
+            $builder =  SystemInfo::where('status', 1)->where('type', 1);
+            $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->select();
+            Cache::set('system_1', json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 300);
+        }
+        return out($system);
     }
 
     public function payNotify()

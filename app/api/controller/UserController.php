@@ -27,7 +27,7 @@ class UserController extends AuthController
         $user = $this->user;
 
         //$user = User::where('id', $user['id'])->append(['equity', 'digital_yuan', 'my_bonus', 'total_bonus', 'profiting_bonus', 'exchange_equity', 'exchange_digital_yuan', 'passive_total_income', 'passive_receive_income', 'passive_wait_income', 'subsidy_total_income', 'team_user_num', 'team_performance', 'can_withdraw_balance'])->find()->toArray();
-        $user = User::where('id', $user['id'])->field('id,phone,realname,is_active,invite_code,ic_number,level,balance,team_bonus_balance,income_balance,digital_yuan_amount,created_at')->find()->toArray();
+        $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,team_bonus_balance,income_balance,digital_yuan_amount,created_at')->find()->toArray();
     
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
         unset($user['password'], $user['pay_password']);
@@ -49,12 +49,22 @@ class UserController extends AuthController
         // }elseif($user['level'] < $zhishu_level){
         //     User::where('id', $user['id'])->update(['level' => $zhishu_level]);
         // }
-        
-        $user['up_users']=[
-            ['id'=>234,'name'=>"上级用户1"],
-            ['id'=>235,'name'=>"上级用户2"],
-            ['id'=>236,'name'=>"上级用户3"],
-        ];
+        $upUserId = $user['up_user_id'];
+        $user['up_users'] = [];
+        for($i=0;$i<3;$i++){
+           if($upUserId==0){
+                break;
+           }
+           $upUser = User::where('id',$upUserId)->field('id,phone,up_user_id')->find();
+           if($upUser){
+                $upUserId = $upUser['up_user_id'];
+                unset($upUsers['up_user_id']);
+                $user['up_users'][] = $upUser;
+           }else{
+                break;
+           }
+           
+        }   
         return out($user);
     }
 
