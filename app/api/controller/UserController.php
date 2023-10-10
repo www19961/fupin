@@ -27,7 +27,7 @@ class UserController extends AuthController
         $user = $this->user;
 
         //$user = User::where('id', $user['id'])->append(['equity', 'digital_yuan', 'my_bonus', 'total_bonus', 'profiting_bonus', 'exchange_equity', 'exchange_digital_yuan', 'passive_total_income', 'passive_receive_income', 'passive_wait_income', 'subsidy_total_income', 'team_user_num', 'team_performance', 'can_withdraw_balance'])->find()->toArray();
-        $user = User::where('id', $user['id'])->field('id,phone,realname,is_active,balance,team_bonus_balance,income_balance,digital_yuan_amount,created_at')->find()->toArray();
+        $user = User::where('id', $user['id'])->field('id,phone,realname,is_active,ic_number,level,balance,team_bonus_balance,income_balance,digital_yuan_amount,created_at')->find()->toArray();
     
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
         unset($user['password'], $user['pay_password']);
