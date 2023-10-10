@@ -173,7 +173,7 @@ class CommonController extends BaseController
 
     public function systemInfo()
     {
-        $req = request()->post();
+        $req = request()->get();
         $this->validate($req, [
             'type' => 'number'
         ]);
