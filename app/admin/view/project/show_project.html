@@ -71,7 +71,18 @@
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
                     </div>
                 </div>
+
                 <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">简介</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <textarea name="intro" class="form-control" placeholder="简介"
+                                   value="{$data['intro']??''}"></textarea>
+                        </div>
+                        <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
+                    </div>
+                </div>
+<!--                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">单份积分</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
@@ -79,8 +90,8 @@
                                    value="{$data['single_integral']??''}">
                         </div>
                     </div>
-                </div>
-                <div class="row dd_input_group">
+                </div> -->
+<!--                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">总份数</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
@@ -89,18 +100,18 @@
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
                     </div>
-                </div>
-                <div class="row dd_input_group">
+                </div> -->
+<!--                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">日分红比例(%)</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">日分红金额</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
-                            <input type="text" name="daily_bonus_ratio" class="form-control" placeholder="请输入日分红比例(单位%)"
+                            <input type="text" name="daily_bonus_ratio" class="form-control" placeholder="日分红金额"
                                    value="{$data['daily_bonus_ratio']??''}">
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
                     </div>
-                </div>
-                <div class="row dd_input_group">
+                </div> -->
+<!--                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">分红周期(时间)</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
@@ -109,12 +120,12 @@
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
                     </div>
-                </div>
+                </div> -->
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">分红总次数(天)</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">分红天数(天)</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
-                            <input type="text" name="period" class="form-control" placeholder="请输入周期"
+                            <input type="text" name="period" class="form-control" placeholder="分红天数"
                                    value="{$data['period']??''}">
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
@@ -131,14 +142,14 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">赠送数字人民币</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">赠送国家补贴</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <input type="text" name="single_gift_digital_yuan" class="form-control"
-                                   placeholder="请输入赠送数字人民币" value="{$data['single_gift_digital_yuan']??''}">
+                                   placeholder="赠送国家补贴" value="{$data['single_gift_digital_yuan']??''}">
                         </div>
                     </div>
                 </div>
-                <div class="row dd_input_group">
+<!--                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">虚拟购买份数</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
@@ -146,7 +157,7 @@
                                    placeholder="请输入虚拟购买份数" value="{$data['sham_buy_num']??''}">
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">是否推荐</label>
@@ -166,7 +177,7 @@
                     </div>
                 </div>
                 
-                <div class="row dd_input_group">
+<!--                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">赠送项目</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
@@ -181,7 +192,7 @@
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts"> *</div>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="row dd_input_group">
                     <div class="form-group">
@@ -206,7 +217,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row dd_input_group">
+<!--                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">奖励倍数</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
@@ -214,7 +225,7 @@
                                    value="{$data['bonus_multiple']??''}">
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="row dd_input_group">
                     <div class="form-group">
                         <div class="col-xs-12 col-sm-8 col-md-6 col-lg-5 text-center">

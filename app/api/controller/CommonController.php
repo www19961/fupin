@@ -174,9 +174,7 @@ class CommonController extends BaseController
     public function systemInfo()
     {
         $req = request()->get();
-        $this->validate($req, [
-            'type' => 'number'
-        ]);
+
         $user = User::getUserByToken();
         
         $banner = Cache::get('banner','');

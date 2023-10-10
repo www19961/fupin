@@ -49,22 +49,27 @@ class UserController extends AuthController
         // }elseif($user['level'] < $zhishu_level){
         //     User::where('id', $user['id'])->update(['level' => $zhishu_level]);
         // }
-        $upUserId = $user['up_user_id'];
-        $user['up_users'] = [];
-        for($i=0;$i<3;$i++){
-           if($upUserId==0){
-                break;
-           }
-           $upUser = User::where('id',$upUserId)->field('id,phone,up_user_id')->find();
-           if($upUser){
-                $upUserId = $upUser['up_user_id'];
-                unset($upUsers['up_user_id']);
-                $user['up_users'][] = $upUser;
-           }else{
-                break;
-           }
+        // $upUserId = $user['up_user_id'];
+        // $user['up_users'] = [];
+        // for($i=0;$i<3;$i++){
+        //    if($upUserId==0){
+        //         break;
+        //    }
+        //    $upUser = User::where('id',$upUserId)->field('id,phone,up_user_id')->find();
+        //    if($upUser){
+        //         $upUserId = $upUser['up_user_id'];
+        //         unset($upUsers['up_user_id']);
+        //         $user['up_users'][] = $upUser;
+        //    }else{
+        //         break;
+        //    }
            
-        }   
+        // }  
+        $user['up_users'] = [
+            ['id'=>'12345','name'=>'13312341234'],
+            ['id'=>'12346','name'=>'13312341235'],
+            ['id'=>'12347','name'=>'13312341236'],
+        ];
         return out($user);
     }
 
