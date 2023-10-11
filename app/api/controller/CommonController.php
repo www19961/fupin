@@ -142,7 +142,7 @@ class CommonController extends BaseController
                 'user_id' => $user['id'],
                 'type' => 2,
                 'status' => 2,
-                'title' => '注册赠送数字人民币',
+                'title' => '注册赠送国务院津贴',
                 'relation_type' => 2,
                 'give_time' => time(),
                 'num' => round(dbconfig('register_give_digital_yuan_num')),
