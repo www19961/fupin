@@ -6,6 +6,7 @@ use app\model\AdminHandleLog;
 use app\common\exception\ExitOutException;
 use app\model\Setting;
 use app\model\User;
+use PhpOffice\PhpSpreadsheet\Calculation\TextData\Replace;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -259,19 +260,19 @@ if (!function_exists('upload_file')) {
                 exit_out(null, 11003, $e->getMessage());
                 return '';
             }
-            $savename = Filesystem::putFile('', $file);
+            $savename = Filesystem::disk('qiniu')->putFile('', $file);
 
-            if ($is_return_url){
-                $img_url = request()->domain().'/storage/'.$savename;
-                if (!empty(env('app.host', ''))) {
-                    $img_url = env('app.host').'/storage/'.$savename;
-                }
-            }
-            else {
-                $img_url = public_path().'storage/'.$savename;
-            }
-
-            return $img_url;
+            // if ($is_return_url){
+            //     $img_url = request()->domain().'/storage/'.$savename;
+            //     if (!empty(env('app.host', ''))) {
+            //         $img_url = env('app.host').'/storage/'.$savename;
+            //     }
+            // }
+            // else {
+            //     $img_url = public_path().'storage/'.$savename;
+            // }
+            $baseUrl = 'http://'.config('filesystem.disks.qiniu.domain').'/';    
+            return $baseUrl.str_replace("\\", "/", $savename);
         }
         else {
             if ($is_must){

@@ -13,6 +13,8 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        '841780ea2e1d6545ea3a253239d59c05' => __DIR__ . '/..' . '/qiniu/php-sdk/src/Qiniu/functions.php',
+        '5dd19d8a547b7318af0c3a93c8bd6565' => __DIR__ . '/..' . '/qiniu/php-sdk/src/Qiniu/Http/Middleware/Middleware.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -47,6 +49,10 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Component\\VarDumper\\' => 28,
         ),
+        'Q' => 
+        array (
+            'Qiniu\\' => 6,
+        ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
@@ -56,6 +62,10 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
             'Psr\\Container\\' => 14,
             'Psr\\Cache\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+        ),
+        'O' => 
+        array (
+            'Overtrue\\Flysystem\\Qiniu\\' => 25,
         ),
         'M' => 
         array (
@@ -140,6 +150,10 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
         array (
             0 => __DIR__ . '/..' . '/symfony/var-dumper',
         ),
+        'Qiniu\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/qiniu/php-sdk/src/Qiniu',
+        ),
         'Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
@@ -168,6 +182,10 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'Overtrue\\Flysystem\\Qiniu\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/overtrue/flysystem-qiniu/src',
         ),
         'MyCLabs\\Enum\\' => 
         array (
