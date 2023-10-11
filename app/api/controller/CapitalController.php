@@ -22,14 +22,16 @@ class CapitalController extends AuthController
         ]);
         $user = $this->user;
 
-        //if ($req['pay_channel'] == 5 && empty($req['pay_voucher_img_url'])) {
-        if ( empty($req['pay_voucher_img_url'])) {
-            return out(null, 10001, '请上传支付凭证图片');
+        if ($req['pay_channel'] == 5 && empty($req['pay_voucher_img_url'])) {
+            if ( empty($req['pay_voucher_img_url'])) {
+                return out(null, 10001, '请上传支付凭证图片');
+            }
         }
         if($req['pay_channel']==6){
             $type = 4;
         }else{
-            $type = $req['pay_channel'] - 1;
+            //$type = $req['pay_channel'] - 1;
+            $type = $req['pay_channel'];
         }
         $paymentConf = PaymentConfig::userCanPayChannel($req['payment_config_id'], $type, $req['amount']);
 
