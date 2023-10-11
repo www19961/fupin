@@ -135,13 +135,13 @@ class CapitalController extends AuthController
             // if ($user['invite_bonus'] < $req['amount']) {
             //     return out(null, 10001, '可提现余额不足');
             // }
-            if($req['pay_channel'] < 7){
+           // if($req['pay_channel'] < 7){
                 $field = 'team_bonus_balance';
                 $log_type = '1';
                 if ($user['team_bonus_balance'] < $req['amount']) {
-                    return out(null, 10001, '可提现余额不足');
+                    return out(null, 10001, '团队奖励余额不足');
                 }
-            }
+            //}
             // }elseif($req['pay_channel'] == 7){
             //     $field = 'digital_yuan_amount';
             //     $log_type = '3';
