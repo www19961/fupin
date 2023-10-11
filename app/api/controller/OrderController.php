@@ -48,7 +48,7 @@ class OrderController extends AuthController
             $pay_amount = round($project['single_amount']*$req['buy_num'], 2);
             $pay_integral = 0;
 
-            if ($req['pay_method'] == 1 && $pay_amount > ($user['topup_balance'] + $user['balance'])) {
+            if ($req['pay_method'] == 1 && $pay_amount >  $user['balance']) {
                 exit_out(null, 10002, '余额不足');
             }
             if ($req['pay_method'] == 5) {
@@ -66,9 +66,9 @@ class OrderController extends AuthController
                 $paymentConf = PaymentConfig::userCanPayChannel($req['payment_config_id'], $type, $pay_amount);
             }
 
-            if ($project['progress_switch'] == 1 && ($req['buy_num'] + $project['all_total_buy_num'] > $project['total_num'])) {
+/*             if ($project['progress_switch'] == 1 && ($req['buy_num'] + $project['all_total_buy_num'] > $project['total_num'])) {
                 exit_out(null, 10004, '超过了项目最大所需份数');
-            }
+            } */
 
             if (isset(config('map.order')['pay_method_map'][$req['pay_method']]) === false) {
                 exit_out(null, 10005, '支付渠道不存在');
@@ -81,9 +81,9 @@ class OrderController extends AuthController
             $order_sn = build_order_sn($user['id']);
 
             // 创建订单
-            if($project['class']==1){
-                $project['sum_amount2'] = round($project['period']*$project['daily_bonus_ratio']*$req['buy_num']*$project['bonus_multiple'], 2);
-            }
+            //if($project['class']==1){
+                $project['sum_amount'] = round($project['sum_amount']*$req['buy_num'], 2);
+            //}
 
             $project['user_id'] = $user['id'];
             $project['up_user_id'] = $user['up_user_id'];
@@ -91,11 +91,12 @@ class OrderController extends AuthController
             $project['buy_num'] = $req['buy_num'];
             $project['pay_method'] = $req['pay_method'];
             //$project['equity_certificate_no'] = 'ZX'.mt_rand(1000000000, 9999999999);
-            $project['daily_bonus_ratio'] = round($project['daily_bonus_ratio']*$project['bonus_multiple'], 2);
+            //$project['daily_bonus_ratio'] = round($project['daily_bonus_ratio']*$project['bonus_multiple'], 2);
             //$project['monthly_bonus_ratio'] = round($project['monthly_bonus_ratio']*$project['bonus_multiple'], 2);
 
             //$project['single_gift_equity'] = round($project['single_gift_equity']*$req['buy_num']*$project['bonus_multiple'], 2);
-            $project['single_gift_digital_yuan'] = round($project['single_gift_digital_yuan']*$req['buy_num']*$project['bonus_multiple'], 2);
+            $project['single_gift_digital_yuan'] = round($project['single_gift_digital_yuan']*$req['buy_num'], 2);
+            $project['sum_amount'] = round($project['sum_amount']*$req['buy_num'], 2);
             $project['price'] = $pay_amount;
 
             $order = Order::create($project);

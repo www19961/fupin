@@ -40,21 +40,21 @@
                             <th>封面图</th>
                             <th>项目名称</th>
                             <th>单份金额</th>
-                            <th>单份积分</th>
+<!--                             <th>单份积分</th>
                             <th>总份数</th>
                             <th>日分红比例</th>
                             <th>分红周期(时间)</th>
-                            <th>分红总次数(天)</th>
+ -->                            <th>分红总次数(天)</th>
                             <th>总收益金额</th>
-                            <th>赠送数字人民币</th>
-                            <th>已购买份数</th>
-                            <th>虚拟购买份数</th>
-                            <th>进度开关</th>
-                            <th>是否启用</th>
+                            <th>国家补贴</th>
+<!--                             <th>已购买份数</th>
+                            <th>虚拟购买份数</th> -->
+<!--                             <th>进度开关</th>
+ -->                            <th>是否启用</th>
                             <th>是否推荐</th>
                             <th>支付方式</th>
-                            <th>倍数</th>
-                            <th>排序号</th>
+<!--                             <th>倍数</th>
+ -->                            <th>排序号</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
@@ -65,16 +65,16 @@
                                 <td><img src="{$v['cover_img']}" onclick="seePhoto('{$v["cover_img"]}')" style="max-width: 80px;"></td>
                                 <td>{$v['name']}</td>
                                 <td>{$v['single_amount']}</td>
-                                <td>{$v['single_integral']}</td>
+<!--                                 <td>{$v['single_integral']}</td>
                                 <td>{$v['total_num']}</td>
                                 <td>{$v['daily_bonus_ratio']}</td>
                                 <td>{$v['dividend_cycle']}</td>
-                                <td>{$v['period']}</td>
+ -->                                <td>{$v['period']}</td>
                                 <td>{$v['sum_amount']}</td>
                                 <td>{$v['single_gift_digital_yuan']}</td>
-                                <td>{$v['total_buy_num']}</td>
+<!--                                 <td>{$v['total_buy_num']}</td>
                                 <td>{$v['sham_buy_num']}</td>
-                                <td>
+ -->                               <!--  <td>
                                     <div class="switch">
                                         <div class="onoffswitch">
                                             <input type="checkbox" <?php echo $v['progress_switch'] == 1 ? 'checked' : ''; ?>
@@ -86,7 +86,7 @@
                                             </label>
                                         </div>
                                     </div>
-                                </td>
+                                </td> -->
                                 <td>
                                     <div class="switch">
                                         <div class="onoffswitch">

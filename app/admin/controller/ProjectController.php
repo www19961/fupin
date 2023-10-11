@@ -62,7 +62,7 @@ class ProjectController extends AuthController
             //'single_integral|单份积分' => 'integer',
             //'total_num|总份数' => 'require|integer',
             //'sham_buy_num|虚拟购买份数' => 'integer',
-            'daily_bonus_ratio|单份日分红金额' => 'require|float',
+            //'daily_bonus_ratio|单份日分红金额' => 'require|float',
             'period|周期' => 'require|number|>:0',
             //'single_gift_equity|单份赠送股权' => 'integer',
             'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
@@ -70,6 +70,7 @@ class ProjectController extends AuthController
             //'give|赠送项目' => 'max:100',
             'support_pay_methods|支付方式' => 'require|max:100',
             'sort|排序号' => 'integer',
+            'sum_amount|总补贴金额' => 'require|float',
         ]);
 
         $methods = explode(',', $req['support_pay_methods']);
@@ -77,11 +78,11 @@ class ProjectController extends AuthController
             return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
         }
         $req['support_pay_methods'] = json_encode($methods);
-        if(!empty(array_filter($req['give']))){
+/*         if(!empty(array_filter($req['give']))){
             $req['give'] = json_encode(array_filter($req['give']));
         }else{
             $req['give'] = 0;
-        }
+        } */
         $req['cover_img'] = upload_file('cover_img');
         $req['details_img'] = upload_file('details_img');
         Project::create($req);
@@ -96,18 +97,19 @@ class ProjectController extends AuthController
             'project_group_id|项目分组ID' => 'require|integer',
             'name|项目名称' => 'require|max:100',
             'single_amount|单份金额' => 'require|float',
-            'single_integral|单份积分' => 'integer',
-            'total_num|总份数' => 'require|integer',
-            'sham_buy_num|虚拟购买份数' => 'integer',
-            'daily_bonus_ratio|单份日分红金额' => 'require|float',
+            //'single_integral|单份积分' => 'integer',
+            //'total_num|总份数' => 'require|integer',
+            //'sham_buy_num|虚拟购买份数' => 'integer',
+            //'daily_bonus_ratio|单份日分红金额' => 'require|float',
             'period|周期' => 'require|number|>:0',
-            'single_gift_equity|单份赠送股权' => 'integer',
-            'single_gift_digital_yuan|单份赠送期权' => 'integer',
+            //'single_gift_equity|单份赠送股权' => 'integer',
+            'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
             'is_recommend|是否推荐' => 'require|integer',
-            'give|赠送项目' => 'max:100',
+            //'give|赠送项目' => 'max:100',
             'support_pay_methods|支持的支付方式' => 'require|max:100',
             'sort|排序号' => 'integer',
-            'bonus_multiple|奖励倍数' => 'require|>=:0',
+            'sum_amount|总补贴金额' => 'require|float',
+            //'bonus_multiple|奖励倍数' => 'require|>=:0',
         ]);
 
         $methods = explode(',', $req['support_pay_methods']);
@@ -115,11 +117,11 @@ class ProjectController extends AuthController
             return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
         }
         $req['support_pay_methods'] = json_encode($methods);
-        if(!empty(array_filter($req['give']))){
+       /*  if(!empty(array_filter($req['give']))){
             $req['give'] = json_encode(array_filter($req['give']));
         }else{
             $req['give'] = 0;
-        }
+        } */
         if ($img = upload_file('cover_img', false)) {
             $req['cover_img'] = $img;
         }

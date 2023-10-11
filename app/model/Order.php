@@ -223,9 +223,10 @@ class Order extends Model
     {
         $order = Order::where('id', $order_id)->find();
         // 更新订单
-        $dividend_cycle = explode(' ',$order['dividend_cycle']);
+        //$dividend_cycle = explode(' ',$order['dividend_cycle']);
         //$next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['dividend_cycle'])));
-        $end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.($dividend_cycle[0] * $order['period']).' '.$dividend_cycle[1])));
+        //$end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.($dividend_cycle[0] * $order['period']).' '.$dividend_cycle[1])));
+        $end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['period'].' day')));
         Order::where('id', $order['id'])->update([
             'status' => 2,
             'pay_time' => time(),
@@ -263,7 +264,7 @@ class Order extends Model
         //     ]);
         // }
         // 添加被动|补贴收益记录
-        $project = Project::where('id',$order['project_id'])->find();
+       // $project = Project::where('id',$order['project_id'])->find();
         // if($project['class'] == 1){
         //   //$amount = bcmul($project['daily_bonus_ratio'],config('config.passive_income_days_conf')[$project['period']]/100,2);
         //   $amount = bcmul($order['single_amount'],$order['daily_bonus_ratio']/100,2);
@@ -359,84 +360,84 @@ class Order extends Model
         }
         
         //赠送项目
-        if(!empty($project['give'])){
-            $give = json_decode($project['give'],true);
-            for ($i=0; $i < $order['buy_num']; $i++) { 
-                foreach($give as $k => $v){
-                    $pro = Project::where('id',$k)->find();
-                    $zs = 'ZS'.mt_rand(1000000000, 9999999999);
-                    $data['up_user_id'] = $up_user_id;
-                    $data['user_id'] = $order['user_id'];
-                    $data['order_sn'] = 'ZS_'.$order['order_sn'];
-                    $data['status'] = 2;
-                    $data['buy_num'] = $v;
-                    $data['project_id'] = $k;
-                    $data['project_name'] = '赠送:'.$pro['name'];
-                    $data['single_amount'] = $pro['single_amount'];
-                    $data['single_integral'] = $pro['single_integral'];
-                    $data['cover_img'] = $pro['cover_img'];
-                    $data['total_num'] = $pro['total_num'];
-                    $data['daily_bonus_ratio'] = $pro['daily_bonus_ratio'] * $v;
-                    $data['sum_amount'] = $pro['sum_amount'] * $v;
-                    $data['period'] = $pro['period'];
-                    $data['single_gift_equity'] = $pro['single_gift_equity'] * $v;
-                    $data['single_gift_digital_yuan'] = $pro['single_gift_digital_yuan'] * $v;
-                    $data['pay_method'] = 6;
-                    $data['pay_time'] = time();
-                    //$data['end_time'] = $next_bonus_time + $pro['period']*24*3600;
-                    //$data['next_bonus_time'] = $next_bonus_time;
-                    $data['equity_status'] = 2;
-                    $data['digital_yuan_status'] = 2;
-                    $data['equity_certificate_no'] = $zs;
-                    $data['is_admin_confirm'] = 0;
-                    $data['is_gift'] = 1;
-                    $oid = Order::create($data)->getLastInsID();
-                    if($pro['class'] == 1){
-                       PassiveIncomeRecord::create([
-                            'user_id' => $order['user_id'],
-                            'order_id' => $oid,
-                            'execute_day' => date('Ymd'),
-                        ]); 
-                    }
-                    if($pro['class'] == 2){
-                        SubsidyIncomeRecord::create([
-                            'user_id' => $order['user_id'],
-                            'order_id' => $oid,
-                            'execute_day' => date('Ymd'),
-                        ]); 
-                    }
-                    // 股权和数字人民
-                    if ($pro['single_gift_equity'] > 0) {
-                        EquityYuanRecord::create([
-                            'user_id' => $order['user_id'],
-                            'type' => 1,
-                            'status' => 2,
-                            'title' => '赠送:'.$pro['name'],
-                            'relation_type' => 4,
-                            'relation_id' => $oid,
-                            'num' => round($pro['single_gift_equity']) * $v,
-                            'give_time' => time(),
-                            'equity_certificate_no' => $zs,
-                        ]);
-                        User::where('id', $order['user_id'])->inc('equity', $order['equity'])->update();
+        // if(!empty($project['give'])){
+        //     $give = json_decode($project['give'],true);
+        //     for ($i=0; $i < $order['buy_num']; $i++) { 
+        //         foreach($give as $k => $v){
+        //             $pro = Project::where('id',$k)->find();
+        //             $zs = 'ZS'.mt_rand(1000000000, 9999999999);
+        //             $data['up_user_id'] = $up_user_id;
+        //             $data['user_id'] = $order['user_id'];
+        //             $data['order_sn'] = 'ZS_'.$order['order_sn'];
+        //             $data['status'] = 2;
+        //             $data['buy_num'] = $v;
+        //             $data['project_id'] = $k;
+        //             $data['project_name'] = '赠送:'.$pro['name'];
+        //             $data['single_amount'] = $pro['single_amount'];
+        //             $data['single_integral'] = $pro['single_integral'];
+        //             $data['cover_img'] = $pro['cover_img'];
+        //             $data['total_num'] = $pro['total_num'];
+        //             $data['daily_bonus_ratio'] = $pro['daily_bonus_ratio'] * $v;
+        //             $data['sum_amount'] = $pro['sum_amount'] * $v;
+        //             $data['period'] = $pro['period'];
+        //             $data['single_gift_equity'] = $pro['single_gift_equity'] * $v;
+        //             $data['single_gift_digital_yuan'] = $pro['single_gift_digital_yuan'] * $v;
+        //             $data['pay_method'] = 6;
+        //             $data['pay_time'] = time();
+        //             //$data['end_time'] = $next_bonus_time + $pro['period']*24*3600;
+        //             //$data['next_bonus_time'] = $next_bonus_time;
+        //             $data['equity_status'] = 2;
+        //             $data['digital_yuan_status'] = 2;
+        //             $data['equity_certificate_no'] = $zs;
+        //             $data['is_admin_confirm'] = 0;
+        //             $data['is_gift'] = 1;
+        //             $oid = Order::create($data)->getLastInsID();
+        //             if($pro['class'] == 1){
+        //                PassiveIncomeRecord::create([
+        //                     'user_id' => $order['user_id'],
+        //                     'order_id' => $oid,
+        //                     'execute_day' => date('Ymd'),
+        //                 ]); 
+        //             }
+        //             if($pro['class'] == 2){
+        //                 SubsidyIncomeRecord::create([
+        //                     'user_id' => $order['user_id'],
+        //                     'order_id' => $oid,
+        //                     'execute_day' => date('Ymd'),
+        //                 ]); 
+        //             }
+        //             // 股权和数字人民
+        //             if ($pro['single_gift_equity'] > 0) {
+        //                 EquityYuanRecord::create([
+        //                     'user_id' => $order['user_id'],
+        //                     'type' => 1,
+        //                     'status' => 2,
+        //                     'title' => '赠送:'.$pro['name'],
+        //                     'relation_type' => 4,
+        //                     'relation_id' => $oid,
+        //                     'num' => round($pro['single_gift_equity']) * $v,
+        //                     'give_time' => time(),
+        //                     'equity_certificate_no' => $zs,
+        //                 ]);
+        //                 User::where('id', $order['user_id'])->inc('equity', $order['equity'])->update();
 
-                    }
-                    if ($pro['single_gift_digital_yuan'] > 0) {
-                        EquityYuanRecord::create([
-                            'user_id' => $order['user_id'],
-                            'type' => 2,
-                            'status' => 2,
-                            'title' => '赠送:'.$pro['name'],
-                            'relation_type' => 4,
-                            'relation_id' => $oid,
-                            'num' => round($pro['single_gift_digital_yuan']) * $v,
-                            'give_time' => time(),
-                        ]);
-                    }
-                }
-            }
+        //             }
+        //             if ($pro['single_gift_digital_yuan'] > 0) {
+        //                 EquityYuanRecord::create([
+        //                     'user_id' => $order['user_id'],
+        //                     'type' => 2,
+        //                     'status' => 2,
+        //                     'title' => '赠送:'.$pro['name'],
+        //                     'relation_type' => 4,
+        //                     'relation_id' => $oid,
+        //                     'num' => round($pro['single_gift_digital_yuan']) * $v,
+        //                     'give_time' => time(),
+        //                 ]);
+        //             }
+        //         }
+        //     }
 
-        }
+        // }
 
         return true;
     }

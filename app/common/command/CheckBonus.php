@@ -11,7 +11,7 @@ use think\console\Output;
 use think\facade\Db;
 
 use Exception;
-
+use think\facade\Log;
 
 class CheckBonus extends Command
 {
@@ -24,13 +24,29 @@ class CheckBonus extends Command
     {   
         // 分红收益
         $cur_time = strtotime(date('Y-m-d 00:00:00'));
-        $data = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
-        ->chunk(100, function($list) use($cur_time){
+        //$data = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
+        $time = time();
+        $data = Order::where('status',2)->where('end_time', '>=', $time)
+        ->chunk(100, function($list) {
             foreach ($list as $item) {
-                $this->fixedMill($item);
+                $this->bonus($item);
             }
         });
         return true;
+    }
+
+    protected function bonus($order){
+        Db::startTrans();
+        try{
+            User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],1);
+            User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
+            Order::where('id',$order->id)->update(['status'=>4]);
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('分红收益异常：'.$e->getMessage(),$e);
+            throw $e;
+        }
     }
     
     protected function fixedMill($order)
