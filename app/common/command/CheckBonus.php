@@ -22,16 +22,25 @@ class CheckBonus extends Command
 
     protected function execute(Input $input, Output $output)
     {   
-        // 分红收益
+
+
         $cur_time = strtotime(date('Y-m-d 00:00:00'));
-        //$data = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
-        $time = time();
-        $data = Order::where('status',2)->where('end_time', '>=', $time)
+        $data2 = Order::where('status',2)->where('next_bonus_time', '>=', $cur_time)
+        ->chunk(100, function($list) {
+            foreach ($list as $item) {
+                $this->digiYuan($item);
+            }
+        });
+
+        // 分红收益
+        $data = Order::where('status',2)->where('end_time', '>=', $cur_time)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus($item);
             }
         });
+
+
         return true;
     }
 
@@ -39,7 +48,7 @@ class CheckBonus extends Command
         Db::startTrans();
         try{
             User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],1);
-            User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
+            //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
             Order::where('id',$order->id)->update(['status'=>4]);
         }catch(Exception $e){
             Db::rollback();
@@ -47,6 +56,53 @@ class CheckBonus extends Command
             Log::error('分红收益异常：'.$e->getMessage(),$e);
             throw $e;
         }
+    }
+
+    protected function digiYuan($order){
+        $cur_time = strtotime(date('Y-m-d 00:00:00'));
+        $user = User::where('id',$order->user_id)->where('status',1)->find();
+        if(is_null($user)) {
+            //用户不存在,禁用
+            return;
+        }
+        
+/*         if($order->end_time < $cur_time){
+            //结束分红
+            Order::where('id',$order->id)->update(['status'=>4]);
+            return;
+        } */
+        $passiveIncome = PassiveIncomeRecord::where('order_id',$order['id'])->where('execute_day',date('Ymd'))->find();
+        if(!empty($passiveIncome)){
+            //已经分红
+            return;
+        }
+        if($passiveIncome['days']>=$order['period']){
+            //已经分红完毕
+            return;
+        }
+        $max_day=$passiveIncome['days']+1;
+        $amount = $order['single_gift_digital_yuan'];
+        Db::startTrans();
+        try {
+            PassiveIncomeRecord::create([
+                    'user_id' => $order['user_id'],
+                    'order_id' => $order['id'],
+                    'execute_day' => date('Ymd'),
+                    'amount'=>$amount,
+                    'days'=>$max_day,
+                    'is_finish'=>1,
+                    'status'=>3,
+                ]); 
+            $next_bonus_time = strtotime('+1 day', strtotime($order['next_bonus_time']));
+            $gain_bonus = bcadd($order['gain_bonus'],$amount,2);
+            Order::where('id', $order['id'])->update(['next_bonus_time'=>$next_bonus_time,'gain_bonus'=>$gain_bonus]);
+            User::changeInc($order['user_id'],$amount,'digital_yuan_amount',5,$order['id'],3);
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+        return true;
     }
     
     protected function fixedMill($order)

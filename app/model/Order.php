@@ -3,7 +3,9 @@
 namespace app\model;
 
 use think\Model;
+use think\facade\Db;
 
+use Exception;
 class Order extends Model
 {
     public function getStatusTextAttr($value, $data)
@@ -224,7 +226,7 @@ class Order extends Model
         $order = Order::where('id', $order_id)->find();
         // 更新订单
         //$dividend_cycle = explode(' ',$order['dividend_cycle']);
-        //$next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['dividend_cycle'])));
+        $next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+1 day')));
         //$end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.($dividend_cycle[0] * $order['period']).' '.$dividend_cycle[1])));
         $end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['period'].' day')));
         Order::where('id', $order['id'])->update([
@@ -232,7 +234,7 @@ class Order extends Model
             'pay_time' => time(),
             'end_time' => $end_time,    //$next_bonus_time + $order['period']*24*3600,
             'gain_bonus' => 0,
-            //'next_bonus_time' => $next_bonus_time,
+            'next_bonus_time' => $next_bonus_time,
             //'equity_status' => 2,
             //'digital_yuan_status' => 2
         ]);
@@ -264,38 +266,38 @@ class Order extends Model
         //     ]);
         // }
         // 添加被动|补贴收益记录
-       // $project = Project::where('id',$order['project_id'])->find();
-        // if($project['class'] == 1){
-        //   //$amount = bcmul($project['daily_bonus_ratio'],config('config.passive_income_days_conf')[$project['period']]/100,2);
-        //   $amount = bcmul($order['single_amount'],$order['daily_bonus_ratio']/100,2);
-        //   $amount = bcmul($amount, $order['buy_num'],2);
-        //   PassiveIncomeRecord::create([
-        //         'user_id' => $order['user_id'],
-        //         'order_id' => $order['id'],
-        //         'execute_day' => date('Ymd'),
-        //         'amount'=>$amount,
-        //         'days'=> 0,
-        //         'is_finish'=>0,
-        //         'status'=>1,
-        //     ]); 
-        //     // PassiveIncomeRecord::create([
-        //     //     'user_id' => $order['user_id'],
-        //     //     'order_id' => $order['id'],
-        //     //     'execute_day' => date('Ymd'),
-        //     //     'amount'=>$amount,
-        //     //     'days'=>$project['period'],
-        //     //     'is_finish'=>1,
-        //     //     'status'=>3,
-        //     // ]); 
-        // }
-        // if($project['class'] == 2){
-        //     SubsidyIncomeRecord::create([
-        //         'user_id' => $order['user_id'],
-        //         'order_id' => $order['id'],
-        //         'execute_day' => date('Ymd'),
-        //     ]); 
-        // }
-        // 增加投资金额  注意积分兑换的不算投资金额
+          //$amount = bcmul($project['daily_bonus_ratio'],config('config.passive_income_days_conf')[$project['period']]/100,2);
+        //   $amount = $order['single_gift_digital_yuan'];
+        //   Db::startTrans();
+        //   try {
+        //       PassiveIncomeRecord::create([
+        //               'user_id' => $order['user_id'],
+        //               'order_id' => $order['id'],
+        //               'execute_day' => date('Ymd'),
+        //               'amount'=>$amount,
+        //               'days'=>1,
+        //               'is_finish'=>1,
+        //               'status'=>3,
+        //           ]); 
+        //       $gain_bonus = bcadd($order['gain_bonus'],$amount,2);
+        //       Order::where('id', $order['id'])->update(['gain_bonus'=>$gain_bonus]);
+        //       User::changeInc($order['user_id'],$amount,'digital_yuan_amount',5,$order['id'],3);
+        //       Db::commit();
+        //   } catch (Exception $e) {
+        //       Db::rollback();
+        //       throw $e;
+        //   }
+        
+            // PassiveIncomeRecord::create([
+            //     'user_id' => $order['user_id'],
+            //     'order_id' => $order['id'],
+            //     'execute_day' => date('Ymd'),
+            //     'amount'=>$amount,
+            //     'days'=>$project['period'],
+            //     'is_finish'=>1,
+            //     'status'=>3,
+            // ]); 
+        //增加投资金额  注意积分兑换的不算投资金额
         if ($order['pay_method'] != 5) {
             User::where('id', $order['user_id'])->inc('invest_amount', $order['buy_amount'])->update();
         }

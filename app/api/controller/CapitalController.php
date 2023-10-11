@@ -22,7 +22,8 @@ class CapitalController extends AuthController
         ]);
         $user = $this->user;
 
-        if ($req['pay_channel'] == 5 && empty($req['pay_voucher_img_url'])) {
+        //if ($req['pay_channel'] == 5 && empty($req['pay_voucher_img_url'])) {
+        if ( empty($req['pay_voucher_img_url'])) {
             return out(null, 10001, '请上传支付凭证图片');
         }
         if($req['pay_channel']==6){
@@ -135,18 +136,19 @@ class CapitalController extends AuthController
             //     return out(null, 10001, '可提现余额不足');
             // }
             if($req['pay_channel'] < 7){
-                $field = 'balance';
+                $field = 'team_bonus_balance';
                 $log_type = '1';
-                if ($user['balance'] < $req['amount']) {
+                if ($user['team_bonus_balance'] < $req['amount']) {
                     return out(null, 10001, '可提现余额不足');
                 }
-            }elseif($req['pay_channel'] == 7){
-                $field = 'digital_yuan_amount';
-                $log_type = '3';
-                if ($user['digital_yuan_amount'] < $req['amount']) {
-                    return out(null, 10001, '可提现数字人民币不足');
-                }
             }
+            // }elseif($req['pay_channel'] == 7){
+            //     $field = 'digital_yuan_amount';
+            //     $log_type = '3';
+            //     if ($user['digital_yuan_amount'] < $req['amount']) {
+            //         return out(null, 10001, '可提现数字人民币不足');
+            //     }
+            // }
             // 判断每天最大提现次数
             $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('pay_channel', '>', 1)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
             if ($num >= dbconfig('per_day_withdraw_max_num')) {

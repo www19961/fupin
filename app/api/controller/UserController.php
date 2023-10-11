@@ -236,7 +236,7 @@ class UserController extends AuthController
             'realname|对方姓名' => 'require',
             'account|对方账号' => 'require',
             'money|转账金额' => 'require|number',
-            'pay_password|支付密码' => 'requireIf:pay_method,1|requireIf:pay_method,5',
+            'pay_password|支付密码' => 'require',
         ]);//type 1 可用余额，2 转账余额，realname 对方姓名，account 对方账号，money 转账金额，pay_password 支付密码
         $user = $this->user;
 
@@ -270,15 +270,16 @@ class UserController extends AuthController
             }
             
             if($req['type'] ==1){
-                $field = 'invite_bonus';
+                $field = 'team_bonus_balance';
                 $fieldText = '推荐奖励';
             }elseif($req['type'] ==2){
-                $field = 'topup_balance';
-                $fieldText = '充值余额';
-            }else{
                 $field = 'balance';
-                $fieldText = '可提现余额';
+                $fieldText = '充值余额';
             }
+            // }else{
+            //     $field = 'balance';
+            //     $fieldText = '可提现余额';
+            // }
 
 
             if ($req['money'] > $user[$field]) {
@@ -309,7 +310,7 @@ class UserController extends AuthController
 
             //收到金额  加金额 转账金额
             //User::where('id', $take['id'])->inc('balance', $req['money'])->inc('topup_balance', $req['money'])->update();
-            User::where('id', $take['id'])->inc($field, $req['money'])->update();
+            User::where('id', $take['id'])->inc('balance', $req['money'])->update();
             //User::changeBalance($take['id'], $req['money'], 18, 0, 1,'接收转账来自'.$user['realname']);
             UserBalanceLog::create([
                 'user_id' => $take['id'],
