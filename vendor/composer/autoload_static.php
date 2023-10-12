@@ -60,7 +60,6 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Http\\Client\\' => 16,
             'Psr\\Container\\' => 14,
-            'Psr\\Cache\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
         'O' => 
@@ -75,7 +74,6 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
         'L' => 
         array (
             'League\\MimeTypeDetection\\' => 25,
-            'League\\Flysystem\\Cached\\' => 24,
             'League\\Flysystem\\' => 17,
         ),
         'G' => 
@@ -117,10 +115,10 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
         ),
         'think\\' => 
         array (
-            0 => __DIR__ . '/..' . '/topthink/framework/src/think',
-            1 => __DIR__ . '/..' . '/topthink/think-helper/src',
-            2 => __DIR__ . '/..' . '/topthink/think-orm/src',
-            3 => __DIR__ . '/..' . '/topthink/think-template/src',
+            0 => __DIR__ . '/..' . '/topthink/think-helper/src',
+            1 => __DIR__ . '/..' . '/topthink/think-orm/src',
+            2 => __DIR__ . '/..' . '/topthink/think-template/src',
+            3 => __DIR__ . '/..' . '/topthink/framework/src/think',
         ),
         'liliuwei\\think\\' => 
         array (
@@ -175,10 +173,6 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'Psr\\Cache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/cache/src',
-        ),
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
@@ -198,10 +192,6 @@ class ComposerStaticInitc9ba59474ec0898129571df8b63360c1
         'League\\MimeTypeDetection\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/mime-type-detection/src',
-        ),
-        'League\\Flysystem\\Cached\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/league/flysystem-cached-adapter/src',
         ),
         'League\\Flysystem\\' => 
         array (
