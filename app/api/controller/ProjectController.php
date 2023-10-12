@@ -9,7 +9,7 @@ class ProjectController extends AuthController
 {
     public function projectList()
     {
-        $data = Project::where('status', 1)->where('class',1)->group('project_group_id')->order(['sort' => 'asc', 'id' => 'desc'])->append(['daily_bonus'])->paginate();
+        $data = Project::where('status', 1)->where('class',1)->order(['sort' => 'asc', 'id' => 'desc'])->append(['daily_bonus'])->paginate();
         foreach($data as $item){
             //$item['intro']="";
             $item['project_income']=$item['sum_amount'];
