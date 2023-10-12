@@ -678,7 +678,7 @@ class UserController extends AuthController
         }
         $certificate = $query->find();
         if(!$certificate){
-            return out([],200,'证书不存在');
+            return out([],10001,'证书不存在');
         }
         $certificate['format_time']=Certificate::getFormatTime($certificate['created_at']);
         return out($certificate);
