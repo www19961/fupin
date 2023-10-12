@@ -238,6 +238,21 @@ class Order extends Model
             //'equity_status' => 2,
             //'digital_yuan_status' => 2
         ]);
+
+        $certificate = Certificate::where('user_id',$order['user_id'])->where('project_group_id',$order['project_group_id'])->find();
+        if(!$certificate){
+            $realname = User::where('id',$order['user_id'])->value('realname');
+            $group = config('map.project')['group'];
+            Certificate::create([
+                'user_id' => $order['user_id'],
+                'project_group_id' => $order['project_group_id'],
+                'name'=>$group[$order['project_group_id']],
+                'realname'=>$realname,
+                'no'=>Certificate::getNo($order['user_id'],$order['project_group_id']),
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
         // 股权和数字人民
         // if ($order['single_gift_equity'] > 0) {
         //     EquityYuanRecord::create([

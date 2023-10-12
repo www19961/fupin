@@ -12,7 +12,7 @@ use app\model\UserBalanceLog;
 use app\model\UserRelation;
 use app\model\KlineChartNew;
 use app\model\Capital;
-
+use app\model\Certificate;
 use think\facade\Db;
 use Exception;
 use Endroid\QrCode\QrCode;
@@ -651,5 +651,36 @@ class UserController extends AuthController
         $data['data'] = $datas;
         return out($data);
        
+    }
+
+    public function certificateList(){
+        $user = $this->user;
+        $list = Certificate::where('user_id',$user['id'])->order('id','desc')->select();
+        foreach($list as $k=>&$v){
+           $v['format_time']=Certificate::getFormatTime($v['created_at']);
+        }
+        return out($list);
+    }
+
+    public function certificate(){
+        $req = $this->validate(request(), [
+            'id|id' => 'integer',
+            'project_group_id|组ID' => 'integer',
+        ]);
+        if(!isset($req['id']) && !isset($req['project_group_id'])){
+            return out('参数错误');
+        }
+        $query = Certificate::order('id','desc');
+        if(isset($req['id'])){
+            $query->where('id',$req['id']);
+        }else if(isset($req['project_group_id'])){
+            $query->where('project_group_id',$req['project_group_id']);
+        }
+        $certificate = $query->find();
+        if(!$certificate){
+            return out([],200,'证书不存在');
+        }
+        $certificate['format_time']=Certificate::getFormatTime($certificate['created_at']);
+        return out($certificate);
     }
 }

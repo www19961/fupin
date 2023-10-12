@@ -43,7 +43,7 @@ class OrderController extends AuthController
         Db::startTrans();
         try {
             $user = User::where('id', $user['id'])->lock(true)->find();
-            $project = Project::field('id project_id,name project_name,class,cover_img,single_amount,single_integral,total_num,daily_bonus_ratio,sum_amount,dividend_cycle,period,single_gift_equity,single_gift_digital_yuan,sham_buy_num,progress_switch,bonus_multiple,settlement_method')->where('id', $req['project_id'])->lock(true)->append(['all_total_buy_num'])->find()->toArray();
+            $project = Project::field('id project_id,name project_name,class,project_group_id,cover_img,single_amount,single_integral,total_num,daily_bonus_ratio,sum_amount,dividend_cycle,period,single_gift_equity,single_gift_digital_yuan,sham_buy_num,progress_switch,bonus_multiple,settlement_method')->where('id', $req['project_id'])->lock(true)->append(['all_total_buy_num'])->find()->toArray();
 
             $pay_amount = round($project['single_amount']*$req['buy_num'], 2);
             $pay_integral = 0;
