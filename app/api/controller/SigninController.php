@@ -42,9 +42,12 @@ class SigninController extends AuthController
     public function signinRecord()
     {
         $user = $this->user;
+        $time = date("Y-m")."-01";
 
-        $list = UserSignin::where('user_id', $user['id'])->order('id', 'desc')->select()->toArray();
-
+        $list = UserSignin::where('user_id', $user['id'])->where("signin_date",'>=',$time)->order('id', 'desc')->select()->toArray();
+        foreach ($list as &$item) {
+            $item['day'] = date('d', strtotime($item['signin_date']));
+        }
         return out([
             'total_signin_num' => count($list),
             'list' => $list
