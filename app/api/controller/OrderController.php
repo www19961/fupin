@@ -138,6 +138,7 @@ class OrderController extends AuthController
                     'mark' => $paymentConf['mark'],
                     'type' => $paymentConf['type'],
                     'card_info' => $card_info,
+                    'product_type'=>1,
                 ]);
                 // 发起支付
                 if ($paymentConf['channel'] == 1) {
