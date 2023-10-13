@@ -339,42 +339,42 @@ class Order extends Model
         }
 
         // 如果不是积分兑换才算直推奖励和团队奖励
-        if ($order['pay_method'] != 5 && !empty($up_user_id)) {
-            // 给直属上级推荐奖
-            $levelConfig = LevelConfig::where('level', $now_level)->find();
-            if (!empty($levelConfig['direct_recommend_reward_ratio'])) {
-                $reward = round($levelConfig['direct_recommend_reward_ratio']/100*$order['buy_amount'], 2);
-                if($reward > 0){
-                    //User::changeBalance($up_user_id, $reward, 9, $order_id);
-                    User::changeInc($up_user_id,$reward,'team_bonus_balance',9,$order_id,4,'推荐奖励',0,2);
-                    //User::changeInc($up_user_id,$reward,'balance',9,$order_id,1,'推荐奖励',0,2);
-                }
-            }
-            // 给上3级团队奖
-            $relation = UserRelation::where('sub_user_id', $order['user_id'])->select();
-            $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
-            //$map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', ];
-            foreach ($relation as $v) {
-                $reward = round(dbconfig($map[$v['level']])/100*$order['buy_amount'], 2);
-                if($reward > 0){
-                    //User::changeBalance($v['user_id'], $reward, 8, $order_id);
-                    //User::changeInc($up_user_id,$reward,'invite_bonus',8,$order_id,3,'推荐奖励');
-                    User::changeInc($v['user_id'],$reward,'team_bonus_balance',8,$order_id,4,'团队奖励',0,2);
-                    //User::changeInc($v['user_id'],$reward,'balance',8,$order_id,1,'团队奖励',0,2);
-                }
-            }
-        }
+        // if ($order['pay_method'] != 5 && !empty($up_user_id)) {
+        //     // 给直属上级推荐奖
+        //     $levelConfig = LevelConfig::where('level', $now_level)->find();
+        //     if (!empty($levelConfig['direct_recommend_reward_ratio'])) {
+        //         $reward = round($levelConfig['direct_recommend_reward_ratio']/100*$order['buy_amount'], 2);
+        //         if($reward > 0){
+        //             //User::changeBalance($up_user_id, $reward, 9, $order_id);
+        //             User::changeInc($up_user_id,$reward,'team_bonus_balance',9,$order_id,4,'推荐奖励',0,2);
+        //             //User::changeInc($up_user_id,$reward,'balance',9,$order_id,1,'推荐奖励',0,2);
+        //         }
+        //     }
+        //     // 给上3级团队奖
+        //     $relation = UserRelation::where('sub_user_id', $order['user_id'])->select();
+        //     $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
+        //     //$map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', ];
+        //     foreach ($relation as $v) {
+        //         $reward = round(dbconfig($map[$v['level']])/100*$order['buy_amount'], 2);
+        //         if($reward > 0){
+        //             //User::changeBalance($v['user_id'], $reward, 8, $order_id);
+        //             //User::changeInc($up_user_id,$reward,'invite_bonus',8,$order_id,3,'推荐奖励');
+        //             User::changeInc($v['user_id'],$reward,'team_bonus_balance',8,$order_id,4,'团队奖励',0,2);
+        //             //User::changeInc($v['user_id'],$reward,'balance',8,$order_id,1,'团队奖励',0,2);
+        //         }
+        //     }
+        // }
 
-        // 检测用户升级
-        if (in_array($order['pay_method'], [1,2,3,4,6])) {
-        //if (in_array($order['pay_method'], [2, 3, 4, 6])) {
-            $user = User::where('id', $order['user_id'])->find();
-            $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
+        // // 检测用户升级
+        // if (in_array($order['pay_method'], [1,2,3,4,6])) {
+        // //if (in_array($order['pay_method'], [2, 3, 4, 6])) {
+        //     $user = User::where('id', $order['user_id'])->find();
+        //     $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
 
-            if ($user['level'] < $new_level) {
-                User::where('id', $user['id'])->update(['level' => $new_level]);
-            }
-        }
+        //     if ($user['level'] < $new_level) {
+        //         User::where('id', $user['id'])->update(['level' => $new_level]);
+        //     }
+        // }
         
         //赠送项目
         // if(!empty($project['give'])){

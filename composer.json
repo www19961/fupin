@@ -31,7 +31,8 @@
         "phpoffice/phpspreadsheet": "1.22.0",
         "maennchen/zipstream-php": "2.1.0",
         "endroid/qr-code": "^4.6",
-        "overtrue/flysystem-qiniu": "^1.0"
+        "overtrue/flysystem-qiniu": "^1.0",
+        "topthink/think-filesystem": "^1.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
