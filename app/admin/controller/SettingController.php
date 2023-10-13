@@ -3,6 +3,8 @@
 namespace app\admin\controller;
 
 use app\model\Setting;
+use think\facade\Cache;
+
 
 class SettingController extends AuthController
 {
@@ -44,9 +46,14 @@ class SettingController extends AuthController
             'id' => 'require|number',
             'value|配置值' => 'require|max:500',
         ]);
-
+        $setting_conf=[];
         Setting::where('id', $req['id'])->update($req);
-
+        $confArr=['apk_download_url','version_apk','video_url','video_img_url','kefu_url'];
+        $setting = Setting::whereIn("key",$confArr)->select();
+        foreach($setting as $item){
+            $setting_conf[$item['key']] = $item['value'];
+        }
+        Cache::set('setting_conf', json_decode(json_encode($setting_conf, JSON_UNESCAPED_UNICODE),true), 300);
         return out();
     }
 }
