@@ -191,7 +191,7 @@ class CommonController extends BaseController
         $setting_conf =[];
         $setting_conf = Cache::get('setting_conf',[]);
         if(empty($setting_conf) || $setting_conf == null){
-            $confArr=['apk_download_url','version_apk','video_url','video_img_url'];
+            $confArr=['apk_download_url','version_apk','video_url','video_img_url','kefu_url'];
             $setting = Setting::whereIn("key",$confArr)->select();
             foreach($setting as $item){
                 $setting_conf[$item['key']] = $item['value'];
