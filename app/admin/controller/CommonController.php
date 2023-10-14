@@ -34,18 +34,27 @@ class CommonController extends BaseController
                 $this->error('账号已被禁用');
             }
 
-            if (AuthGroupAccess::where('admin_user_id', $adminUser['id'])->where('auth_group_id', 2)->count()) {
-                Session::set('is_agent', 1);
-                Session::set('admin_user', $adminUser);
+            //if (AuthGroupAccess::where('admin_user_id', $adminUser['id'])->where('auth_group_id', 2)->count()) {
+                // Session::set('is_agent', 1);
+                // Session::set('google_auth_secret', $adminUser);
+               
+            //     return out(['is_agent' => 1]);
+            // }else{
 
-                return out(['is_agent' => 1]);
-            }
-
-            Session::set('is_agent', 0);
+            //     Session::set('is_agent', 0);
+            //     Session::set('admin_user', $adminUser);
+            //     Session::set('google_auth_secret', $adminUser);
+            //     return out(['is_agent' => 0]);
+            // }
             //Session::set('google_auth_secret', $adminUser);
-            Session::set('admin_user', $adminUser);
-
-            return out(['is_agent' => 0]);
+            $auth = \app\model\Setting::where('key','is_google_auth')->find();
+            if($auth['value'] == '1'){
+                Session::set('google_auth_secret', $adminUser);
+                return out(['isValid' => 1]);
+            }else{
+                Session::set('admin_user', $adminUser);
+                return out(['isValid' => 0]);
+            }
         }
 
         return $this->fetch();
@@ -54,7 +63,8 @@ class CommonController extends BaseController
     public function secondaryValidation()
     {
         if (!Session::has('google_auth_secret')){
-            $this->redirect('admin/Common/login');
+            $this->redirect('/admin/Common/login');
+            exit;
         }
 
         $adminUser = Session::get('google_auth_secret');
