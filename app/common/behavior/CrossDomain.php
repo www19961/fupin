@@ -17,7 +17,7 @@ class CrossDomain
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Max-Age: 1800');
         header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE');
-        header('Access-Control-Allow-Headers: Authorization, Content-Type, Origin, Accept, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-Requested-With, token, lang, sec-fetch-dest,sec-fetch-mode, sec-fetch-site');
+        header('Access-Control-Allow-Headers: Authorization, Content-Type, Origin, Accept, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-Requested-With, token, lang, sec-fetch-dest,sec-fetch-mode, sec-fetch-site,access-control_allow_origin');
         if (strtoupper($request->method()) == "OPTIONS") {
             exit();
         }

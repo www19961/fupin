@@ -6,6 +6,7 @@ use app\model\User;
 use app\model\UserSignin;
 use Exception;
 use think\facade\Db;
+use think\model\relation\OneToOne;
 
 class SigninController extends AuthController
 {
@@ -24,11 +25,23 @@ class SigninController extends AuthController
                 'user_id' => $user['id'],
                 'signin_date' => $signin_date,
             ]);
+            $oneDate = date('Y-m')."-01";
+            $signDates = UserSignin::where('user_id',$user['id'])->where('signin_date','>',$oneDate)->order('sigin_date','desc')->select();
+            $signNum=0;
+            foreach($signDates as $date){
+               $yesterday = date('Y-m-d',strtotime("-1 day",strtotime($date['signin_date'])));
+               if($yesterday == $date['signin_date']){
+                     $signNum++;
+               }else{
+                        break;
+               }   
+            }
 
             // 添加签到奖励积分
-            User::changeBalance($user['id'], dbconfig('signin_integral'), 17, $signin['id'], 2);
+            //User::changeBalance($user['id'], dbconfig('signin_integral'), 17, $signin['id'], 2);
             // 签到奖励数码货币
-            User::changeBalance($user['id'], dbconfig('signin_digital_yuan'), 17, $signin['id'], 3);
+            //User::changeBalance($user['id'], dbconfig('signin_digital_yuan'), 17, $signin['id'], 3);
+            User::changeInc($user['id'],$signNum*10,'team_bonus_balance',17,$signin['id'],2);
 
             Db::commit();
         } catch (Exception $e) {

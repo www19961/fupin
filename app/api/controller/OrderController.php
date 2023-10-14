@@ -52,9 +52,9 @@ class OrderController extends AuthController
                 exit_out(null, 10002, '余额不足');
             }
             if ($req['pay_method'] == 5) {
-                $pay_integral = $project['single_integral'] * $req['buy_num'];
-                if ($pay_integral > $user['integral']) {
-                    exit_out(null, 10003, '积分不足');
+                $pay_integral = $project['single_amount'] * $req['buy_num'];
+                if ($pay_integral > $user['team_bonus_balance']) {
+                    exit_out(null, 10003, '团队奖励不足');
                 }
             }
 
@@ -101,22 +101,18 @@ class OrderController extends AuthController
 
             $order = Order::create($project);
 
-            if (in_array($req['pay_method'], [1, 5])) {
-                // 扣余额或积分
-                $change_balance = $req['pay_method'] == 1 ? (0 - $pay_amount) : (0 - $pay_integral);
-                $log_type = $req['pay_method'] == 1 ? 1 : 2;    //2积分 5充值余额
-                //User::changeInc($user['id'], $change_balance, 3, $order['id'], $log_type);
-
-                User::changeInc($user['id'],$change_balance,'balance',3,$order['id'],$log_type);
-
-                
+            if ($req['pay_method']==1) {
+                // 扣余额
+                User::changeInc($user['id'],-$pay_amount,'balance',3,$order['id'],1);
                 // 累计总收益和赠送数字人民币  到期结算
-                // User::changeBalance($user['id'], $project['single_gift_digital_yuan'], 3, $order['id'], 3, '项目购买赠送数码港元');
-                //User::where('id', $user['id'])->inc('poverty_subsidy_amount', $project['sum_amount2'])->inc('digital_yuan_amount', $project['single_gift_digital_yuan'])->update();
-                //User::where('id', $user['id'])->inc('poverty_subsidy_amount', $project['sum_amount2'])->update();
                 // 订单支付完成
                 Order::orderPayComplete($order['id']);
-
+            }else if($req['pay_method']==5){
+                // 扣团队奖励
+                User::changeInc($user['id'],-$pay_amount,'team_bonus_balance',3,$order['id'],2);
+                // 累计总收益和赠送数字人民币  到期结算
+                // 订单支付完成
+                Order::orderPayComplete($order['id']);
             }
             // 发起第三方支付
             if (in_array($req['pay_method'], [2,3,4,6])) {

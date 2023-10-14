@@ -74,9 +74,9 @@ class ProjectController extends AuthController
         ]);
 
         $methods = explode(',', $req['support_pay_methods']);
-        if (in_array(5, $methods) && empty($req['single_integral'])) {
+/*         if (in_array(5, $methods) && empty($req['single_integral'])) {
             return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
-        }
+        } */
         $req['support_pay_methods'] = json_encode($methods);
 /*         if(!empty(array_filter($req['give']))){
             $req['give'] = json_encode(array_filter($req['give']));
@@ -113,9 +113,9 @@ class ProjectController extends AuthController
         ]);
 
         $methods = explode(',', $req['support_pay_methods']);
-        if (in_array(5, $methods) && empty($req['single_integral'])) {
+/*         if (in_array(5, $methods) && empty($req['single_integral'])) {
             return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
-        }
+        } */
         $req['support_pay_methods'] = json_encode($methods);
        /*  if(!empty(array_filter($req['give']))){
             $req['give'] = json_encode(array_filter($req['give']));

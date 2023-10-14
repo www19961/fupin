@@ -85,10 +85,11 @@ class Capital extends Model
         $user = User::where('id', $capital['user_id'])->find();
         $topup_reward_ratio = LevelConfig::where('level', $user['level'])->value('topup_reward_ratio');
         $change_balance = round($topup_reward_ratio/100*$capital['amount'], 2);
-        User::changeBalance($capital['user_id'], $change_balance, 4, $capital_id, 1, '', $admin_user_id);
+        User::changeBalance($capital['user_id'], $change_balance, 4, $capital_id, 2, '', $admin_user_id);
 
         return true;
     }
+
 
     public static function auditWithdraw($id, $status, $admin_user_id, $audit_remark = '', $is_batch = false)
     {
