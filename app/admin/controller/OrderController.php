@@ -102,9 +102,11 @@ class OrderController extends AuthController
 
             Order::where('id', $order['id'])->update(['is_admin_confirm' => 1]);
             Order::orderPayComplete($order['id']);
-
             // 判断通道是否超过最大限额，超过了就关闭通道
             $payment = Payment::where('order_id', $order['id'])->find();
+            $userModel = new User();
+            $userModel->teamBonus($order['user_id'],$payment['pay_amount'],$payment['id']);
+
             PaymentConfig::checkMaxPaymentLimit($payment['type'], $payment['channel'], $payment['mark']);
 
             Db::commit();

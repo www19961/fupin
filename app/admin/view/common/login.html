@@ -50,12 +50,12 @@
         {
             $.post("{:url('admin/Common/login')}", $('#commentForm').serialize(), function (res) {
                 if (res.code == '200'){
-                    if (res.data.is_agent == 1) {
+                    if (res.data.isValid == 0) {
                         window.location.href = "{:url('admin/Home/index')}"
                     }
                     else {
-                        //window.location.href = "{:url('admin/Common/secondaryValidation')}"
-                        window.location.href = "{:url('admin/Home/index')}"
+                        window.location.href = "{:url('admin/Common/secondaryValidation')}"
+                        //window.location.href = "{:url('admin/Home/index')}"
                     }
                 }
                 else {
