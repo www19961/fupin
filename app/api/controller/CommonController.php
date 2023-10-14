@@ -77,12 +77,13 @@ class CommonController extends BaseController
     public function register()
     {
         $req = $this->validate(request(), [
-            'phone|手机号' => 'require',
+            'phone|手机号' => 'require|mobile',
             'password|密码' => 'require|alphaNum|length:6,12',
             're_password|重复密码'=>'require|confirm:password',
             'invite_code|邀请码' => 'max:10',
-            'realname|姓名'=>'require|min:2',
+            'realname|姓名'=>'require|min:2|max:20',
             'ic_number|身份证号' => 'require|idCard',
+            'vt|验证'=>'require',
             //'captcha|验证码' => 'require|max:6',
         ]);
 
@@ -94,7 +95,11 @@ class CommonController extends BaseController
             }
         }
         Cache::rm($key);*/
-
+        $registerKey = config('config.register_key');
+        $key=md5($req['phone'].$registerKey);
+        if($req['vt'] != $key){
+            return out(null, 10001, '验证错误');
+        }
         if (User::where('phone', $req['phone'])->count()) {
             return out(null, 10002, '该手机号已注册，请登录');
         }
