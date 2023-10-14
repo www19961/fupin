@@ -175,7 +175,7 @@ class CommonController extends BaseController
     {
         $req = request()->get();
 
-        $user = User::getUserByToken();
+        //$user = User::getUserByToken();
         
         $banner = Cache::get('banner','');
         if($banner == '' || $banner == null){
