@@ -49,7 +49,7 @@ class SigninController extends AuthController
             //User::changeBalance($user['id'], dbconfig('signin_integral'), 17, $signin['id'], 2);
             // 签到奖励数码货币
             //User::changeBalance($user['id'], dbconfig('signin_digital_yuan'), 17, $signin['id'], 3);
-            User::changeInc($user['id'],$signNum*10,'team_bonus_balance',17,$signin['id'],2);
+            User::changeInc($user['id'],$signNum*10,'signin_digital_yuan',17,$signin['id'],2);
 
             Db::commit();
         } catch (Exception $e) {
