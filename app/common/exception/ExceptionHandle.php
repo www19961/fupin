@@ -71,7 +71,9 @@ class ExceptionHandle extends Handle
                 View::engine()->layout(false);
                 return parent::render($request, $e);
             }
-
+            if($out['code']==401){
+                return json($out,401);
+            }
             return json($out);
         }
         else {
@@ -86,6 +88,7 @@ class ExceptionHandle extends Handle
                     $msg = $e->getMessage();
                     $out = json_decode($msg, true);
                 }
+                
                 return json($out);
             }
             else {

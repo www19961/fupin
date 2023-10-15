@@ -252,7 +252,7 @@ class User extends Model
         }
 
         if ($is_exit) {
-            exit_out(null, 403, '认证失效，请重新登录');
+            exit_out(null, 401, '认证失效，请重新登录');
         }
 
         return [];
