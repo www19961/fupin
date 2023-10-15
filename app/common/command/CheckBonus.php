@@ -33,7 +33,7 @@ class CheckBonus extends Command
         });
 
         // 分红收益
-        $data = Order::where('status',2)->where('end_time', '>=', $cur_time)
+        $data = Order::where('status',2)->where('end_time', '<=', $cur_time)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus($item);
@@ -71,18 +71,23 @@ class CheckBonus extends Command
             Order::where('id',$order->id)->update(['status'=>4]);
             return;
         } */
+        $day=0;
         $passiveIncome = PassiveIncomeRecord::where('order_id',$order['id'])->where('user_id',$order['user_id'])->where('execute_day',date('Ymd'))->find();
         if(!empty($passiveIncome)){
             //已经分红
 
             return;
         }
-        $passiveIncome = PassiveIncomeRecord::where('order_id',$order['id'])->where('user_id',$order['user_id'])->order('execute_day',date('Ymd'))->find();
-        if($passiveIncome['days']>=$order['period']){
+        $passiveIncome = PassiveIncomeRecord::where('order_id',$order['id'])->where('user_id',$order['user_id'])->order('execute_day','desc')->find();
+        if(!$passiveIncome){
+            $day=0;
+        }else if($passiveIncome['days']>=$order['period']){
             //已经分红完毕
             return;
+        }else{
+            $day=$passiveIncome['days'];
         }
-        $day=$passiveIncome['days']+1;
+        $day+=1;
         $amount = $order['single_gift_digital_yuan'];
         Db::startTrans();
         try {
@@ -95,7 +100,7 @@ class CheckBonus extends Command
                     'is_finish'=>1,
                     'status'=>3,
                 ]); 
-            $next_bonus_time = strtotime('+1 day', strtotime($order['next_bonus_time']));
+            $next_bonus_time = strtotime('+1 day', strtotime(date('Y-m-d H:i:s',$order['next_bonus_time'])));
             $gain_bonus = bcadd($order['gain_bonus'],$amount,2);
             Order::where('id', $order['id'])->update(['next_bonus_time'=>$next_bonus_time,'gain_bonus'=>$gain_bonus]);
             User::changeInc($order['user_id'],$amount,'digital_yuan_amount',5,$order['id'],3);
