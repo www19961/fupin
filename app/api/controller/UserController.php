@@ -272,9 +272,11 @@ class UserController extends AuthController
             if($req['type'] ==1){
                 $field = 'team_bonus_balance';
                 $fieldText = '推荐奖励';
+                $logType=2;
             }elseif($req['type'] ==2){
                 $field = 'balance';
                 $fieldText = '充值余额';
+                $logType = 1;
             }
             // }else{
             //     $field = 'balance';
@@ -297,7 +299,7 @@ class UserController extends AuthController
             UserBalanceLog::create([
                 'user_id' => $user['id'],
                 'type' => 18,
-                'log_type' => 1,
+                'log_type' => $logType,
                 'relation_id' => $take['id'],
                 'before_balance' => $user[$field],
                 'change_balance' => $change_balance,
@@ -414,7 +416,7 @@ class UserController extends AuthController
         return out();
     }
 
-    public function userBalanceLog()
+/*     public function userBalanceLog()
     {
         $req = $this->validate(request(), [
             'log_type' => 'require|in:1,2,3,4',
@@ -430,7 +432,7 @@ class UserController extends AuthController
 
         return out($data);
     }
-
+ */
 
     public function team(){
         $user = $this->user;
