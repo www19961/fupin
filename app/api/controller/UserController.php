@@ -343,8 +343,8 @@ class UserController extends AuthController
         ]);
         $user = $this->user;
 
-        $builder = UserBalanceLog::where('user_id', $user['id'])->whereIn('type', [18,19])->order('created_at','desc')->limit(10)->select();
-            //->paginate(15,false,['query'=>request()->param()]);
+        $builder = UserBalanceLog::where('user_id', $user['id'])->whereIn('type', [18,19])->order('created_at','desc')
+                    ->paginate(15,false,['query'=>request()->param()]);
         if($builder){
             foreach($builder as $k => $v){
                 $builder[$k]['phone'] = User::where('id', $v['relation_id'])->value('phone');
