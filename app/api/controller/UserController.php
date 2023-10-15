@@ -588,7 +588,8 @@ class UserController extends AuthController
         $user = $this->user;
         $req = $this->validate(request(), [
             //'type' => 'require|number|in:1,2,3,4,5',
-            'log_type' => 'require|number|in:1,2,3',
+            //充值 1  团队奖励2  3国家津贴  6收益
+            'log_type' => 'require|number|in:1,2,3,6',
         ]);
         $map = config('map.user_balance_log')['type_map'];
         $log_type = $req['log_type'];
@@ -626,7 +627,7 @@ class UserController extends AuthController
             array_push($sort_key,$v['created_at']);
             array_push($datas,$in);
         }
-        if($log_type == 1)
+/*         if($log_type == 1)
         {
             $builder = Capital::where('user_id', $user['id'])->order('id', 'desc');
             $builder->where('type', 1)->where('status',1);
@@ -647,7 +648,7 @@ class UserController extends AuthController
             }
         }
 
-        array_multisort($sort_key,SORT_DESC,$datas);
+        array_multisort($sort_key,SORT_DESC,$datas); */
         $data['data'] = $datas;
         return out($data);
        

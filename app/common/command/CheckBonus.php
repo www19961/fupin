@@ -47,7 +47,7 @@ class CheckBonus extends Command
     protected function bonus($order){
         Db::startTrans();
         try{
-            User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],1);
+            User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
             //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
             Order::where('id',$order->id)->update(['status'=>4]);
         }catch(Exception $e){
@@ -71,16 +71,18 @@ class CheckBonus extends Command
             Order::where('id',$order->id)->update(['status'=>4]);
             return;
         } */
-        $passiveIncome = PassiveIncomeRecord::where('order_id',$order['id'])->where('execute_day',date('Ymd'))->find();
+        $passiveIncome = PassiveIncomeRecord::where('order_id',$order['id'])->where('user_id',$order['user_id'])->where('execute_day',date('Ymd'))->find();
         if(!empty($passiveIncome)){
             //已经分红
+
             return;
         }
+        $passiveIncome = PassiveIncomeRecord::where('order_id',$order['id'])->where('user_id',$order['user_id'])->order('execute_day',date('Ymd'))->find();
         if($passiveIncome['days']>=$order['period']){
             //已经分红完毕
             return;
         }
-        $max_day=$passiveIncome['days']+1;
+        $day=$passiveIncome['days']+1;
         $amount = $order['single_gift_digital_yuan'];
         Db::startTrans();
         try {
@@ -89,7 +91,7 @@ class CheckBonus extends Command
                     'order_id' => $order['id'],
                     'execute_day' => date('Ymd'),
                     'amount'=>$amount,
-                    'days'=>$max_day,
+                    'days'=>$day,
                     'is_finish'=>1,
                     'status'=>3,
                 ]); 
