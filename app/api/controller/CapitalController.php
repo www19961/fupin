@@ -139,7 +139,7 @@ class CapitalController extends AuthController
             // }
            // if($req['pay_channel'] < 7){
                 $field = 'team_bonus_balance';
-                $log_type = '1';
+                $log_type =2;
                 if ($user['team_bonus_balance'] < $req['amount']) {
                     return out(null, 10001, '团队奖励余额不足');
                 }
