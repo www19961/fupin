@@ -166,6 +166,9 @@ class CapitalController extends AuthController
             Payment::where('capital_id', $capital['id'])->update(['payment_time' => time(), 'status' => 2]);
 
             Capital::where('id', $capital['id'])->update(['is_admin_confirm' => 1]);
+            $userModel = new User();
+            $userModel->teamBonus($capital['user_id'], $capital['amount'],$capital['id']);
+
             Capital::topupPayComplete($capital['id'], $adminUser['id']);
 
             // 判断通道是否超过最大限额，超过了就关闭通道

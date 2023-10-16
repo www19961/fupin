@@ -3,11 +3,13 @@
 namespace app\admin\controller;
 
 use app\model\Order;
+use app\model\OrderLog;
 use app\model\Payment;
 use app\model\PaymentConfig;
 use app\model\User;
 use Exception;
 use think\facade\Db;
+use think\facade\Session;
 
 class OrderController extends AuthController
 {
@@ -124,7 +126,17 @@ class OrderController extends AuthController
             'project_id' => 'require|number',
             'day_num' => 'require|number',
         ]);
-
-        $data = Order::where('project_id',$req['project_id'])->where('status',2)->update(['pay_time'=>time()+$req['day_num']*24*3600]);
+        $updateData=[
+            'end_time'=>Db::raw('end_time+'.$req['day_num']*24*3600),
+            'period'=>Db::raw('period+'.$req['day_num']),
+        ];
+        $admin_user = Session::get('admin_user');
+        OrderLog::create([
+            'project_id'=>$req['project_id'],
+            'day_num'=>$req['day_num'],
+            'admin_id'=>$admin_user['id'],
+            ]
+        );
+        Order::where('project_id',$req['project_id'])->where('status',2)->update($updateData);
     }
 }

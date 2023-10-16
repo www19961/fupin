@@ -78,7 +78,8 @@ class Capital extends Model
     {
         $capital = Capital::where('id', $capital_id)->find();
         // 充值增加余额
-        User::changeBalance($capital['user_id'], $capital['amount'], 1, $capital_id, 1, '', $admin_user_id);
+        //User::changeBalance($capital['user_id'], $capital['amount'], 1, $capital_id, 1, '', $admin_user_id);
+        User::changeInc($capital['user_id'],$capital['amount'],'balance',1,$capital_id,1,'',$admin_user_id);
         // 改变充值单状态
         Capital::where('id', $capital_id)->update(['status' => 2, 'audit_time' => time()]);
         // 添加充值奖励
@@ -138,7 +139,7 @@ class Capital extends Model
                 if ($status == 3) {
                     $change = 0 - $capital['amount'];
                     //User::changeBalance($capital['user_id'], $change, 13, $id, 1, $audit_remark ?? '', $admin_user_id);
-                    User::changeInc($capital['user_id'], $change,'invite_bonus', 13, $id, 1, $audit_remark ?? '', $admin_user_id);
+                    User::changeInc($capital['user_id'], $change,'team_bonus_balances', 13, $id, 1, $audit_remark ?? '', $admin_user_id);
                 }
                 else {
                     // 审核通过把资金日志的提现记录变为已完成
