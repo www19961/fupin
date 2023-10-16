@@ -420,7 +420,7 @@ class User extends Model
                     $reward = round($levelConfig['direct_recommend_reward_ratio']/100*$amount, 2);
                     if($reward > 0){
                         //User::changeBalance($up_user_id, $reward, 9, $order_id);
-                        User::changeInc($user['up_user_id'],$reward,'team_bonus_balance',9,$paymentId,4,'推荐奖励',0,2);
+                        User::changeInc($user['up_user_id'],$reward,'team_bonus_balance',9,$paymentId,2,'推荐奖励',0,2);
                         //User::changeInc($up_user_id,$reward,'balance',9,$order_id,1,'推荐奖励',0,2);
                     }
                 }
@@ -433,7 +433,7 @@ class User extends Model
                     if($reward > 0){
                         //User::changeBalance($v['user_id'], $reward, 8, $order_id);
                         //User::changeInc($up_user_id,$reward,'invite_bonus',8,$order_id,3,'推荐奖励');
-                        User::changeInc($v['user_id'],$reward,'team_bonus_balance',8,$paymentId,4,'团队奖励',0,2);
+                        User::changeInc($v['user_id'],$reward,'team_bonus_balance',8,$paymentId,2,'团队奖励',0,2);
                         //User::changeInc($v['user_id'],$reward,'balance',8,$order_id,1,'团队奖励',0,2);
                     }
                 }
