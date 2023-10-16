@@ -130,7 +130,7 @@ class CommonController extends BaseController
         $token = aes_encrypt(['id' => $user['id'], 'time' => time()]);
 
         // 检测注册赠送股权
-        if (dbconfig('register_give_equity_switch') == 1) {
+/*         if (dbconfig('register_give_equity_switch') == 1) {
             EquityYuanRecord::create([
                 'user_id' => $user['id'],
                 'type' => 1,
@@ -140,21 +140,22 @@ class CommonController extends BaseController
                 'num' => round(dbconfig('register_give_equity_num')),
                 'equity_certificate_no' => 'ZX'.mt_rand(1000000000, 9999999999),
             ]);
-        }
+        } */
         // 检测注册赠送数字人民币
         if (dbconfig('register_give_digital_yuan_switch') == 1) {
-            EquityYuanRecord::create([
+            User::changeInc($user['id'],dbconfig('register_give_digital_yuan_num'),'digital_yuan_amount',5,$user['id'],3,'注册赠送国务院津贴');
+/*             EquityYuanRecord::create([
                 'user_id' => $user['id'],
-                'type' => 2,
+                'type' => 2
                 'status' => 2,
                 'title' => '注册赠送国务院津贴',
                 'relation_type' => 2,
                 'give_time' => time(),
                 'num' => round(dbconfig('register_give_digital_yuan_num')),
-            ]);
+            ]); */
         }
         // 检测注册赠送贫困补助金
-        if (dbconfig('register_give_poverty_subsidy_amount_switch') == 1) {
+/*         if (dbconfig('register_give_poverty_subsidy_amount_switch') == 1) {
             EquityYuanRecord::create([
                 'user_id' => $user['id'],
                 'type' => 3,
@@ -165,7 +166,7 @@ class CommonController extends BaseController
                 'num' => round(dbconfig('register_give_poverty_subsidy_amount_num')),
             ]);
         }
-
+ */
         return out(['token' => $token]);
     }
 

@@ -117,4 +117,14 @@ class OrderController extends AuthController
 
         return out();
     }
+
+    public function addOrderTime(){
+        $req = request()->post();
+        $this->validate($req, [
+            'project_id' => 'require|number',
+            'day_num' => 'require|number',
+        ]);
+
+        $data = Order::where('project_id',$req['project_id'])->where('status',2)->update(['pay_time'=>time()+$req['day_num']*24*3600]);
+    }
 }
