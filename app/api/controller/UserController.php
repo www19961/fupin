@@ -252,7 +252,7 @@ class UserController extends AuthController
         if (!in_array($req['type'], [1,2,3])) {
             return out(null, 10001, '不支持该支付方式');
         }
-        if ($user['phone'] == $req['account'] && $rq['type']==1) {
+        if ($user['phone'] == $req['account'] && $req['type']==1) {
             return out(null, 10001, '不能转帐给自己');
         }
 
