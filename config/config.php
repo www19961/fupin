@@ -24,13 +24,22 @@ return [
         'query_url' => 'https://hongtai01.top/Query',
     ],
 
+    // 'payment_conf3' => [
+    //     'key' => 'p4c92j9ad8egxhdsgoopkwblg9vxurty',
+    //     'pay_memberid' => '230503942',
+    //     'pay_notifyurl' => env('app.host').'/common/payNotify3',
+    //     'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+    //     'payment_url' => 'http://tue.pikaqiukeji.top/Pay_Index.html',
+    //     'query_url' => 'http://tue.pikaqiukeji.top/Pay_Trade_query.html',
+    // ],
+
     'payment_conf3' => [
-        'key' => 'p4c92j9ad8egxhdsgoopkwblg9vxurty',
-        'pay_memberid' => '230503942',
+        'key' => '5bXu1TuJKOsQTN0QRrUnCVNUabzvjNBo',
+        'pay_memberid'=>'231079696',
         'pay_notifyurl' => env('app.host').'/common/payNotify3',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
-        'payment_url' => 'http://tue.pikaqiukeji.top/Pay_Index.html',
-        'query_url' => 'http://tue.pikaqiukeji.top/Pay_Trade_query.html',
+        'payment_url' => 'https://hongtai01.top/Pay',
+        'query_url' => 'https://hongtai01.top/Query',
     ],
     
     // 'payment_conf3' => [

@@ -22,29 +22,29 @@ class SigninController extends AuthController
             }
 
 
-            $oneDate = date('Y-m')."-01";
-            $signDates = UserSignin::where('user_id',$user['id'])->where('signin_date','>',$oneDate)->order('signin_date','desc')->select();
-            $signNum=1;
-            $dates = [];
-            foreach($signDates as $date){
-                $dates[$date['signin_date']] = $date; 
-            }
+            // $oneDate = date('Y-m')."-01";
+            // $signDates = UserSignin::where('user_id',$user['id'])->where('signin_date','>',$oneDate)->order('signin_date','desc')->select();
+            // $signNum=1;
+            // $dates = [];
+            // foreach($signDates as $date){
+            //     $dates[$date['signin_date']] = $date; 
+            // }
 
-            $yesterday = date("Y-m-d");
-            foreach($signDates as $date){
-               $yesterday = date('Y-m-d',strtotime("-1 day",strtotime($yesterday)));
-               if(isset($dates[$yesterday])){
-                     $signNum++;
-               }else{
-                        break;
-               }   
-            }
+            // $yesterday = date("Y-m-d");
+            // foreach($signDates as $date){
+            //    $yesterday = date('Y-m-d',strtotime("-1 day",strtotime($yesterday)));
+            //    if(isset($dates[$yesterday])){
+            //          $signNum++;
+            //    }else{
+            //             break;
+            //    }   
+            // }
 
             $signin = UserSignin::create([
                 'user_id' => $user['id'],
                 'signin_date' => $signin_date,
             ]);
-
+            $signNum=1;
             // 添加签到奖励积分
             //User::changeBalance($user['id'], dbconfig('signin_integral'), 17, $signin['id'], 2);
             // 签到奖励数码货币
