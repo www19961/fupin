@@ -30,6 +30,10 @@ class KlineChartController extends CommonController
         return $this->fetch();
     }
 
+    public function testUp(){
+        return $this->fetch();
+    }
+
     public function addKline(){
         $req = $this->validate(request(), [
             'date|日期' => 'date',

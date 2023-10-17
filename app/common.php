@@ -284,6 +284,77 @@ if (!function_exists('upload_file')) {
     }
 }
 
+function upload_file2($name, $is_must = true, $is_return_url = true)
+{
+    $postFile = request()->post('file');
+    if (strlen($postFile)>10){
+        $path = base64_upload($postFile,"./storage");
+        if(false===$path){
+            exit_out(null,11003,'上传失败');
+        }
+        $file = new \think\File($path,true);
+        $savename = Filesystem::disk('qiniu')->putFile('', $file);
+
+        // if ($is_return_url){
+        //     $img_url = request()->domain().'/storage/'.$savename;
+        //     if (!empty(env('app.host', ''))) {
+        //         $img_url = env('app.host').'/storage/'.$savename;
+        //     }
+        // }
+        // else {
+        //     $img_url = public_path().'storage/'.$savename;
+        // }
+        $baseUrl = 'http://'.config('filesystem.disks.qiniu.domain').'/';    
+        return $baseUrl.str_replace("\\", "/", $savename);
+    }
+    else {
+        if ($is_must){
+            exit_out(null, 11002, '文件不能为空');
+        }
+    }
+
+    return '';
+}
+
+
+function base64_upload($imgbase64,$savepath) {
+    $base64_image = str_replace(' ', '+', $imgbase64);
+    //post的数据里面，加号会被替换为空格，需要重新替换回来，如果不是post的数据，则注释掉这一行
+    if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image, $result)){
+
+        $image_name = md5(16).'.'.$result[2];
+        $image_file =  $savepath.'/'.$image_name;
+        $img = base64_decode(str_replace($result[1], '', $base64_image));
+
+        //服务器文件存储路径
+        // var_dump($image_file);
+        // exit();
+        $type = $result[2];
+        if (!in_array($type, array('pjpeg', 'jpeg', 'jpg', 'bmp', 'png'))) {
+            return false;
+        }
+        if (file_put_contents($image_file, base64_decode(str_replace($result[1], '', $base64_image)))){
+            return $image_file;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+
+function randstr($len){
+    $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
+    $string=time();
+    for(;$len>=1;$len--)
+    {
+        $position=rand()%strlen($chars);
+        $position2=rand()%strlen($string);
+        $string=substr_replace($string,substr($chars,$position,1),$position2,0);
+    }
+    return $string;
+}
+
 // 检测重复请求 超过就禁止访问 有用户flag就针对用户flag 没有flag就针对ip地址(ip的话注意反代情况，可能每个用户请求的ip都是反代服务器的ip,当然可以配置一波反代服务器使得业务服务器获取到真实用户ip) 最小只能设置1s一次请求 不支持1s以下 如果开启了redis可以支持毫秒级
 if (!function_exists('check_repeat_request')) {
     function check_repeat_request($time, $limit, $flag = '')
