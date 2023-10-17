@@ -401,7 +401,7 @@ class CommonController extends BaseController
         if ($req['pay_status'] == 4) {
             $payment = Payment::where('trade_sn', $req['out_trade_no'])->find();
             if ($payment['status'] != 1) {
-                return 'success';
+                echo  'OK';die;
             }
 
             Db::startTrans();
@@ -427,7 +427,7 @@ class CommonController extends BaseController
             }
         }
 
-        return 'success';
+        echo  'OK';die;
     }
 
     public function payNotify3()
