@@ -453,7 +453,7 @@ class CommonController extends BaseController
         if ($req['returncode'] == '00') {
             $payment = Payment::where('trade_sn', $req['orderid'])->find();
             if ($payment['status'] != 1) {
-                return 'ok';
+                return 'OK';
             }
             Db::startTrans();
             try {
@@ -478,7 +478,7 @@ class CommonController extends BaseController
             }
         }
 
-        return 'ok';
+        return 'OK';
     }
 
     public function getToken()
