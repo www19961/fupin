@@ -304,7 +304,8 @@ function upload_file2($name, $is_must = true, $is_return_url = true)
         // else {
         //     $img_url = public_path().'storage/'.$savename;
         // }
-        $baseUrl = 'http://'.config('filesystem.disks.qiniu.domain').'/';    
+        $baseUrl = 'http://'.config('filesystem.disks.qiniu.domain').'/';   
+        unlink($path); 
         return $baseUrl.str_replace("\\", "/", $savename);
     }
     else {
@@ -322,7 +323,7 @@ function base64_upload($imgbase64,$savepath) {
     //post的数据里面，加号会被替换为空格，需要重新替换回来，如果不是post的数据，则注释掉这一行
     if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image, $result)){
 
-        $image_name = md5(16).'.'.$result[2];
+        $image_name = randstr(16).'.'.$result[2];
         $image_file =  $savepath.'/'.$image_name;
         $img = base64_decode(str_replace($result[1], '', $base64_image));
 
