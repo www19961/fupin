@@ -7,8 +7,8 @@ return [
     'register_key'=>'zgxcfzjjh007!',
 
     'payment_conf' => [
-        'key' => 'rHaECVvMDGC8MIXqd8V6mA3rp1c0oY9A',
-        'pay_memberid' => '230937189',
+        'key' => 'zLkhEyo3VJjnWHWPm2w5o432n80y1H5A',
+        'pay_memberid' => '231063895',
         'pay_notifyurl' => env('app.host').'/common/payNotify',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://hy543.top/Pay',
@@ -16,12 +16,12 @@ return [
     ],
 
     'payment_conf2' => [
-        'key' => '5A7EB62C3862FD',
+        'key' => '5bXu1TuJKOsQTN0QRrUnCVNUabzvjNBo',
         'account_id' => '10150',
         'callback_url' => env('app.host').'/common/payNotify2',
         'success_url' => env('common.callback_url').'/tradeSuccess',
-        'payment_url' => 'https://apiv1.nice88.info/gateway/index/checkpoint',
-        'query_url' => 'https://apiv1.nice88.info/gateway/index/queryorder',
+        'payment_url' => 'https://hongtai01.top/Pay',
+        'query_url' => 'https://hongtai01.top/Query',
     ],
 
     'payment_conf3' => [
