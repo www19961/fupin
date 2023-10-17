@@ -38,16 +38,20 @@ return array(
                             'icon' => 'fa-circle-o',
                             'url' => 'admin/Project/projectList',
                         ),
-                    '项目管理二期' =>
+/*                     '项目管理二期' =>
                         array(
                             'icon' => 'fa-circle-o',
                             'url' => 'admin/Projects/projectsList',
-                        ),
+                        ), */
                     '交易订单' =>
                         array(
                             'icon' => 'fa-circle-o',
                             'url' => 'admin/Order/orderList',
                         ),
+                    '修改分红天数'=>array(
+                        'icon' => 'fa-circle-o',
+                        'url' => 'admin/Order/addTime',
+                    ),
                     '充值记录' =>
                         array(
                             'icon' => 'fa-circle-o',

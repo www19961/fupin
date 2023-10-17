@@ -120,23 +120,28 @@ class OrderController extends AuthController
         return out();
     }
 
-    public function addOrderTime(){
-        $req = request()->post();
-        $this->validate($req, [
-            'project_id' => 'require|number',
-            'day_num' => 'require|number',
-        ]);
-        $updateData=[
-            'end_time'=>Db::raw('end_time+'.$req['day_num']*24*3600),
-            'period'=>Db::raw('period+'.$req['day_num']),
-        ];
-        $admin_user = Session::get('admin_user');
-        OrderLog::create([
-            'project_id'=>$req['project_id'],
-            'day_num'=>$req['day_num'],
-            'admin_id'=>$admin_user['id'],
-            ]
-        );
-        Order::where('project_id',$req['project_id'])->where('status',2)->update($updateData);
+    public function addTime(){
+        
+
+            if(request()->isPost()){
+                $req = request()->post();
+                $this->validate($req, [
+                    'project_id' => 'require|number',
+                    'day_num' => 'require|number',
+                ]);
+                $updateData=[
+                    'end_time'=>Db::raw('end_time+'.$req['day_num']*24*3600),
+                    'period'=>Db::raw('period+'.$req['day_num']),
+                    'period_change_day'=>$req['day_num'],
+                ];
+
+                $num = Order::where('project_id',$req['project_id'])->where('status',2)->update($updateData);
+
+                return out(['msg'=>$num."个订单已增加".$req['day_num']."天"]);
+            }else{
+                $projectList = \app\model\Project::field('id,name')->where('status',1)->select();
+                $this->assign('projectList', $projectList);
+                return $this->fetch();
+            }
     }
 }
