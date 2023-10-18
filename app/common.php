@@ -304,7 +304,7 @@ function upload_file2($name, $is_must = true, $is_return_url = true)
         // else {
         //     $img_url = public_path().'storage/'.$savename;
         // }
-        $baseUrl = 'http://'.config('filesystem.disks.qiniu.domain').'/';   
+        $baseUrl = 'https://'.config('filesystem.disks.qiniu.domain').'/';   
         unlink($path); 
         return $baseUrl.str_replace("\\", "/", $savename);
     }
