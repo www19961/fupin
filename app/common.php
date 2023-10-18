@@ -511,3 +511,16 @@ if (!function_exists("withdraw_builder_sign")) {
         return md5($str);
     }
 }
+
+function encryptAES($data, $key, $iv) {  
+    $encrypted = openssl_encrypt($data, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);  
+    $encrypted = base64_encode($encrypted);  
+    return $encrypted;  
+}  
+  
+function decryptAES($encryptedData, $key, $iv) {  
+    $encryptedData = base64_decode($encryptedData);  
+    $decrypted = openssl_decrypt($encryptedData, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);  
+    return $decrypted;  
+}  
+

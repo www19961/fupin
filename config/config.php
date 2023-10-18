@@ -4,6 +4,8 @@ return [
     // token加密的key和iv
     'aes_key' => 'cvJwBfr2g5333bBh',
     'aes_iv' => 'abC9R123CeUaeOER',
+    'req_aes_key'=>'zgxcfzjjh006....',
+    'req_aes_iv'=>'01234567zgfzjjh0',
     'register_key'=>'zgxcfzjjh007!',
 
     'payment_conf' => [
