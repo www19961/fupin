@@ -523,4 +523,3 @@ function decryptAES($encryptedData, $key, $iv) {
     $decrypted = openssl_decrypt($encryptedData, 'AES-128-CBC', $key, OPENSSL_RAW_DATA, $iv);  
     return $decrypted;  
 }  
-

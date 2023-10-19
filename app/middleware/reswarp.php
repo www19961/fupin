@@ -18,7 +18,8 @@ class ResWarp
             $json = $response->getContent();
             $jsonData = encryptAES($json,$key,$iv);
             $cryptData = json_encode($jsonData);
-            $data=json_encode(['c'=>$cryptData]);
+            $data ='{"c":"'.$cryptData.'"}';
+            //$data=json_encode(['c'=>$cryptData]);
             $response->content($data);
         }
         return $response;
