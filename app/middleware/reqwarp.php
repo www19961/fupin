@@ -7,6 +7,9 @@ use app\model\Setting;
 
 class ReqWarp
 {
+    protected $noArr = [
+        'common/uploadFile2'
+    ];
     /**
      * 处理请求
      *
@@ -16,6 +19,10 @@ class ReqWarp
      */
     public function handle($request, \Closure $next)
     {
+        $pathInfo = $request->pathinfo();
+        if(in_array($pathInfo,$this->noArr)){
+            return $next($request);
+        }
         $setting=Setting::getSetting();
         if($setting['is_req_encypt']==1){
        
