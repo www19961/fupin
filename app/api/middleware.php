@@ -1,6 +1,6 @@
 <?
-use app\middleware\ReqWarp;
-use app\middleware\ResWarp;
+use \app\middleware\ReqWarp;
+use \app\middleware\ResWarp;
 
 return [
 
