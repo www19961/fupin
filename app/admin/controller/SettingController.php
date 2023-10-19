@@ -48,7 +48,11 @@ class SettingController extends AuthController
         ]);
         $setting_conf=[];
         Setting::where('id', $req['id'])->update($req);
-        $confArr=['apk_download_url','version_apk','video_url','video_img_url','kefu_url'];
+        $key = Setting::where('id',$req['id'])->value('key');
+/*         if($key=='is_req_encypt'){
+            config('config.is_req_encypt',$req['value']);
+        } */
+        $confArr=config('map.system_info.setting_key');
         $setting = Setting::whereIn("key",$confArr)->select();
         foreach($setting as $item){
             $setting_conf[$item['key']] = $item['value'];

@@ -3,7 +3,9 @@ declare (strict_types = 1);
 
 namespace app\middleware;
 
-class Reqwarp
+use app\model\Setting;
+
+class ReqWarp
 {
     /**
      * 处理请求
@@ -14,7 +16,30 @@ class Reqwarp
      */
     public function handle($request, \Closure $next)
     {
-        $d = $request->param('d');
+        $setting=Setting::getSetting();
+        if($setting['is_req_encypt']==1){
        
+            $key=config('config.req_aes_key');
+            $iv=config('config.req_aes_iv');
+            $postData =[];
+            $getData=[];
+            if($request->has('d','post')){
+                $d = $request->post('d');
+                $jsonData = decryptAES($d,$key,$iv);
+                $postData = json_decode($jsonData,true);
+            }
+            if($request->has('d','get')){
+                $d=$request->get('d');
+                $jsonData = decryptAES($d,$key,$iv);
+                $postData = json_decode($jsonData,true);
+            }
+            $request = $request->withPost($postData)
+                                ->withGet($getData);
+        }
+        return $next($request);
+        
     }
+
+
+
 }

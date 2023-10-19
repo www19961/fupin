@@ -58,6 +58,7 @@ return array(
                     0 => '禁用',
                     1 => '启用',
                 ),
+            'setting_key'=>['apk_download_url','version_apk','video_url','video_img_url','kefu_url','register_domain','is_req_encypt'],
         ),
     'project' =>
         array(
