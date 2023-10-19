@@ -16,8 +16,8 @@ class ResWarp
             $iv=config('config.req_aes_iv');
 
             $json = $response->getContent();
-            $jsonData = encryptAES($json,$key,$iv);
-            $cryptData = json_encode($jsonData);
+            //$jsonData = encryptAES($json,$key,$iv);
+            $cryptData = encryptAES($json,$key,$iv);
             $data ='{"c":"'.$cryptData.'"}';
             //$data=json_encode(['c'=>$cryptData]);
             $response->content($data);
