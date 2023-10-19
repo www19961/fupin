@@ -417,20 +417,32 @@ if (!function_exists('check_repeat_request')) {
 
 // 生成邀请码
 if (!function_exists('build_invite_code')) {
-    function build_invite_code($len = 7)
+    function build_invite_code($len = 6)
     {
-        $str = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+/*         $str = "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
         $str = str_shuffle($str);
         $max = strlen($str) - (int)$len - 3;
         $start = mt_rand(0, $max);
-        $str = substr(str_shuffle($str), $start, $len);
-
+        $str = substr(str_shuffle($str), $start, $len); */
+        $str = getRandStr($len);
         if (User::where('invite_code', $str)->count()){
             $str = build_invite_code();
         }
 
         return $str;
     }
+}
+
+function getRandStr($length){
+    //字符组合
+    $str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $len = strlen($str)-1;
+    $randstr = '';
+    for ($i=0;$i<$length;$i++) {
+        $num=mt_rand(0,$len);
+        $randstr .= $str[$num];
+    }
+    return $randstr;
 }
 
 // 生成订单号
