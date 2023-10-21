@@ -435,7 +435,7 @@ if (!function_exists('build_invite_code')) {
 
 function getRandStr($length){
     //字符组合
-    $str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    $str = '0123456789abcdefghijklmnopqrstuvwxyz0123456789';
     $len = strlen($str)-1;
     $randstr = '';
     for ($i=0;$i<$length;$i++) {
