@@ -18,6 +18,14 @@ class UserDeliveryController extends AuthController
             $builder->where('user_id', $req['user_id']);
         }
 
+        if (!empty($req['export'])) {
+            $list = $builder->select();
+            if ($req['export'] == '地址导出') {
+
+                create_excel($list, ['user_id' => '用户id', 'name' => '实名', 'phone' => '手机号', 'address' => '地址'],'地址列表-'.date('YmdHis'));
+            }
+        }
+
         $data = $builder->paginate(['query' => $req]);
 
         $this->assign('req', $req);

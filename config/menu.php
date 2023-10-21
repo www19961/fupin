@@ -26,6 +26,11 @@ return array(
                             'icon' => 'fa-circle-o',
                             'url' => 'admin/UserBalanceLog/userIntegralLogList',
                         ),
+                    '收货地址' =>
+                    array(
+                        'icon' => 'fa-circle-o',
+                        'url' => 'admin/UserDelivery/userDeliveryList',
+                    ),
                 ),
         ),
     '交易中心' =>
