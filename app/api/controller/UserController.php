@@ -13,6 +13,7 @@ use app\model\UserRelation;
 use app\model\KlineChartNew;
 use app\model\Capital;
 use app\model\Certificate;
+use app\model\UserDelivery;
 use think\facade\Db;
 use Exception;
 use Endroid\QrCode\QrCode;
@@ -30,7 +31,12 @@ class UserController extends AuthController
         $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,team_bonus_balance,income_balance,digital_yuan_amount,created_at')->find()->toArray();
     
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
+        $user['address'] = '';
         unset($user['password'], $user['pay_password']);
+        $delivery=UserDelivery::where('user_id', $user['id'])->find();
+        if($delivery){
+            $user['address']=$delivery['address'];
+        }
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
 
@@ -49,27 +55,27 @@ class UserController extends AuthController
         // }elseif($user['level'] < $zhishu_level){
         //     User::where('id', $user['id'])->update(['level' => $zhishu_level]);
         // }
-        // $upUserId = $user['up_user_id'];
-        // $user['up_users'] = [];
-        // for($i=0;$i<3;$i++){
-        //    if($upUserId==0){
-        //         break;
-        //    }
-        //    $upUser = User::where('id',$upUserId)->field('id,phone,up_user_id')->find();
-        //    if($upUser){
-        //         $upUserId = $upUser['up_user_id'];
-        //         unset($upUsers['up_user_id']);
-        //         $user['up_users'][] = $upUser;
-        //    }else{
-        //         break;
-        //    }
+        $upUserId = $user['up_user_id'];
+        $user['up_users'] = [];
+        for($i=0;$i<3;$i++){
+           if($upUserId==0){
+                break;
+           }
+           $upUser = User::where('id',$upUserId)->field('id,phone,up_user_id')->find();
+           if($upUser){
+                $upUserId = $upUser['up_user_id'];
+                unset($upUsers['up_user_id']);
+                $user['up_users'][] = $upUser;
+           }else{
+                break;
+           }
            
-        // }  
-        $user['up_users'] = [
+        }  
+/*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
             ['id'=>'12346','name'=>'13312341235'],
             ['id'=>'12347','name'=>'13312341236'],
-        ];
+        ]; */
         return out($user);
     }
 
