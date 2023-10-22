@@ -50,6 +50,7 @@ class CheckBonus extends Command
             User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
             //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
             Order::where('id',$order->id)->update(['status'=>4]);
+            Db::Commit();
         }catch(Exception $e){
             Db::rollback();
             

@@ -11,7 +11,7 @@ class UserBalanceLogController extends AuthController
     {
         $req = request()->param();
 
-        $req['log_type'] = 1;
+        //$req['log_type'] = 1;
         $data = $this->logList($req);
 
         $this->assign('req', $req);
