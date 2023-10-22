@@ -446,12 +446,12 @@ class UserController extends AuthController
         $data['level2_total'] = UserRelation::where('user_id', $user['id'])->where('level', 2)->count();
         $data['level3_total'] = UserRelation::where('user_id', $user['id'])->where('level', 3)->count();
         $data['realname'] = $user['realname'];
-        $data['parent_name'] = User::where('id',$user['up_user_id'])->value('realname');
+        $data['parent_name'] = User::where('id',$user['up_user_id'])->value('phone');
         $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('log_type',4)->whereIn('type', '8,9')->sum('change_balance');
 
-        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.invite_bonus','desc')->limit(10)->select();
-        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.invite_bonus','desc')->limit(10)->select();
-        $data['team_leve3_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',3)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.phone,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.phone,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve3_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.phone,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',3)->order('u.invite_bonus','desc')->limit(10)->select();
         $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
                                                 ->field('l.created_at,l.type,l.remark,change_balance,single_amount,buy_num,project_name,o.user_id')
                                                 ->whereIn('l.type','8,9')
@@ -468,7 +468,7 @@ class UserController extends AuthController
         foreach($invite_bonus as $key=>$item){
         
             $orderPrice = bcmul($item['single_amount'],$item['buy_num'],2);
-            $realname = User::where('id',$item['user_id'])->value('realname');
+            $realname = User::where('id',$item['user_id'])->value('phone');
             $invite_bonus[$key]['realname'] = $realname;
             $level = UserRelation::where('user_id',$user['id'])->where('sub_user_id',$item['user_id'])->value('level');
             $levelText = [
