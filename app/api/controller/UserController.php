@@ -446,6 +446,7 @@ class UserController extends AuthController
         $data['level2_total'] = UserRelation::where('user_id', $user['id'])->where('level', 2)->count();
         $data['level3_total'] = UserRelation::where('user_id', $user['id'])->where('level', 3)->count();
         $data['realname'] = $user['realname'];
+        $data['phone'] = $user['phone'];
         $data['parent_name'] = User::where('id',$user['up_user_id'])->value('phone');
         $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('log_type',4)->whereIn('type', '8,9')->sum('change_balance');
 
