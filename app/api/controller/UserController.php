@@ -447,7 +447,14 @@ class UserController extends AuthController
         $data['level3_total'] = UserRelation::where('user_id', $user['id'])->where('level', 3)->count();
         $data['realname'] = $user['realname'];
         $data['phone'] = $user['phone'];
-        $data['parent_name'] = User::where('id',$user['up_user_id'])->value('phone');
+        $data['parent_name'] = '';
+        $data['parent_is_agent'] = 0;
+        $upUser = User::where('id',$user['up_user_id'])->field('phone,is_agent')->find();
+        if($upUser){
+            $data['parent_name'] = $upUser['phone'];
+            $data['parent_is_agent'] = $upUser['is_agent'];
+        }
+        
         $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('log_type',4)->whereIn('type', '8,9')->sum('change_balance');
 
         $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.phone,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.invite_bonus','desc')->limit(10)->select();

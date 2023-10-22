@@ -39,19 +39,22 @@
                         <tr>
                             <th>ID</th>
                             <th>上级会员</th>
-                            <th>会员手机号</th>
+                            <th>手机号</th>
                             <th>余额</th>
-                            <th>积分</th>
+                            <th>津贴</th>
+                            <th>团队奖励</th>
+                            <th>收益</th>
                             <th>邀请码</th>
-                            <th>实名姓名</th>
-                            <th>身份证号</th>
-                            <th>等级</th>
-                            <th>是否激活</th>
+                            <th>实名</th>
+                            <!-- <th>身份证</th>
+                            <th>等级</th> -->
+                            <th>激活</th>
                             <th>激活时间</th>
-                            <th>直属下级实名人数</th>
-                            <th>总投资金额</th>
-                            <th>注册时间</th>
-                            <th>启用状态</th>
+                            <th>直属下级实名</th>
+                            <th>总投资</th>
+                            <th>时间</th>
+                            <th>状态</th>
+                            <th>首码</th>
                             <th>操作</th>
                         </tr>
                         <?php foreach ($data as $k => $v) { ?>
@@ -60,12 +63,14 @@
                                 <td>{$v['upUser']['phone']??''}</td>
                                 <td>{$v['phone']}</td>
                                 <td>{$v['balance']}</td>
-                                <td>{$v['integral']}</td>
+                                <td>{$v['digital_yuan_amount']}</td>
+                                <td>{$v['team_bonus_balance']}</td>
+                                <td>{$v['income_balance']}</td>
                                 <td>{$v['invite_code']}</td>
                                 <td>{$v['realname']}</td>
-                                <td>{$v['ic_number']}</td>
+<!--                                 <td>{$v['ic_number']}</td>
                                 <td>{$v['level_text']}</td>
-                                <td>{$v['is_active_text']}</td>
+ -->                                <td>{$v['is_active_text']}</td>
                                 <td>{$v['active_date']}</td>
                                 <td><a href="{:url('admin/User/userList', ['up_user' => $v['id'], 'is_realname' => 1])}">{$v['real_sub_user_num']}</a></td>
                                 <td>{$v['invest_amount']}</td>
@@ -77,6 +82,19 @@
                                                    class="onoffswitch-checkbox" id="status{$v['id']}">
                                             <label class="onoffswitch-label" for="status{$v['id']}"
                                                    onclick="changeUser({$v['id']}, 'status')">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" <?php echo $v['is_agent'] == 1 ? 'checked' : ''; ?>
+                                                   class="onoffswitch-checkbox" id="is_agent{$v['id']}">
+                                            <label class="onoffswitch-label" for="is_agent{$v['id']}"
+                                                   onclick="changeUser({$v['id']}, 'is_agent')">
                                                 <span class="onoffswitch-inner"></span>
                                                 <span class="onoffswitch-switch"></span>
                                             </label>
@@ -134,3 +152,8 @@
         });
     }
 </script>
+<style>
+    th{
+        font-size: 14px;
+    }
+</style>
