@@ -64,7 +64,7 @@ class UserController extends AuthController
            $upUser = User::where('id',$upUserId)->field('id,phone,up_user_id')->find();
            if($upUser){
                 $upUserId = $upUser['up_user_id'];
-                unset($upUsers['up_user_id']);
+                unset($upUser['up_user_id']);
                 $user['up_users'][] = $upUser;
            }else{
                 break;
