@@ -116,7 +116,10 @@ class CapitalController extends AuthController
             return out(null, 10001, '暂未开启支付宝提现');
         }
         if ($req['pay_channel'] == 7 && dbconfig('digital_withdrawal_switch') == 0) {
-            return out(null, 10001, '暂未开启数字人民币提现');
+            return out(null, 10001, '连续签到30填才可提现国务院津贴');
+        }
+        if ($req['pay_channel'] == 5 ) {
+            return out(null, 10001, '完成3个阶段才可提现');
         }
         // 判断单笔限额
         if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
