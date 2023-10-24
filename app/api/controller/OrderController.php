@@ -36,9 +36,9 @@ class OrderController extends AuthController
         }
 
         $project = Project::where('id', $req['project_id'])->find();
-        if($req['pay_method']>1){
+/*         if($req['pay_method']>1){
             $req['pay_method']+=1;
-        }
+        } */
         if (!in_array($req['pay_method'], $project['support_pay_methods'])) {
             return out(null, 10001, '不支持该支付方式');
         }
