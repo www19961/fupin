@@ -30,8 +30,8 @@ class CapitalController extends AuthController
         if($req['pay_channel']==6){
             $type = 4;
         }else{
-            //$type = $req['pay_channel'] - 1;
-            $type = $req['pay_channel'];
+            $type = $req['pay_channel'] - 1;
+            //$type = $req['pay_channel'];
         }
         $paymentConf = PaymentConfig::userCanPayChannel($req['payment_config_id'], $type, $req['amount']);
 

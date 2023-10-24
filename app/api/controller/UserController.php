@@ -581,9 +581,15 @@ class UserController extends AuthController
                 $data = array_merge($data, $confs);
             }
         }
-        $img =[1=>'wechat.jpg',2=>'alipay.jpg',3=>'unionpay.jpg',4=>'unionpay.jpg'];
+        $img =[1=>'wechat.jpg',2=>'alipay.jpg',3=>'unionpay.jpg',4=>'unionpay.jpg',5=>'unionpay.jpg'];
         foreach($data as &$item){
             $item['img'] = env('app.host').'/storage/pay_img/'.$img[$item['type']];
+            if($item['type']==4){
+                $item['type'] = 6;
+            }else if($item['type']<5){
+                $item['type'] = $item['type']+1;
+            }
+           
         }
 
         return out($data);
