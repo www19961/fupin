@@ -22,6 +22,7 @@ class OrderController extends AuthController
             'pay_method' => 'require|number',
             'payment_config_id' => 'requireIf:pay_method,2|requireIf:pay_method,3|requireIf:pay_method,4|requireIf:pay_method,6|number',
             'pay_password|支付密码' => 'requireIf:pay_method,1|requireIf:pay_method,5',
+            'pay_voucher_img_url|支付凭证' => 'requireIf:pay_method,6|url',
         ]);
         $user = $this->user;
 
@@ -138,6 +139,7 @@ class OrderController extends AuthController
                     'type' => $paymentConf['type'],
                     'card_info' => $card_info,
                     'product_type'=>1,
+                    'pay_voucher_img_url'=>$req['pay_voucher_img_url'],
                 ]);
                 // 发起支付
                 if ($paymentConf['channel'] == 1) {
