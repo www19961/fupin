@@ -101,6 +101,10 @@ class CapitalController extends AuthController
         if (empty($user['pay_password'])) {
             return out(null, 801, '请先设置支付密码');
         }
+
+        if ($req['pay_channel'] == 7 ) {
+            return out(null, 10001, '连续签到30填才可提现国务院津贴');
+        }
         $pay_type = $req['pay_channel'] - 1;
         $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', $pay_type)->where('id',$req['bank_id'])->find();
         if (empty($payAccount)) {
