@@ -11,7 +11,7 @@ return [
     'payment_conf' => [
         'key' => 'zLkhEyo3VJjnWHWPm2w5o432n80y1H5A',
         'pay_memberid' => '231063895',
-        'pay_notifyurl' => env('app.host').'/common/payNotify',
+        'pay_notifyurl' => env('app.host').'/common/paynotify',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://hy543.top/Pay',
         'query_url' => 'https://hy543.top/Query',
@@ -20,7 +20,7 @@ return [
     'payment_conf2' => [
         'key' => '5bXu1TuJKOsQTN0QRrUnCVNUabzvjNBo',
         'account_id' => '10150',
-        'callback_url' => env('app.host').'/common/payNotify2',
+        'callback_url' => env('app.host').'/common/paynotify2',
         'success_url' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://hongtai01.top/Pay',
         'query_url' => 'https://hongtai01.top/Query',
@@ -38,7 +38,7 @@ return [
     'payment_conf3' => [
         'key' => '5bXu1TuJKOsQTN0QRrUnCVNUabzvjNBo',
         'pay_memberid'=>'231079696',
-        'pay_notifyurl' => env('app.host').'/common/payNotify3',
+        'pay_notifyurl' => env('app.host').'/common/paynotify3',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://hongtai01.top/Pay',
         'query_url' => 'https://hongtai01.top/Query',

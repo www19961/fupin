@@ -10,8 +10,10 @@ class ReqWarp
     protected $noArr = [
         'common/uploadFile2',
         'common/paynotify',
+        'common/payNotify',
         'common/paynotify2',
         'common/paynotify3',
+        'common/payNotify3',
     ];
     /**
      * 处理请求

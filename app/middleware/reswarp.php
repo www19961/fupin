@@ -6,10 +6,12 @@ use app\model\Setting;
 class ResWarp
 {
     protected $noArr = [
-        'common/uploadFile2',
+        //'common/uploadFile2',
         'common/paynotify',
+        'common/payNotify',
         'common/paynotify2',
         'common/paynotify3',
+        'common/payNotify3',
     ];
 
     public function handle($request, \Closure $next)

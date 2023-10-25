@@ -10,6 +10,10 @@ class HomeController extends AuthController
 {
     public function index()
     {
+        if(!session('is_admin')){
+            $this->assign('data', []);
+            return $this->fetch();
+        }
         $data = $arr = [];
 
         $arr['title'] = '注册会员数';

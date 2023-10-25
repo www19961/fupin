@@ -35,11 +35,11 @@ class AuthController extends BaseController
             $action = request()->action();
             $path = $controller . '/' . $action;
             $path = strtolower($path);
-            if (session('is_agent') && !in_array($path, ['capital/withdrawlist', 'adminuser/updatepassword', 'adminuser/logout', 'adminuser/showupdatepassword', 'capital/auditwithdraw'])) {
+/*             if (!session('is_admin') && !in_array($path, ['capital/withdrawlist', 'adminuser/updatepassword', 'adminuser/logout', 'adminuser/showupdatepassword', 'capital/auditwithdraw'])) {
                 $this->redirect(url('admin/Capital/withdrawList'));
-            }
+            } */
 
-            if (config('app.is_open_auth')){
+            if (!session('is_admin') && config('app.is_open_auth')){
                 $action = request()->action();
                 if (strpos($action, 'show') === false){
                     if (!AdminUser::checkAuth($adminUser['id'])) {

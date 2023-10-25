@@ -92,7 +92,7 @@ if (!function_exists('exit_out')) {
 if (!function_exists('auth_show_judge')) {
     function auth_show_judge($path, $is_return_bool = false)
     {
-        if (config('app.is_open_auth')){
+        if (!session('is_admin') && config('app.is_open_auth')){
             if (!AdminUser::checkAuth(session('admin_user')['id'], $path)) {
                 return $is_return_bool ? false : 'style="display: none;"';
             }
@@ -112,7 +112,7 @@ if (!function_exists('auth_show_navigation')) {
             if (is_array($v['url'])){
                 foreach ($v['url'] as $k1 => $v1){
                     $path = str_replace('admin/', '', $v1['url']);
-                    if (!auth_show_judge($path, true)){
+                    if (!session('is_admin')  && !auth_show_judge($path, true)){
                         unset($menu[$k]['url'][$k1]);
                     }
                 }
@@ -122,7 +122,7 @@ if (!function_exists('auth_show_navigation')) {
             }
             else {
                 $path = str_replace('admin/', '', $v['url']);
-                if (!auth_show_judge($path, true)){
+                if (!session('is_admin') && !auth_show_judge($path, true)){
                     unset($menu[$k]);
                 }
             }

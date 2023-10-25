@@ -35,7 +35,9 @@ class AdminUser extends Model
             $rules = array_merge($rules, $tmp);
         }
         $rules = array_values(array_unique($rules));
-
+        foreach($rules as &$rule){
+            $rule = strtolower($rule);
+        }
         if (in_array($path, $rules)) {
             return true;
         }

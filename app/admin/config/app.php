@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'is_open_auth' => false,
+    'is_open_auth' => true,
 
-    'path_common_map' => ['Home/index', 'AdminUser/updatepassword'],
+    'path_common_map' => ['Home/index','AdminUser/updatepassword'],
 ];

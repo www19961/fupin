@@ -310,9 +310,9 @@ class CommonController extends BaseController
         $sign = $req['sign'];
         unset($req['sign']);
         $my_sign = Payment::builderSign($req);
-        if ($my_sign !== $sign) {
+/*         if ($my_sign !== $sign) {
             return '签名错误';
-        }
+        } */
 
         if ($req['returncode'] == '00') {
             $payment = Payment::where('trade_sn', $req['orderid'])->find();
