@@ -108,6 +108,8 @@
                                     <a {:auth_show_judge('User/userTeamList')} class="btn btn-flat btn-xs" href="{:url('admin/User/userTeamList', ['user_id' => $v['id']])}">查看团队人数</a>
                                     <a {:auth_show_judge('UserDelivery/userDeliveryList')} class="btn btn-flat btn-xs" href="{:url('admin/UserDelivery/userDeliveryList', ['user_id' => $v['id']])}">查看收货地址</a>
                                     <a {:auth_show_judge('PayAccount/payAccountList')} class="btn btn-flat btn-xs" href="{:url('admin/PayAccount/payAccountList', ['user_id' => $v['id']])}">查看收款配置</a>
+                                    <a {:auth_show_judge('User/editPhone')} class="btn btn-flat btn-xs" href="{:url('admin/User/editPhone', ['user_id' => $v['id']])}">修改手机号</a>
+
                                 </td>
                             </tr>
                         <?php } ?>

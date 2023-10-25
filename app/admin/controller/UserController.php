@@ -126,6 +126,30 @@ class UserController extends AuthController
         return out();
     }
 
+    public function editPhone(){
+        if(request()->isPost()){
+            $req = $this->validate(request(), [
+                'user_id'=>'require',
+                'phone|手机号' => 'require|mobile',
+            ]);
+            $new = User::where('phone',$req['phone'])->find();
+            if($new){
+                return out(null,10001,'已有的手机号');
+            }
+            $user = User::where('id',$req['user_id'])->find();
+            $ret = User::where('id',$req['user_id'])->update(['phone'=>$req['phone'],'prev_phone'=>$user['phone']]);
+            return out();
+        }else{
+            $req = $this->validate(request(), [
+                'user_id'=>'require',
+            ]);
+            $user = User::where('id',$req['user_id'])->find();
+            $this->assign('data', $user);
+
+            return $this->fetch();
+        }
+    }
+
     public function showChangeBalance()
     {
         $req = request()->get();
