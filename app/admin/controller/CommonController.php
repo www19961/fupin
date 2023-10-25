@@ -34,12 +34,13 @@ class CommonController extends BaseController
                 $this->error('账号已被禁用');
             }
 
-            //if (AuthGroupAccess::where('admin_user_id', $adminUser['id'])->where('auth_group_id', 2)->count()) {
-                // Session::set('is_agent', 1);
-                // Session::set('google_auth_secret', $adminUser);
-               
-            //     return out(['is_agent' => 1]);
-            // }else{
+            if (AuthGroupAccess::where('admin_user_id', $adminUser['id'])->where('auth_group_id', 1)->count()) {
+                Session::set('is_admin', 1);               
+            }else{
+                Session::set('is_admin', 0);
+            }
+            
+            //else{
 
             //     Session::set('is_agent', 0);
             //     Session::set('admin_user', $adminUser);

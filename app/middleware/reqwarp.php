@@ -8,7 +8,10 @@ use app\model\Setting;
 class ReqWarp
 {
     protected $noArr = [
-        'common/uploadFile2'
+        'common/uploadFile2',
+        'common/paynotify',
+        'common/paynotify2',
+        'common/paynotify3',
     ];
     /**
      * 处理请求
