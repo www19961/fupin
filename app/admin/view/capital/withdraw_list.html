@@ -78,7 +78,7 @@
                                 <td>{:round(0 - $v['amount'], 2)}</td>
                                 <td>{$v['withdraw_amount']}</td>
                                 <td>{$v['realname']}</td>
-                                <td><?php if ($v['pay_channel'] == 4) { ?> 银行：{$v['bank_name']}<br>支行：{$v['bank_branch']}<br>卡号：{$v['account']} <?php } else { ?>{$v['account']} <?php } ?></td>
+                                <td><?php if ($v['bank_name'] !='') { ?> 银行：{$v['bank_name']}<br>支行：{$v['bank_branch']}<br>卡号：{$v['account']} <?php } else { ?>{$v['account']} <?php } ?></td>
                                 <td>{$v['adminUser']['nickname'] ?? ''}</td>
                                 <td>{$v['audit_remark']}</td>
                                 <td>{$v['audit_date']}</td>
