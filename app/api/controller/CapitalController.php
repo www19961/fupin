@@ -132,11 +132,11 @@ class CapitalController extends AuthController
         if (dbconfig('single_withdraw_min_amount') > $req['amount']) {
             return out(null, 10001, '单笔最低提现'.dbconfig('single_withdraw_min_amount').'元');
         }
-        // 每天提现时间为9：00-18：00
+        // 每天提现时间为8：00-20：00
         $timeNum = (int)date('Hi');
-/*         if ($timeNum < 900 || $timeNum > 1800) {
-            return out(null, 10001, '每天提现时间为9：00-18：00');
-        } */
+        if ($timeNum < 800 || $timeNum > 2000) {
+            return out(null, 10001, '提现时间为早上8:00到晚上20:00');
+        }
         Db::startTrans();
         try {
             // 判断余额
