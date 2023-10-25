@@ -241,7 +241,7 @@ class UserController extends AuthController
             'type' => 'require|in:1,2,3',//1推荐给奖励,2 转账余额（充值金额）3 可提现余额
             'realname|对方姓名' => 'require|max:20',
             'account|对方账号' => 'require|mobile',
-            'money|转账金额' => 'require|number',
+            'money|转账金额' => 'require|number|between:100,100000',
             'pay_password|支付密码' => 'require',
         ]);//type 1 可用余额，2 转账余额，realname 对方姓名，account 对方账号，money 转账金额，pay_password 支付密码
         $user = $this->user;
