@@ -25,9 +25,13 @@ class CapitalController extends AuthController
             $pconfig[$v['id']] = $v;
         }
         foreach($data as $k=>&$v){
-            $payConfig = $pconfig[$v['payment']->payment_config_id];
-            $chanel_name = config('map.payment_config.channel_map')[$payConfig['channel']];
-            $v['chanel_text'] = $chanel_name.'-'.$payConfig['mark'];
+            $v['chanel_text'] = '';
+            if(isset($v['payment'])){
+
+                $payConfig = $pconfig[$v['payment']->payment_config_id];
+                $chanel_name = config('map.payment_config.channel_map')[$payConfig['channel']];
+                $v['chanel_text'] = $chanel_name.'-'.$payConfig['mark'];
+            }
         }
         $this->assign('req', $req);
         $this->assign('data', $data);
