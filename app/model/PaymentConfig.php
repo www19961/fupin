@@ -61,7 +61,7 @@ class PaymentConfig extends Model
         if(empty($paymentConf['fixed_topup_limit']))
         {
             if ($paymentConf['single_topup_min_amount'] > $amount || $paymentConf['single_topup_max_amount'] < $amount) {
-                exit_out(null, 10001, '金额异常，不符合限额规则');
+                exit_out(null, 10001, '金额异常，金额为'.$paymentConf['single_topup_min_amount']).'-'.$paymentConf['single_topup_max_amount'];
             }
         }
 

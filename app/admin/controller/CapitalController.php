@@ -19,7 +19,16 @@ class CapitalController extends AuthController
         $req = request()->param();
         $req['type'] = 1;
         $data = $this->capitalList($req);
-
+        $paymentConfig = PaymentConfig::where('status', 1)->select();
+        $pconfig = [];
+        foreach ($paymentConfig as $v) {
+            $pconfig[$v['id']] = $v;
+        }
+        foreach($data as $k=>&$v){
+            $payConfig = $pconfig[$v['payment']['payment_config_id']];
+            $chanel_name = config('map.payment_config.channel_map')[$payConfig['channel']];
+            $v['chanel_text'] = $chanel_name.'-'.$payConfig['mark'];
+        }
         $this->assign('req', $req);
         $this->assign('data', $data);
 
