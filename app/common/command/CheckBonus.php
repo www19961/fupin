@@ -104,7 +104,7 @@ class CheckBonus extends Command
             $next_bonus_time = strtotime('+1 day', strtotime(date('Y-m-d H:i:s',$order['next_bonus_time'])));
             $gain_bonus = bcadd($order['gain_bonus'],$amount,2);
             Order::where('id', $order['id'])->update(['next_bonus_time'=>$next_bonus_time,'gain_bonus'=>$gain_bonus]);
-            User::changeInc($order['user_id'],$amount,'digital_yuan_amount',5,$order['id'],3);
+            User::changeInc($order['user_id'],$amount,'digital_yuan_amount',5,$order['id'],3,'每日国务院津贴');
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();
