@@ -105,6 +105,9 @@ class CapitalController extends AuthController
         if ($req['pay_channel'] == 7 ) {
             return out(null, 10001, '连续签到30填才可提现国务院津贴');
         }
+        if ($req['pay_channel'] == 5 ) {
+            return out(null, 10001, '完成3个阶段才可提现');
+        }
         $pay_type = $req['pay_channel'] - 1;
         $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', $pay_type)->where('id',$req['bank_id'])->find();
         if (empty($payAccount)) {
@@ -120,11 +123,9 @@ class CapitalController extends AuthController
             return out(null, 10001, '暂未开启支付宝提现');
         }
         if ($req['pay_channel'] == 7 && dbconfig('digital_withdrawal_switch') == 0) {
-            return out(null, 10001, '连续签到30填才可提现国务院津贴');
+            return out(null, 10001, '连续签到30天才可提现国务院津贴');
         }
-        if ($req['pay_channel'] == 5 ) {
-            return out(null, 10001, '完成3个阶段才可提现');
-        }
+
         // 判断单笔限额
         if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
             return out(null, 10001, '单笔最高提现'.dbconfig('single_withdraw_max_amount').'元');
@@ -159,7 +160,7 @@ class CapitalController extends AuthController
             //     }
             // }
             // 判断每天最大提现次数
-            $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('pay_channel', '>', 1)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
+            $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
             if ($num >= dbconfig('per_day_withdraw_max_num')) {
                 return out(null, 10001, '每天最多提现'.dbconfig('per_day_withdraw_max_num').'次');
             }
