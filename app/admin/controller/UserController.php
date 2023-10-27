@@ -173,7 +173,7 @@ class UserController extends AuthController
         ]);
         $adminUser = $this->adminUser;
 
-        User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
+        //User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
         User::changeInc($req['user_id'],$req['money'],'balance',15,0,1,$req['remark']??'',$adminUser['id']);
 
         return out();

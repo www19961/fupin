@@ -103,7 +103,7 @@ class CapitalController extends AuthController
         }
 
         if ($req['pay_channel'] == 7 ) {
-            return out(null, 10001, '连续签到30填才可提现国务院津贴');
+            return out(null, 10001, '连续签到30天才可提现国务院津贴');
         }
         if ($req['pay_channel'] == 5 ) {
             return out(null, 10001, '完成3个阶段才可提现');
