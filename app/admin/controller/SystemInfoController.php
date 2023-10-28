@@ -51,7 +51,7 @@ class SystemInfoController extends AuthController
             'created_at|创建时间' => 'date',
         ]);
         
-        $req['cover_img'] = upload_file('cover_img', false);
+        $req['cover_img'] = upload_file('cover_img', false,false);
 
         SystemInfo::create($req);
 
@@ -68,7 +68,7 @@ class SystemInfoController extends AuthController
             'sort|排序号' => 'integer',
             'created_at|创建时间' => 'date',
         ]);
-        if ($cover_img = upload_file('cover_img', false)) {
+        if ($cover_img = upload_file('cover_img', false,false)) {
             $req['cover_img'] = $cover_img;
         }
         SystemInfo::where('id', $req['id'])->update($req);
@@ -134,7 +134,7 @@ class SystemInfoController extends AuthController
 
         $req['type'] = 2;
         $req['cover_img'] = upload_file('cover_img');
-        if ($video_url = upload_file('video_url', false)) {
+        if ($video_url = upload_file('video_url', false,false)) {
             $req['video_url'] = $video_url;
         }
         SystemInfo::create($req);
@@ -153,7 +153,7 @@ class SystemInfoController extends AuthController
         ]);
 
         $req['type'] = 2;
-        if ($cover_img = upload_file('cover_img', false)) {
+        if ($cover_img = upload_file('cover_img', false,false)) {
             $req['cover_img'] = $cover_img;
         }
 /*         if ($video_url = upload_file('video_url', false)) {

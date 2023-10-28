@@ -122,10 +122,10 @@ class ProjectController extends AuthController
         }else{
             $req['give'] = 0;
         } */
-        if ($img = upload_file('cover_img', false)) {
+        if ($img = upload_file('cover_img', false,false)) {
             $req['cover_img'] = $img;
         }
-        if($img = upload_file('details_img', false)){
+        if($img = upload_file('details_img', false,false)){
             $req['details_img'] = $img;
         }
         Project::where('id', $req['id'])->update($req);

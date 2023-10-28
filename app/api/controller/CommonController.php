@@ -170,12 +170,12 @@ class CommonController extends BaseController
         return out(['token' => $token]);
     }
 
-    public function uploadFile()
+/*     public function uploadFile()
     {
         $url = upload_file('file');
 
         return out(['url' => $url]);
-    }
+    } */
 
     public function uploadFile2(){
         $url = upload_file2('file');
@@ -522,6 +522,7 @@ class CommonController extends BaseController
             $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->append(['total_amount', 'daily_bonus', 'passive_income', 'progress','day_amount'])->paginate();
             foreach($system as $k =>$v){
                  $system[$k]['created_at'] = date("Y-m-d",strtotime($v['created_at']));
+                 $system[$k]['cover_img']=get_img_api($v['cover_img']);
             }
             Cache::set('system_'.$req['type'], json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 10);
         }
