@@ -218,7 +218,7 @@ class CapitalController extends AuthController
         if ($digital_withdrawal_switch == 1) {
             $pay_type[] = 6;
         }
-        $data = PayAccount::where('user_id', $user['id'])->whereIn('pay_type', $pay_type)->append(['realname'])->select();
+        $data = PayAccount::where('user_id', $user['id'])->whereIn('pay_type', $pay_type)->select()->toArray();
         foreach ($data as $k => &$v) {
             $v['realname'] = $v['name'];
         }
