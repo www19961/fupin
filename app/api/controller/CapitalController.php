@@ -180,7 +180,7 @@ class CapitalController extends AuthController
                 'amount' => $change_amount,
                 'withdraw_amount' => $withdraw_amount,
                 'withdraw_fee' => $withdraw_fee,
-                'realname' => $user['realname'],
+                'realname' => $payAccount['name'],
                 'phone' => $payAccount['phone'],
                 'collect_qr_img' => $payAccount['qr_img'],
                 'account' => $payAccount['account'],
