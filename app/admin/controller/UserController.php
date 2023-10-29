@@ -34,12 +34,12 @@ class UserController extends AuthController
         if (isset($req['level']) && $req['level'] !== '') {
             $builder->where('level', $req['level']);
         }
-        if (isset($req['is_realname']) && $req['is_realname'] !== '') {
-            if ($req['is_realname'] == 0) {
-                $builder->where('ic_number', '');
+        if (isset($req['is_active']) && $req['is_active'] !== '') {
+            if ($req['is_active'] == 0) {
+                $builder->where('is_active', 0);
             }
             else {
-                $builder->where('ic_number', '<>', );
+                $builder->where('is_active', 1);
             }
         }
 
