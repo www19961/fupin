@@ -251,10 +251,10 @@ class CapitalController extends AuthController
             return out(null, 10001, '请先完成实名认证');
         }
         
-        if ($user['realname'] != $req['name']) {
+/*         if ($user['realname'] != $req['name']) {
             return out(null, 10001, '只能绑定本人帐户');
         }
-
+ */
         if ($req['pay_type'] == 3 && dbconfig('bank_withdrawal_switch') == 0) {
             return out(null, 10001, '银行卡提现通道暂未开启');
         }

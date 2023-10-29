@@ -457,9 +457,9 @@ class UserController extends AuthController
         
         $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('log_type',4)->whereIn('type', '8,9')->sum('change_balance');
 
-        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.invite_bonus','desc')->limit(10)->select();
-        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.invite_bonus','desc')->limit(10)->select();
-        $data['team_leve3_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus')->where('r.user_id',$user['id'])->where('r.level',3)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus,u.is_active')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus,u.is_active')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.invite_bonus','desc')->limit(10)->select();
+        $data['team_leve3_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus,u.is_active')->where('r.user_id',$user['id'])->where('r.level',3)->order('u.invite_bonus','desc')->limit(10)->select();
         $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
                                                 ->field('l.created_at,l.type,l.remark,change_balance,single_amount,buy_num,project_name,o.user_id')
                                                 ->whereIn('l.type','8,9')
