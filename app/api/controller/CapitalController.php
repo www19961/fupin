@@ -219,6 +219,9 @@ class CapitalController extends AuthController
             $pay_type[] = 6;
         }
         $data = PayAccount::where('user_id', $user['id'])->whereIn('pay_type', $pay_type)->append(['realname'])->select();
+        foreach ($data as $k => &$v) {
+            $v['realname'] = $v['name'];
+        }
 
         return out($data);
     }
