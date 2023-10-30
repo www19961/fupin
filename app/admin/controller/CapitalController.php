@@ -34,6 +34,7 @@ class CapitalController extends AuthController
         }
         $this->assign('req', $req);
         $this->assign('data', $data);
+        $this->assign('count',$data->total());
 
         return $this->fetch();
     }
