@@ -112,7 +112,7 @@ class CapitalController extends AuthController
                 create_excel($list, [
                     'id' => '序号',
                     'account_type' => '用户',
-                    'realname'=>'姓名',  
+                    //'realname'=>'姓名',  
                     'capital_sn' => '单号',
                     'topup_status_text' => '充值状态',
                     'topup_pay_status_text' => '支付状态',
