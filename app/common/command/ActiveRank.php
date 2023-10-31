@@ -51,7 +51,7 @@ class ActiveRank extends Command
                 Db::table('mp_active_rank')->where('id',$user['id'])->update(['next_time'=>$time+$minute*60,'update_time'=>$time]);
             }
             else if($user['next_time']<=$time){
-                Db::table('mp_active_rank')->where('id',$user['id'])->update(['next_time'=>$time+$minute*60,'num'=>Db::raw('num+1'),'update_time'=>$time]);
+                Db::table('mp_active_rank')->where('id',$user['id'])->update(['next_time'=>Db::raw('next_time+'.$minute*60),'num'=>Db::raw('num+1'),'update_time'=>$time]);
             }
         }
     }
