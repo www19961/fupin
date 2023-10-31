@@ -10,7 +10,7 @@ class RankController extends AuthController
 {
     public function teamRankList()
     {
-        $relation = UserRelation::alias('r')->field(['count(r.sub_user_id) as team_num', 'r.user_id'])->join('user u', 'u.id = r.sub_user_id')->where('r.level', 1)->where('r.is_active',1)->whereTime('r.created_at','today')->group('r.user_id')->order('team_num', 'desc')->limit(10)->select()->toArray();
+        $relation = UserRelation::alias('r')->field(['count(r.sub_user_id) as team_num', 'r.user_id'])->join('user u', 'u.id = r.sub_user_id')->where('r.is_active',1)->whereTime('r.created_at','today')->group('r.user_id')->order('team_num', 'desc')->limit(10)->select()->toArray();
         $users = [];
         $rankData = Db::table('mp_active_rank')->field('phone,num as team_num')->select();
         foreach ($rankData as $k => $v) {
