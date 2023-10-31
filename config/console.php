@@ -8,6 +8,7 @@ return [
         'curd'	=>	'app\common\command\Curd',
         'rule'  =>  'app\common\command\Rule',
         'checkBonus'  =>  'app\common\command\CheckBonus',
+        'activeRank'  =>  'app\common\command\ActiveRank',
         'checkSubsidy'  =>  'app\common\command\CheckSubsidy',
         'sendCashReward'  =>  'app\common\command\SendCashReward',
     ],
