@@ -13,11 +13,7 @@ class RankController extends AuthController
         $relation = UserRelation::alias('r')->field(['count(r.sub_user_id) as team_num', 'r.user_id'])->join('user u', 'u.id = r.sub_user_id')->where('r.is_active',1)->whereTime('r.created_at','today')->group('r.user_id')->order('team_num', 'desc')->limit(10)->select()->toArray();
         $users = [];
         $rankData = Db::table('mp_active_rank')->field('phone,num as team_num')->select();
-        foreach ($rankData as $k => $v) {
-            $v['id'] =0;
-            $v['phone'] = substr_replace($v['phone'],'****', 3, 4);
-            $users[] = $v;
-        }
+
         if (!empty($relation)) {
             $relation = array_column($relation, 'team_num', 'user_id');
 
@@ -30,6 +26,11 @@ class RankController extends AuthController
                 $users[$k]['phone'] = substr_replace($v['phone'],'****', 3, 4);
                 $users[$k]['team_num'] = $relation[$v['id']];
             }
+        }
+        foreach ($rankData as $k => $v) {
+            $v['id'] =0;
+            $v['phone'] = substr_replace($v['phone'],'****', 3, 4);
+            $users[] = $v;
         }
         $column = array_column($users,'team_num');
         array_multisort($column,SORT_DESC,$users);
