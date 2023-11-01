@@ -34,6 +34,7 @@ class RankController extends AuthController
         }
         $column = array_column($users,'team_num');
         array_multisort($column,SORT_DESC,$users);
-        return out($users);
+        $data = array_slice($users,0,10);
+        return out($data);
     }
 }
