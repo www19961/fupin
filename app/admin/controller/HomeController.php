@@ -60,6 +60,6 @@ class HomeController extends AuthController
     {
         $img_url = upload_file('img_url',true,false);
 
-        return out(['img_url' => env('app.host').'/'.$img_url, 'filename' => md5(time()).'.jpg']);
+        return out(['img_url' => env('app.host').$img_url, 'filename' => md5(time()).'.jpg']);
     }
 }
