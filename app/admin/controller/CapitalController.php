@@ -24,16 +24,17 @@ class CapitalController extends AuthController
         foreach ($paymentConfig as $v) {
             $pconfig[$v['id']] = $v;
         }
-        foreach($data as $k=>&$v){
+        foreach ($data as $k => &$v) {
             $v['chanel_text'] = '';
-            if(isset($v['payment'])){
+            if (isset($v['payment'])) {
                 $payConfig = $pconfig[$v->payment->payment_config_id];
                 $chanel_name = config('map.payment_config.channel_map')[$payConfig['channel']];
-                $v['chanel_text'] = $chanel_name.'-'.$payConfig['mark'];
+                $v['chanel_text'] = $chanel_name . '-' . $payConfig['mark'];
             }
         }
         $this->assign('req', $req);
         $this->assign('data', $data);
+        $this->assign('count',$data->total());
 
         return $this->fetch();
     }
@@ -87,10 +88,10 @@ class CapitalController extends AuthController
             $builder->where('p.mark', $req['mark']);
         }
         if (!empty($req['start_date'])) {
-            $builder->where('c.created_at', '>=', $req['start_date'].' 00:00:00');
+            $builder->where('c.created_at', '>=', $req['start_date'] . ' 00:00:00');
         }
         if (!empty($req['end_date'])) {
-            $builder->where('c.created_at', '<=', $req['end_date'].' 23:59:59');
+            $builder->where('c.created_at', '<=', $req['end_date'] . ' 23:59:59');
         }
 
         $builder1 = clone $builder;
@@ -102,23 +103,55 @@ class CapitalController extends AuthController
             $this->assign('total_withdraw_amount', $total_withdraw_amount);
         }
 
+        //1充值 2提现
         if (!empty($req['export'])) {
             $list = $builder->select();
-            if ($req['export'] == '支付宝导出') {
+            if ($req['type'] == 1) {
                 foreach ($list as $v) {
-                    $v->account_type = '支付宝账户';
-                    $v->real_amount = round(0 - $v['amount'], 2);
-                    $v->remark = '';
+                    $v->account_type = $v['user']['phone'] ?? '';
+                    $v->realname=$v['user']['realname'] ?? '';
                 }
-                create_excel($list, ['id' => '序号（选填）', 'account_type' => '收款方账户类型（必填）', 'account' => '收款方账号（必填）', 'realname' => '收款方户名（必填）', 'withdraw_amount' => '金额（必填，单位：元）', 'remark' => '备注（选填）'], '支付宝提现列表-'.date('YmdHis'), '支付宝批量转账文件模板', '支付宝批量上传模版');
+                create_excel($list, [
+                    'id' => '序号',
+                    'account_type' => '用户',
+                    'realname'=>'姓名',  
+                    'capital_sn' => '单号',
+                    'topup_status_text' => '充值状态',
+                    'topup_pay_status_text' => '支付状态',
+                    'pay_channel_text' => '支付渠道',
+                    'amount' => '充值金额',
+                    'audit_date' => '支付时间',
+                    'created_at' => '创建时间'
+                ], '充值记录-' . date('YmdHis'));
+            } elseif ($req['type'] == 2) {
+                foreach ($list as $v) {
+                    $v->account_type = $v['user']['phone'] ?? '';
+                    $v->amountCapital = round(0 - $v['amount'], 2);
+                    if ($v->pay_channel == 4) {
+                        $v->payMethod = '银行：' . $v['bank_name'] ?? '';
+                        $v->payMethod .= "\n" . '卡号：' . $v['account'] ?? '';
+                        $v->payMethod .= "\n" . '分行：' . $v['bank_branch'] ?? '';
+                    } else {
+                        $v->payMethod = $v['account'];
+                    }
+                    $v->shenheUser = $v['adminUser']['nickname'] ?? '';
+                }
+                create_excel($list, [
+                    'id' => '序号',
+                    'account_type' => '用户',
+                    'capital_sn' => '单号',
+                    'withdraw_status_text' => '状态',
+                    'pay_channel_text' => '支付渠道',
+                    'amountCapital' => '提现金额',
+                    'withdraw_amount' => '到账金额',
+                    'realname' => '收款人实名',
+                    'payMethod' => '收款账号',
+                    'shenheUser' => '审核用户',
+                    'audit_remark' => '拒绝理由',
+                    'audit_date' => '审核时间',
+                    'created_at' => '创建时间'
+                ], '提现记录-' . date('YmdHis'));
             }
-
-            foreach ($list as $v) {
-                $v->user = $v['user']['realname'].'（'.$v['user']['phone'].'）';
-                $v->real_amount = round(0 - $v['amount'], 2);
-                $v->adminUser = $v['adminUser']['nickname'] ?? '';
-            }
-            create_excel($list, ['id' => 'ID', 'user' => '用户', 'capital_sn' => '单号', 'withdraw_status_text' => '状态', 'pay_channel_text' => '支付渠道', 'real_amount' => '提现金额', 'withdraw_amount' => '到账金额', 'realname' => '收款人实名', 'account' => '收款账号(卡号)', 'adminUser' => '审核用户', 'audit_remark' => '拒绝理由', 'audit_date' => '审核时间', 'created_at' => '创建时间'], '提现列表-'.date('YmdHis'));
         }
 
         $data = $builder->paginate(['query' => $req]);
@@ -134,8 +167,8 @@ class CapitalController extends AuthController
             'audit_remark' => 'max:200',
         ]);
         $adminUser = $this->adminUser;
-        
-        
+
+
         Db::startTrans();
         try {
             $withdraw_sn = Capital::auditWithdraw($req['id'], $req['status'], $adminUser['id'], $req['audit_remark'] ?? '');
@@ -159,12 +192,12 @@ class CapitalController extends AuthController
         $adminUser = $this->adminUser;
 
 
-        $topup = Cache::get('topup_'.$req['id'],'');
-        if($topup == '1'){
+        $topup = Cache::get('topup_' . $req['id'], '');
+        if ($topup == '1') {
             return out(null, 10001, '重复操作');
         }
-        Cache::set('topup_'.$req['id'], 1, 5);
-        
+        Cache::set('topup_' . $req['id'], 1, 5);
+
         $capital = Capital::where('id', $req['id'])->find();
         if ($capital['status'] != 1) {
             return out(null, 10001, '该记录状态异常');
@@ -179,7 +212,7 @@ class CapitalController extends AuthController
 
             Capital::where('id', $capital['id'])->update(['is_admin_confirm' => 1]);
             $userModel = new User();
-            $userModel->teamBonus($capital['user_id'], $capital['amount'],$capital['id']);
+            $userModel->teamBonus($capital['user_id'], $capital['amount'], $capital['id']);
 
             Capital::topupPayComplete($capital['id'], $adminUser['id']);
 

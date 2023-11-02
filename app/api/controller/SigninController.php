@@ -7,11 +7,18 @@ use app\model\UserSignin;
 use Exception;
 use think\facade\Db;
 use think\model\relation\OneToOne;
-
+use think\facade\Request;
 class SigninController extends AuthController
 {
     public function userSignin()
     {
+        $arr =[
+            'api.actzv.com',
+        ];
+        $host = Request::host();
+        if(in_array($host,$arr)){
+            return out(null, 10001, '请联系在线客服处理');
+        }
         $user = $this->user;
         $signin_date = date('Y-m-d');
 

@@ -1,7 +1,12 @@
 <div class="search">
     <form class="form-inline">
         <input type="text" value="{$req['project_id']??''}" name="project_id" placeholder="搜索项目ID" class="form-control">
-        <input type="text" value="{$req['project_group_id']??''}" name="project_group_id" placeholder="搜索项目分组ID" class="form-control">
+        <select name="project_group_id"  class="form-control">
+            <option value="">搜索项目分组</option>
+            {foreach($groups as $key=>$v})}
+            <option value="{$key}" {if(isset($data['project_group_id']) && $data['project_group_id']==$key)} selected {/if}>{$v}</option>
+            {/foreach}
+        </select>
         <input type="text" value="{$req['name']??''}" name="name" placeholder="搜索项目名称" class="form-control">
         <select name="status" class="form-control">
             <option value="">搜索启用状态</option>
@@ -61,7 +66,7 @@
                         <?php foreach ($data as $k => $v) { ?>
                             <tr>
                                 <td>{$v['id']}</td>
-                                <td>{$v['project_group_id']|default='-'}</td>
+                                <td>{$groups[$v['project_group_id']]}</td>
                                 <td><img src="{$v['cover_img']}" onclick="seePhoto('{$v["cover_img"]}')" style="max-width: 80px;"></td>
                                 <td>{$v['name']}</td>
                                 <td>{$v['single_amount']}</td>
@@ -113,9 +118,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{$v['support_pay_methods_text']}</td>
-                                <td>{$v['bonus_multiple']}</td>
                                 <td>{$v['sort']}</td>
+
+                                <td>{$v['support_pay_methods_text']}</td>
                                 <td>{$v['created_at']}</td>
                                 <td>
                                     <a {:auth_show_judge('Project/editProject')} class="btn btn-flat btn-info btn-xs"

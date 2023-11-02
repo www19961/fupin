@@ -54,6 +54,13 @@ class UserBalanceLogController extends AuthController
             $builder->where('relation_id', $req['relation_id']);
         }
 
+        if (!empty($req['start_date'])) {
+            $builder->where('created_at', '>=', $req['start_date'] . ' 00:00:00');
+        }
+        if (!empty($req['end_date'])) {
+            $builder->where('created_at', '<=', $req['end_date'] . ' 23:59:59');
+        }
+
         $data = $builder->paginate(['query' => $req]);
 
         return $data;

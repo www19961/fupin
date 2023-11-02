@@ -133,7 +133,7 @@ class CapitalController extends AuthController
         if (dbconfig('single_withdraw_min_amount') > $req['amount']) {
             return out(null, 10001, '单笔最低提现'.dbconfig('single_withdraw_min_amount').'元');
         }
-        // 每天提现时间为8：00-20：00
+        // 每天提现时间为8：00-20：00 早上8点到晚上20点
         $timeNum = (int)date('Hi');
         if ($timeNum < 800 || $timeNum > 2000) {
             return out(null, 10001, '提现时间为早上8:00到晚上20:00');
@@ -180,7 +180,7 @@ class CapitalController extends AuthController
                 'amount' => $change_amount,
                 'withdraw_amount' => $withdraw_amount,
                 'withdraw_fee' => $withdraw_fee,
-                'realname' => $user['realname'],
+                'realname' => $payAccount['name'],
                 'phone' => $payAccount['phone'],
                 'collect_qr_img' => $payAccount['qr_img'],
                 'account' => $payAccount['account'],
@@ -218,7 +218,10 @@ class CapitalController extends AuthController
         if ($digital_withdrawal_switch == 1) {
             $pay_type[] = 6;
         }
-        $data = PayAccount::where('user_id', $user['id'])->whereIn('pay_type', $pay_type)->append(['realname'])->select();
+        $data = PayAccount::where('user_id', $user['id'])->whereIn('pay_type', $pay_type)->select()->toArray();
+        foreach ($data as $k => &$v) {
+            $v['realname'] = $v['name'];
+        }
 
         return out($data);
     }
@@ -251,10 +254,10 @@ class CapitalController extends AuthController
             return out(null, 10001, '请先完成实名认证');
         }
         
-        if ($user['realname'] != $req['name']) {
+/*         if ($user['realname'] != $req['name']) {
             return out(null, 10001, '只能绑定本人帐户');
         }
-
+ */
         if ($req['pay_type'] == 3 && dbconfig('bank_withdrawal_switch') == 0) {
             return out(null, 10001, '银行卡提现通道暂未开启');
         }

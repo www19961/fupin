@@ -25,12 +25,12 @@ class CheckBonus extends Command
 
 
         $cur_time = strtotime(date('Y-m-d 00:00:00'));
-        $data2 = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
+         $data2 = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->digiYuan($item);
             }
-        });
+        }); 
 
         // 分红收益
         $data = Order::where('status',2)->where('end_time', '<=', $cur_time)
@@ -40,8 +40,60 @@ class CheckBonus extends Command
             }
         });
 
-
+        //二期新项目结束之后每月分红
+        $this->secondBonus();
         return true;
+    }
+
+    protected function secondBonus(){
+        $yesterday = date("Y-m-d",strtotime("-1 day"));
+        $day = date("d",strtotime($yesterday));
+        $month = date("m",strtotime($yesterday));
+        Order::where('status',4)->where('project_group_id',2)->whereRaw("DAYOFMONTH(created_at)=$day")->chunk(100, function($list) use ($month) {
+            $time = time();
+            $nowMonth = intval(date("m",$time));
+            
+            foreach ($list as $item) {
+                $endMonth = intval(date("m",$item['end_time']));
+               if($nowMonth>$endMonth){
+                    $passiveIncome = PassiveIncomeRecord::where('order_id',$item['id'])->where('user_id',$item['user_id'])->where('execute_day',date('Ymd'))->where('type',2)->find();
+                    if(!empty($passiveIncome)){
+                        //已经分红
+                        return;
+                    }
+                    $passiveIncome = PassiveIncomeRecord::where('order_id',$item['id'])->where('user_id',$item['user_id'])->order('execute_day','desc')->where('type',2)->find();
+                    if(!$passiveIncome){
+                        $day=0;
+                    }else{
+                        $day=$passiveIncome['days'];
+                    }
+                    $day+=1;
+                    Db::startTrans();
+                    try {
+                        $amount = $item['sum_amount'];
+                        PassiveIncomeRecord::create([
+                                'project_group_id'=>$item['project_group_id'],
+                                'user_id' => $item['user_id'],
+                                'order_id' => $item['id'],
+                                'execute_day' => date('Ymd'),
+                                'amount'=>$amount,
+                                'days'=>$day,
+                                'is_finish'=>1,
+                                'status'=>3,
+                                'type'=>2,
+                            ]); 
+                        $gain_bonus = bcadd($item['gain_bonus'],$amount,2);
+                        Order::where('id', $item['id'])->update(['gain_bonus'=>$gain_bonus]);
+                        User::changeInc($item['user_id'],$amount,'income_balance',6,$item['id'],6,'二期项目每月分红');
+                        Db::commit();
+                    } catch (Exception $e) {
+                        Db::rollback();
+                        throw $e;
+                    }
+                    return true;
+               }
+            }
+        });
     }
 
     protected function bonus($order){
@@ -50,6 +102,9 @@ class CheckBonus extends Command
             User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
             //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
             Order::where('id',$order->id)->update(['status'=>4]);
+/*             if($order['project_group_id']==2){
+                
+            } */
             Db::Commit();
         }catch(Exception $e){
             Db::rollback();
@@ -93,6 +148,7 @@ class CheckBonus extends Command
         Db::startTrans();
         try {
             PassiveIncomeRecord::create([
+                    'project_group_id'=>$order['project_group_id'],
                     'user_id' => $order['user_id'],
                     'order_id' => $order['id'],
                     'execute_day' => date('Ymd'),
@@ -100,6 +156,7 @@ class CheckBonus extends Command
                     'days'=>$day,
                     'is_finish'=>1,
                     'status'=>3,
+                    'type'=>1,
                 ]); 
             $next_bonus_time = strtotime('+1 day', strtotime(date('Y-m-d H:i:s',$order['next_bonus_time'])));
             $gain_bonus = bcadd($order['gain_bonus'],$amount,2);

@@ -37,6 +37,15 @@ class OrderController extends AuthController
         }
 
         $project = Project::where('id', $req['project_id'])->find();
+        if(!$project){
+            return out(null, 10001, '项目不存在');
+        }
+        if($project['project_group_id']==2){
+            $order = Order::where('user_id', $user['id'])->where('status', '>', 1)->where('project_group_id',1)->find();
+            if(!$order){
+                return out(null, 10001, '请先购买强国工匠项目');
+            }
+        }
 /*         if($req['pay_method']>1){
             $req['pay_method']+=1;
         } */
