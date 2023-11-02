@@ -25,12 +25,12 @@ class CheckBonus extends Command
 
 
         $cur_time = strtotime(date('Y-m-d 00:00:00'));
-/*         $data2 = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
+         $data2 = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->digiYuan($item);
             }
-        }); */
+        }); 
 
         // 分红收益
         $data = Order::where('status',2)->where('end_time', '<=', $cur_time)
