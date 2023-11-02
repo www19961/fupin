@@ -348,7 +348,7 @@ function base64_upload($imgbase64,$savepath) {
 }
 
 function get_img_api($img){
-    return env('app.host').'/'.$img;
+    return env('app.host').$img;
 }
 
 function randstr($len){

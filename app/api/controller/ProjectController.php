@@ -61,7 +61,7 @@ class ProjectController extends AuthController
         $user = $this->user;
 
         $data = Project::where('project_group_id', $req['project_group_id'])->where('status', 1)->append(['total_amount', 'daily_bonus', 'passive_income', 'progress','day_amount'])->select()->toArray();
-        foreach($data as $item){
+        foreach($data as &$item){
             //$item['intro']="";
             $item['cover_img']=get_img_api($item['cover_img']);
             $item['details_img']=get_img_api($item['details_img']);
