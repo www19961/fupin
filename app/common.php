@@ -348,7 +348,11 @@ function base64_upload($imgbase64,$savepath) {
 }
 
 function get_img_api($img){
-    return env('app.host').$img;
+    if(strpos($img,'http')!==false){
+        return $img;
+    }else{
+        return env('app.host').$img;
+    }
 }
 
 function randstr($len){
