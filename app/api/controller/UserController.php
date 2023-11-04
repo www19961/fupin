@@ -570,11 +570,12 @@ class UserController extends AuthController
             //'type' => 'require|number|in:1,2,3,4,5',
         ]);
         $user = $this->user;
-
+        $userModel = new User();
+        $toupTotal = $userModel->getTotalTopupAmountAttr(0,$user);
         $data = [];
         foreach (config('map.payment_config.channel_map') as $k => $v) {
             //$paymentConfig = PaymentConfig::where('type', $req['type'])->where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
-            $paymentConfig = PaymentConfig::where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
+            $paymentConfig = PaymentConfig::where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $toupTotal)->order('start_topup_limit', 'desc')->find();
             if (!empty($paymentConfig)) {
                 //$confs = PaymentConfig::where('type', $req['type'])->where('status', 1)->where('channel', $k)->where('start_topup_limit', $paymentConfig['start_topup_limit'])->select()->toArray();
                 $confs = PaymentConfig::where('status', 1)->where('channel', $k)->where('start_topup_limit', $paymentConfig['start_topup_limit'])->select()->toArray();
