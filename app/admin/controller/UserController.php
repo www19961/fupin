@@ -169,12 +169,44 @@ class UserController extends AuthController
         $this->validate($req, [
             'user_id' => 'require|number',
             'money' => 'require|float',
+            'type'=>'require|number',
             'remark' => 'max:50',
         ]);
         $adminUser = $this->adminUser;
-
+        $filed = 'balance';
+        $log_type = 0;
+        $balance_type = 1;
+        $text = '余额';
+        switch($req['type']){
+            case 1:
+                $filed = 'balance';
+                $log_type = 1;
+                $balance_type = 15;
+                break;
+            case 2:
+                $filed = 'team_bonus_balance';
+                $log_type = 2;
+                $balance_type = 8;
+                $text = '团队奖励';
+                break;
+            case 3:
+                $filed = 'income_balance';
+                $log_type = 6;
+                $balance_type = 6;
+                $text = '收益';
+                break;
+            case 4:
+                $filed = 'digital_yuan_amount';
+                $log_type = 3;
+                $balance_type = 5;
+                $text = '国务院津贴';
+                break;
+            default:
+                return out(null, 10001, '类型错误');
+        }
         //User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
-        User::changeInc($req['user_id'],$req['money'],'balance',15,0,1,$req['remark']??'',$adminUser['id']);
+        $text = isset($req['remark']) || $req['remark']==''?'管理员充值'.$text:$req['remark'];
+        User::changeInc($req['user_id'],$req['money'],$filed,$balance_type,0,$log_type,$text,$adminUser['id']);
 
         return out();
     }
