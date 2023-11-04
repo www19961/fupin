@@ -48,7 +48,8 @@ class CapitalController extends AuthController
         }
 
         $data = $this->capitalList($req);
-
+        $logTypeList = [0=>'团队奖励',3=>'国务院津贴',6=>'收益'];
+        $this->assign('logTypeList', $logTypeList);
         $this->assign('req', $req);
         $this->assign('data', $data);
 
@@ -92,6 +93,10 @@ class CapitalController extends AuthController
         }
         if (!empty($req['end_date'])) {
             $builder->where('c.created_at', '<=', $req['end_date'] . ' 23:59:59');
+        }
+
+        if(!empty($req['log_type'])){
+            $builder->where('c.log_type', $req['log_type']);
         }
 
         $builder1 = clone $builder;

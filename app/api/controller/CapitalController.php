@@ -201,6 +201,115 @@ class CapitalController extends AuthController
         return out();
     }
 
+    public function applyWithdraw2()
+    {
+        $req = $this->validate(request(), [
+            'amount|提现金额' => 'require|number',
+            'pay_channel|收款渠道' => 'require|number',
+            'pay_password|支付密码' => 'require',
+            'bank_id|银行卡'=>'require|number',
+        ]);
+        $user = $this->user;
+
+        if (empty($user['ic_number'])) {
+            return out(null, 10001, '请先完成实名认证');
+        }
+        if (empty($user['pay_password'])) {
+            return out(null, 801, '请先设置支付密码');
+        }
+
+/*         if ($req['pay_channel'] == 7 ) {
+            return out(null, 10001, '连续签到30天才可提现国务院津贴');
+        }
+        if ($req['pay_channel'] == 5 ) {
+            return out(null, 10001, '完成3个阶段才可提现');
+        } */
+        $pay_type = $req['pay_channel'] - 1;
+        $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', 3)->where('id',$req['bank_id'])->find();
+        if (empty($payAccount)) {
+            return out(null, 802, '请先设置收款方式');
+        }
+        if (sha1(md5($req['pay_password'])) !== $user['pay_password']) {
+            return out(null, 10001, '支付密码错误');
+        }
+        // 判断单笔限额
+        if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
+            return out(null, 10001, '单笔最高提现'.dbconfig('single_withdraw_max_amount').'元');
+        }
+        if (dbconfig('single_withdraw_min_amount') > $req['amount']) {
+            return out(null, 10001, '单笔最低提现'.dbconfig('single_withdraw_min_amount').'元');
+        }
+        // 每天提现时间为8：00-20：00 早上8点到晚上20点
+        $timeNum = (int)date('Hi');
+        if ($timeNum < 800 || $timeNum > 2000) {
+            return out(null, 10001, '提现时间为早上8:00到晚上20:00');
+        }
+
+
+        Db::startTrans();
+        try {
+            // 判断余额
+            $user = User::where('id', $user['id'])->lock(true)->find();
+            $withdraw_fee = round(0.001*$req['amount'], 2);
+            $change_amount = $req['amount']+$withdraw_fee;
+           if($req['pay_channel'] == 5){
+                $field = 'income_balance';
+                $log_type =6;
+                if ($user['income_balance'] < $change_amount) {
+                    return out(null, 10001, '收益不足');
+                }
+            }else if($req['pay_channel'] == 7){
+                $field = 'digital_yuan_amount';
+                $log_type = 3;
+                if ($user['digital_yuan_amount'] < $change_amount) {
+                    return out(null, 10001, '国务院津贴不足');
+                }
+            }else{
+                return out(null, 10001, '参数错误');
+            }
+            // 判断每天最大提现次数
+            $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
+            if ($num >= dbconfig('per_day_withdraw_max_num')) {
+                return out(null, 10001, '每天最多提现'.dbconfig('per_day_withdraw_max_num').'次');
+            }
+
+            $capital_sn = build_order_sn($user['id']);
+            //$withdraw_fee = round(0.001*$req['amount'], 2);
+            //$withdraw_amount = round($req['amount'] - $withdraw_fee, 2);
+
+            $payMethod = $req['pay_channel'] == 4 ? 1 : $req['pay_channel'];
+            // 保存提现记录
+            $capital = Capital::create([
+                'user_id' => $user['id'],
+                'capital_sn' => $capital_sn,
+                'type' => 2,
+                'pay_channel' => $payMethod,
+                'amount' => -$change_amount,
+                'withdraw_amount' => $req['amount'],
+                'withdraw_fee' => $withdraw_fee,
+                'realname' => $payAccount['name'],
+                'phone' => $payAccount['phone'],
+                'collect_qr_img' => $payAccount['qr_img'],
+                'account' => $payAccount['account'],
+                'bank_name' => $payAccount['bank_name'],
+                'bank_branch' => $payAccount['bank_branch'],
+                'log_type'=>$log_type,
+                'end_time'=>strtotime('+3 day'),
+            ]);
+            // 扣减用户余额
+            User::changeInc($user['id'],$change_amount,$field,2,$capital['id'],$log_type);
+            //User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
+            //User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
+
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+
+        return out();
+    }
+
     public function payAccountList()
     {
         $user = $this->user;

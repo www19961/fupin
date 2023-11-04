@@ -69,6 +69,11 @@ class ProjectController extends AuthController
 
         return out($data);
     }
+
+    public function groupName(){
+        $data = config('map.project.group');
+        return out($data);
+    }
     
         public function PaymentType(){
 //        array(

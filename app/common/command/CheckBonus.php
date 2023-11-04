@@ -2,6 +2,7 @@
 
 namespace app\common\command;
 
+use app\model\Capital;
 use app\model\Order;
 use app\model\PassiveIncomeRecord;
 use app\model\User;
@@ -43,6 +44,10 @@ class CheckBonus extends Command
         //二期新项目结束之后每月分红
         $this->secondBonus();
         return true;
+    }
+
+    protected function widthdrawAudit(){
+        Capital::where('status',1)->where('type',2)->whereIn('log_type',[3,6])->where('end_time','<=',time())->update(['status'=>2]);
     }
 
     protected function secondBonus(){

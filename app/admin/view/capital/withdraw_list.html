@@ -12,15 +12,15 @@
                 </option>
             <?php } ?>
         </select>
-        <select name="pay_channel" class="form-control">
-            <option value="">搜索支付渠道</option>
-            <?php foreach (config('map.capital')['pay_channel_map'] as $k => $v) { ?>
-                <option <?php if (isset($req['pay_channel']) && $req['pay_channel'] == $k) {
-                    echo 'selected = "selected"';
-                } ?> value="{$k}">{$v}
-                </option>
-            <?php } ?>
+    
+        <select name="log_type" class="form-control">
+            <option value="">搜索提现类别</option>
+                {foreach($logTypeList as $k=>$v})}
+                <option  value="{$k}"<?php if($req['log_type']===strval($k)) {?> selected <?php } ?>>{$v}</option>
+                {/foreach}
+            
         </select>
+
         <input placeholder="开始时间" autocomplete="off" value="{$req['start_date']??''}" name="start_date" class="form-control layer-date" id="start">
         ～
         <input placeholder="结束时间" autocomplete="off" value="{$req['end_date']??''}" name="end_date" class="form-control layer-date" id="end">
@@ -54,7 +54,7 @@
                             <th>用户</th>
                             <th>单号</th>
                             <th>状态</th>
-                            <th>支付渠道</th>
+                            <th>类别</th>
                             <th>提现金额</th>
                             <th>到账金额</th>
                             <th>收款人实名</th>
@@ -74,7 +74,16 @@
                                 <td>{$v['user']['realname'] ?? ''}<?php if (session('is_agent') == 0) { ?>（{$v['user']['phone'] ?? ''}）<?php } ?></td>
                                 <td>{$v['capital_sn']}</td>
                                 <td>{$v['withdraw_status_text']}</td>
-                                <td>{$v['pay_channel_text']}</td>
+                                <td>
+                                    {if($v['log_type']==3)}
+                                        国务院津贴
+                                    {elseif($v['log_type']==6)}
+                                        收益
+                                    {else}
+                                        团队奖励
+                                    {/if}
+
+                                </td>
                                 <td>{:round(0 - $v['amount'], 2)}</td>
                                 <td>{$v['withdraw_amount']}</td>
                                 <td>{$v['realname']}</td>
@@ -84,10 +93,10 @@
                                 <td>{$v['audit_date']}</td>
                                 <td>{$v['created_at']}</td>
                                 <td>
-                                    <?php if ($v['status'] == 1) { $success = $v['pay_channel'] == 1 ? 2 : 4;  ?>
+                                    <?php if ($v['log_type']==0 && $v['status'] == 1) { $success = $v['pay_channel'] == 1 ? 2 : 4;  ?>
                                         <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-success btn-xs" onclick="auditCapital({$v['id']}, {$success})">审核通过</button>
                                         <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-warning btn-xs" onclick="auditCapital({$v['id']}, 3)">审核拒绝</button>
-                                    <?php } elseif ($v['status'] == 4) { ?>
+                                    <?php } elseif ($v['log_type']==0 && $v['status'] == 4) { ?>
                                         <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-warning btn-xs" onclick="auditCapital({$v['id']}, 2)">手动回调</button>
                                     <?php } ?>
                                 </td>
