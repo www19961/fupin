@@ -16,7 +16,7 @@
         <select name="log_type" class="form-control">
             <option value="">搜索提现类别</option>
                 {foreach($logTypeList as $k=>$v})}
-                <option  value="{$k}"<?php if($req['log_type']===strval($k)) {?> selected <?php } ?>>{$v}</option>
+                <option  value="{$k}"<?php if(isset($req['log_type']) && $req['log_type']===strval($k)) {?> selected <?php } ?>>{$v}</option>
                 {/foreach}
             
         </select>
