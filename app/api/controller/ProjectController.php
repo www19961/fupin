@@ -71,12 +71,9 @@ class ProjectController extends AuthController
     }
 
     public function groupName(){
-        $data = config('map.project.group');
-        $data2 = [];
-        foreach($data as $key=>$item){
-            $data2[] = ['id'=>$key,'name'=>$item];
-        }
-        return out($data2);
+        $data = config('map.project.groupName');
+
+        return out($data);
     }
     
         public function PaymentType(){
