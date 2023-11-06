@@ -304,7 +304,7 @@ class CapitalController extends AuthController
             ]);
             // 扣减用户余额
             User::changeInc($user['id'],-$change_amount,$field,2,$capital['id'],$log_type);
-            User::changeInc($user['id'],-$withdraw_fee,'balance',2,$capital['id'],1);
+            User::changeInc($user['id'],-$withdraw_fee,'balance',20,$capital['id'],1);
             //User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
             //User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
 
