@@ -138,6 +138,7 @@ return array(
             17 => '签到',
             18 => '转账',
             19 => '收款',
+            20 => '提现手续费',
         ),
         'balance_type_map' =>
         array(
@@ -160,6 +161,7 @@ return array(
             17 => '签到',
             18 => '转账',
             19 => '收款',
+            20 => '提现手续费',
         ),
         'integral_type_map' =>
         array(
