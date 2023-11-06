@@ -12,13 +12,13 @@ class SigninController extends AuthController
 {
     public function userSignin()
     {
-        $arr =[
+/*         $arr =[
             'api.actzv.com',
         ];
         $host = Request::host();
         if(in_array($host,$arr)){
             return out(null, 10001, '请联系在线客服处理');
-        }
+        } */
         $user = $this->user;
         $signin_date = date('Y-m-d');
 
