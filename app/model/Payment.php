@@ -64,20 +64,16 @@ class Payment extends Model
         return $data;
     }
 
-    public static function requestPayment2($trade_sn, $mark, $pay_amount)
+    public static function requestPayment2($trade_sn, $ppdID, $pay_amount)
     {
         $conf = config('config.payment_conf2');
         $req = [
-            'account_id' => $conf['account_id'],
-            'content_type' => 'json',
-            'thoroughfare' => $mark,
-            'out_trade_no' => $trade_sn,
+            'code' => $conf['account_id'],
+            'orderno' => $trade_sn,
             'amount' => $pay_amount,
-            'callback_url' => $conf['callback_url'],
-            'success_url' => $conf['success_url'],
-            'error_url' => $conf['success_url'],
-            'timestamp' => time(),
-            'ip' => request()->ip(),
+            'returnurl' => $conf['callback_url'],
+            'notifyurl' => $conf['success_url'],
+            'ppID' => $ppdID,
         ];
         $req['sign'] = self::builderSign2($req);
         $client = new Client(['verify' => false]);
@@ -91,14 +87,14 @@ class Payment extends Model
             ]);
             $resp = $ret->getBody()->getContents();
             $data = json_decode($resp, true);
-            if (empty($data['code']) || $data['code'] != 200) {
+            if (empty($data['responseCode']) || $data['responseCode'] != 200) {
                 exit_out(null, 10001, $data['msg']??'支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
             }
         } catch (Exception $e) {
             throw $e;
         }
 
-        return ['type' => 'url', 'data' => $data['data']['pay_url'] ?? ''];
+        return ['type' => 'url', 'data' => $data['url'] ?? ''];
     }
 
     public static function requestPayment3($trade_sn, $pay_bankcode, $pay_amount)
@@ -145,12 +141,13 @@ class Payment extends Model
 
     public static function builderSign2($req)
     {
-        ksort($req);
+/*         ksort($req);
         $buff = '';
         foreach ($req as $k => $v) {
             $buff .= $k . '=' . $v . '&';
-        }
-        $str = $buff . "key=" . config('config.payment_conf2')['key'];
+        } */
+       // $str = $buff . "key=" . config('config.payment_conf2')['key'];
+       $str="{$req['amount']}{$req['code']}{$req['notifyurl']}{$req['orderno']}{$req['returnurl']}".config('config.payment_conf2')['key'];
         return md5($str);
     }
 

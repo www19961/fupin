@@ -124,7 +124,7 @@ class OrderController extends AuthController
                     $ret = Payment::requestPayment($order_sn, $paymentConf['mark'], $pay_amount);
                 }
                 elseif ($paymentConf['channel'] == 2) {
-                    $ret = Payment::requestPayment2($order_sn, $paymentConf['mark'], $pay_amount);
+                    $ret = Payment::requestPayment2($order_sn, $paymentConf['mark'], $pay_amount,4);
                 }
                 elseif ($paymentConf['channel'] == 3) {
                     $ret = Payment::requestPayment3($order_sn, $paymentConf['mark'], $pay_amount);

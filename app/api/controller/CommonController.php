@@ -389,16 +389,16 @@ class CommonController extends BaseController
     {
         $req = request()->post();
         $this->validate($req, [
-            'account_name' => 'require',
-            'pay_status' => 'require',
-            'out_trade_no' => 'require',
+            'code' => 'require',
+            'status' => 'require',
+            'orderno' => 'require',
             'amount' => 'require',
-            'trade_no' => 'require',
             'sign' => 'require',
         ]);
 
         $sign = $req['sign'];
         unset($req['sign']);
+        $str = "{$req['amount']}{$req['code']}{$req['orderno']}".config('config.payment_conf2')['key'];
         $my_sign = Payment::builderSign2($req);
         if ($my_sign !== $sign) {
             return '签名错误';

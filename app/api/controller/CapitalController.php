@@ -27,7 +27,7 @@ class CapitalController extends AuthController
                 return out(null, 10001, '请上传支付凭证图片');
             }
         }
-        if (in_array($req['pay_channel'], [2,3,4,6])) {
+        if (in_array($req['pay_channel'], [2,3,4,5,8,9])) {
             $type = $req['pay_channel'] - 1;
             if ($req['pay_channel'] == 6) {
                 $type = 4;
@@ -69,7 +69,7 @@ class CapitalController extends AuthController
             if ($paymentConf['channel'] == 1) {
                 $ret = Payment::requestPayment($capital_sn, $paymentConf['mark'], $req['amount']);
             }
-            elseif ($paymentConf['channel'] == 2) {
+            elseif ($paymentConf['channel'] == 7) {
                 $ret = Payment::requestPayment2($capital_sn, $paymentConf['mark'], $req['amount']);
             }
             elseif ($paymentConf['channel'] == 3) {
