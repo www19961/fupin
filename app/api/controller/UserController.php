@@ -77,10 +77,11 @@ class UserController extends AuthController
         $medal = Apply::where('user_id',$user['id'])->where('type',1)->find();
         $house = Apply::where('user_id',$user['id'])->where('type',2)->find();
         $car = Apply::where('user_id',$user['id'])->where('type',3)->find();
-        $user['is_sub_500'] = $subCount>=500?1:0;
+        $user['is_sub_medal'] = $subCount>=500?1:0;
         $user['is_apply_medal'] = $medal?1:0;
         $user['is_apply_house'] = $house?1:0;
         $user['is_apply_car'] = $car?1:0;
+        $user['is_three_stage'] = User::isThreeStage($user['id']);
 /*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
             ['id'=>'12346','name'=>'13312341235'],
@@ -105,6 +106,10 @@ class UserController extends AuthController
     }
     public function applyHouse(){
         $user = $this->user;
+        $is_three_stage = User::isThreeStage($user['id']);
+        if(!$is_three_stage){
+            return out(null,10001,'未达到三阶段');
+        }
         $msg = Apply::add($user['id'],2);
         if($msg==""){
             return out();
@@ -113,6 +118,12 @@ class UserController extends AuthController
         }
     }
     public function applyCar(){
+        $user = $this->user;
+        $is_three_stage = User::isThreeStage($user['id']);
+
+        if(!$is_three_stage){
+            return out(null,10001,'未达到三阶段');
+        }
         $user = $this->user;
         $msg = Apply::add($user['id'],3);
         if($msg==""){

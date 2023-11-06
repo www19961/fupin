@@ -450,4 +450,9 @@ class User extends Model
                 }
             //}
     }
+
+    public static function isThreeStage($userId){
+        
+        return 0;
+    }
 }
