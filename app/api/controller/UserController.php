@@ -92,15 +92,19 @@ class UserController extends AuthController
 
     public function applyMedal(){
         $user = $this->user;
+        $delivery = UserDelivery::where('user_id',$user['id'])->find();
+        if(!$delivery){
+            return out(null,10001,'请先填写收货地址');
+        }
         $subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
         if($subCount<500){
-            return out(null,10001,'激活人数不足500人');
+            return out(null,10002,'激活人数不足500人');
         }
         $msg = Apply::add($user['id'],1);
         if($msg==""){
             return out();
         }else{
-            return out(null,10001,$msg);
+            return out(null,10003,$msg);
         }
 
     }
