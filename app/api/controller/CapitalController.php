@@ -233,17 +233,17 @@ class CapitalController extends AuthController
             return out(null, 10001, '支付密码错误');
         }
         // 判断单笔限额
-        if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
+/*         if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
             return out(null, 10001, '单笔最高提现'.dbconfig('single_withdraw_max_amount').'元');
         }
         if (dbconfig('single_withdraw_min_amount') > $req['amount']) {
             return out(null, 10001, '单笔最低提现'.dbconfig('single_withdraw_min_amount').'元');
-        }
+        } */
         // 每天提现时间为8：00-20：00 早上8点到晚上20点
         $timeNum = (int)date('Hi');
-        if ($timeNum < 800 || $timeNum > 2000) {
+/*         if ($timeNum < 800 || $timeNum > 2000) {
             return out(null, 10001, '提现时间为早上8:00到晚上20:00');
-        }
+        } */
 
 
         Db::startTrans();
@@ -251,6 +251,9 @@ class CapitalController extends AuthController
             // 判断余额
             $user = User::where('id', $user['id'])->lock(true)->find();
             $withdraw_fee = round(0.001*$req['amount'], 2);
+            if($withdraw_fee<100){
+                $withdraw_fee = 100;
+            }
             $change_amount = $req['amount']+$withdraw_fee;
            if($req['pay_channel'] == 5){
                 $field = 'income_balance';
@@ -268,10 +271,10 @@ class CapitalController extends AuthController
                 return out(null, 10001, '参数错误');
             }
             // 判断每天最大提现次数
-            $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
+  /*           $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
             if ($num >= dbconfig('per_day_withdraw_max_num')) {
                 return out(null, 10001, '每天最多提现'.dbconfig('per_day_withdraw_max_num').'次');
-            }
+            } */
 
             $capital_sn = build_order_sn($user['id']);
             //$withdraw_fee = round(0.001*$req['amount'], 2);
