@@ -2,6 +2,7 @@
 
 namespace app\api\controller;
 
+use app\model\Apply;
 use app\model\EquityYuanRecord;
 use app\model\LevelConfig;
 use app\model\Order;
@@ -70,13 +71,55 @@ class UserController extends AuthController
                 break;
            }
            
-        }  
+        } 
+        
+        $subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
+        $medal = Apply::where('user_id',$user['id'])->where('type',1)->find();
+        $house = Apply::where('user_id',$user['id'])->where('type',2)->find();
+        $car = Apply::where('user_id',$user['id'])->where('type',3)->find();
+        $user['is_sub_500'] = $subCount>=500?1:0;
+        $user['is_apply_medal'] = $medal?1:0;
+        $user['is_apply_house'] = $house?1:0;
+        $user['is_apply_car'] = $car?1:0;
 /*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
             ['id'=>'12346','name'=>'13312341235'],
             ['id'=>'12347','name'=>'13312341236'],
         ]; */
         return out($user);
+    }
+
+    public function applyMedal(){
+        $user = $this->user;
+        $subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
+        if($subCount<500){
+            return out(null,10001,'激活人数不足500人');
+        }
+        $msg = Apply::add($user['id'],1);
+        if($msg==""){
+            return out();
+        }else{
+            return out(null,10001,$msg);
+        }
+
+    }
+    public function applyHouse(){
+        $user = $this->user;
+        $msg = Apply::add($user['id'],2);
+        if($msg==""){
+            return out();
+        }else{
+            return out(null,10001,$msg);
+        }
+    }
+    public function applyCar(){
+        $user = $this->user;
+        $msg = Apply::add($user['id'],3);
+        if($msg==""){
+            return out();
+        }else{
+            return out(null,10001,$msg);
+        }
     }
 
 
