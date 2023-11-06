@@ -254,7 +254,7 @@ class CapitalController extends AuthController
             if($withdraw_fee<100){
                 $withdraw_fee = 100;
             }
-            $change_amount = $req['amount']+$withdraw_fee;
+            $change_amount = $req['amount'];
            if($req['pay_channel'] == 5){
                 $field = 'income_balance';
                 $log_type =6;
@@ -269,6 +269,9 @@ class CapitalController extends AuthController
                 }
             }else{
                 return out(null, 10001, '参数错误');
+            }
+            if($user['balance']<$withdraw_fee){
+                return out(null, 10001, '钱包余额不足以支付手续费');
             }
             // 判断每天最大提现次数
   /*           $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
@@ -301,6 +304,7 @@ class CapitalController extends AuthController
             ]);
             // 扣减用户余额
             User::changeInc($user['id'],-$change_amount,$field,2,$capital['id'],$log_type);
+            User::changeInc($user['id'],-$withdraw_fee,'balance',2,$capital['id'],1);
             //User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
             //User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
 
