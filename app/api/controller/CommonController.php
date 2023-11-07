@@ -399,20 +399,20 @@ class CommonController extends BaseController
         $sign = $req['sign'];
         unset($req['sign']);
         $str = "{$req['amount']}{$req['code']}{$req['orderno']}".config('config.payment_conf2')['key'];
-        $my_sign = Payment::builderSign2($req);
+        $my_sign = md5($str);
         if ($my_sign !== $sign) {
             return '签名错误';
         }
 
-        if ($req['pay_status'] == 4) {
-            $payment = Payment::where('trade_sn', $req['out_trade_no'])->find();
+        if ($req['status'] == 2) {
+            $payment = Payment::where('trade_sn', $req['orderno'])->find();
             if ($payment['status'] != 1) {
                 echo  'OK';die;
             }
 
             Db::startTrans();
             try {
-                Payment::where('id', $payment['id'])->update(['online_sn' => $req['trade_no'], 'payment_time' => time(), 'status' => 2]);
+                Payment::where('id', $payment['id'])->update(['online_sn' => $req['orderno'], 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
                     Order::orderPayComplete($payment['order_id']);
