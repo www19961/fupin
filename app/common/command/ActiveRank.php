@@ -17,7 +17,7 @@ class ActiveRank extends Command
 {
     protected function configure()
     {
-        $this->setName('checkBonus')
+        $this->setName('activeRank')
             ->addArgument('name', Argument::OPTIONAL, "clear清零")
             ->setDescription('激活用户日排行');
     }
@@ -50,7 +50,10 @@ class ActiveRank extends Command
             if($user['next_time']==0){
                 Db::table('mp_active_rank')->where('id',$user['id'])->update(['next_time'=>$time+$minute*60,'update_time'=>$time]);
             }
-            else if($user['next_time']<=$time){
+            if($user['num']>=$conf['day_max']){
+                continue;
+            }
+            if($user['next_time']<=$time){
                 Db::table('mp_active_rank')->where('id',$user['id'])->update(['next_time'=>Db::raw('next_time+'.$minute*60),'num'=>Db::raw('num+1'),'update_time'=>$time]);
             }
         }
