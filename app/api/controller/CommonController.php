@@ -23,6 +23,7 @@ use app\model\UserRelation;
 use Exception;
 use think\facade\Db;
 use think\facade\Cache;
+use think\facade\Log;
 
 class CommonController extends BaseController
 {
@@ -388,6 +389,7 @@ class CommonController extends BaseController
     public function payNotify2()
     {
         $req = request()->post();
+        Log::debug('payNotify2:'.json_encode($req));
         $this->validate($req, [
             'code' => 'require',
             'status' => 'require',
