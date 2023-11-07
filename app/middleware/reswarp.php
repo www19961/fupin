@@ -10,6 +10,7 @@ class ResWarp
         'common/paynotify',
         'common/payNotify',
         'common/paynotify2',
+        'common/payNotify2',
         'common/paynotify3',
         'common/payNotify3',
     ];
