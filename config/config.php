@@ -20,8 +20,8 @@ return [
     'payment_conf2' => [
         'key' => 'jashduwqd76738dd',
         'account_id' => 'akjsdhuw636hn',
-        'callback_url' => env('app.host').'/common/paynotify2',
-        'success_url' => env('common.callback_url').'/tradeSuccess',
+        'pay_notifyurl' => env('app.host').'/common/paynotify2',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://darlie-payment.ziwei.com.my/api/pay',
         'query_url' => 'https://hongtai01.top/Query',
     ],

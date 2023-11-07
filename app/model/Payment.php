@@ -71,8 +71,8 @@ class Payment extends Model
             'code' => $conf['account_id'],
             'orderno' => $trade_sn,
             'amount' => $pay_amount,
-            'returnurl' => $conf['callback_url'],
-            'notifyurl' => $conf['success_url'],
+            'notifyurl' => $conf['pay_notifyurl'],
+            'returnurl' => $conf['pay_callbackurl'],
             'ppID' => $ppdID,
         ];
         $req['sign'] = self::builderSign2($req);
