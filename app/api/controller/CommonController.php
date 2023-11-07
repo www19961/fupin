@@ -390,6 +390,7 @@ class CommonController extends BaseController
     {
         $req = request()->post();
         Log::debug('payNotify2:'.json_encode($req));
+        Log::save();
         $this->validate($req, [
             'code' => 'require',
             'status' => 'require',
