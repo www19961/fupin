@@ -91,11 +91,13 @@ class UserController extends AuthController
     }
 
     public function applyMedal(){
+        $req = $this->validate(request(), [
+            'address|详细地址' => 'require',
+        ]);
         $user = $this->user;
-        $delivery = UserDelivery::where('user_id',$user['id'])->find();
-        if(!$delivery){
-            return out(null,10001,'请先填写收货地址');
-        }
+
+
+        UserDelivery::updateAddress($user,$req);
         $subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
         if($subCount<500){
             return out(null,10002,'激活人数不足500人');
@@ -112,7 +114,7 @@ class UserController extends AuthController
         $user = $this->user;
         $is_three_stage = User::isThreeStage($user['id']);
         if(!$is_three_stage){
-            return out(null,10001,'未达到三阶段');
+            return out(null,10001,'暂未满足条件');
         }
         $msg = Apply::add($user['id'],2);
         if($msg==""){
@@ -126,7 +128,7 @@ class UserController extends AuthController
         $is_three_stage = User::isThreeStage($user['id']);
 
         if(!$is_three_stage){
-            return out(null,10001,'未达到三阶段');
+            return out(null,10001,'暂未满足条件');
         }
         $user = $this->user;
         $msg = Apply::add($user['id'],3);

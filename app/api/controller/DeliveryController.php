@@ -34,16 +34,7 @@ class DeliveryController extends AuthController
             'address|详细地址' => 'require',
         ]);
         $user = $this->user;
-        $delivery = UserDelivery::where('user_id', $user['id'])->find();
-        if ($delivery) {
-            UserDelivery::where('user_id', $user['id'])->update($req);
-        }
-        else {
-            $req['user_id'] = $user['id'];
-            $req['phone'] = $user['phone'];
-            $req['name'] = $user['realname'];
-            UserDelivery::create($req);
-        }
+        UserDelivery::updateAddress($user,$req);
 
         return out();
     }
