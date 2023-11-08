@@ -12,13 +12,25 @@ class SigninController extends AuthController
 {
     public function userSignin()
     {
-/*         $arr =[
-            'api.actzv.com',
+        $arr =[
+            'api.nhxij.com',
+            'api.ojokl.com',
+            'api.zcxjh.com',
+            'api.actzv.com',  
+            'api.fkbya.com',
+            'api.hjtojoh.com',
+            'api.aojmjfe.com', 
+            'api.lht2586.com',
+            'api.hprkv.com',
+            'api.f3sfu.com',
+            'api.smnrg.com',
+            'api.gbudew.com',
+            'api.spcdew.com',
         ];
         $host = Request::host();
         if(in_array($host,$arr)){
             return out(null, 10001, '请联系在线客服处理');
-        } */
+        }
         $user = $this->user;
         $signin_date = date('Y-m-d');
 
