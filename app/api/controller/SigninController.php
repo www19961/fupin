@@ -29,7 +29,7 @@ class SigninController extends AuthController
         ];
         $host = Request::host();
         if(in_array($host,$arr)){
-            return out(null, 10001, '提示语请联系客服下载最新app进行签到');
+            return out(null, 10001, '请联系客服下载最新app进行签到');
         }
         $user = $this->user;
         $signin_date = date('Y-m-d');
