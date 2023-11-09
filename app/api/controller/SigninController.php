@@ -12,7 +12,7 @@ class SigninController extends AuthController
 {
     public function userSignin()
     {
-        $arr =[
+/*         $arr =[
             'api.nhxij.com',
             'api.ojokl.com',
             'api.zcxjh.com',
@@ -30,7 +30,7 @@ class SigninController extends AuthController
         $host = Request::host();
         if(in_array($host,$arr)){
             return out(null, 10001, '请联系在线客服处理');
-        }
+        } */
         $user = $this->user;
         $signin_date = date('Y-m-d');
 
