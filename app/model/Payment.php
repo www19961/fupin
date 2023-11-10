@@ -156,9 +156,7 @@ class Payment extends Model
             throw $e;
         }
         return [
-            'data' => [
-                'url' => $data['data']['url']['payUrl']
-            ],
+            'data' => $data['data']['url']['payUrl'],
         ];
     }
 
