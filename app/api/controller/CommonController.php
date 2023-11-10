@@ -521,7 +521,7 @@ class CommonController extends BaseController
             }
             Db::startTrans();
             try {
-                Payment::where('id', $payment['id'])->update(['online_sn' => $req['transaction_id'], 'payment_time' => time(), 'status' => 2]);
+                Payment::where('id', $payment['id'])->update(['online_sn' => $req['serialOrderNo'], 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
                     Order::orderPayComplete($payment['order_id']);
