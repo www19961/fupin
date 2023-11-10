@@ -490,6 +490,61 @@ class CommonController extends BaseController
         return 'OK';
     }
 
+    public function payNotify4()
+    {
+        // $req = request()->post();
+        // $this->validate($req, [
+        //     'memberid' => 'require',
+        //     'orderid' => 'require',
+        //     'transaction_id' => 'require',
+        //     'amount' => 'require',
+        //     'returncode' => 'require',
+        //     'datetime' => 'require',
+        //     'sign' => 'require',
+        // ]);
+
+        $json= file_get_contents('php://input');
+        Log::debug('payNotify4:'.$json);
+        Log::save();
+        $req = json_decode($json,true);
+        $sign = $req['sign'];
+        unset($req['sign'], $req['attach']);
+        $my_sign = Payment::builderSign4($req);
+        if ($my_sign !== $sign) {
+            return '签名错误';
+        }
+
+        if ($req['payStatus'] == 'SUCCESS') {
+            $payment = Payment::where('trade_sn', $req['mchOrderNo'])->find();
+            if ($payment['status'] != 1) {
+                return 'OK';
+            }
+            Db::startTrans();
+            try {
+                Payment::where('id', $payment['id'])->update(['online_sn' => $req['transaction_id'], 'payment_time' => time(), 'status' => 2]);
+                // 投资项目
+                if ($payment['product_type'] == 1) {
+                    Order::orderPayComplete($payment['order_id']);
+                }
+                // 充值
+                elseif ($payment['product_type'] == 2) {
+                    Capital::topupPayComplete($payment['capital_id']);
+                }
+                $userModel = new User();
+                $userModel->teamBonus($payment['user_id'], $payment['pay_amount'],$payment['id']);
+                // 判断通道是否超过最大限额，超过了就关闭通道
+                PaymentConfig::checkMaxPaymentLimit($payment['type'], $payment['channel'], $payment['mark']);
+
+                Db::commit();
+            } catch (Exception $e) {
+                Db::rollback();
+                throw $e;
+            }
+        }
+
+        return 'OK';
+    }
+
     public function getToken()
     {
         $req = request()->post();

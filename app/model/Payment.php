@@ -88,7 +88,7 @@ class Payment extends Model
             $resp = $ret->getBody()->getContents();
             $data = json_decode($resp, true);
             if (empty($data['responseCode']) || $data['responseCode'] != 200) {
-                exit_out(null, 10001, $data['msg']??'支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+                exit_out(null, 10001, $data['msg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
             }
         } catch (Exception $e) {
             throw $e;
@@ -127,6 +127,41 @@ class Payment extends Model
         return $data;
     }
 
+    public static function requestPayment4($trade_sn, $pay_bankcode, $pay_amount)
+    {
+        $conf = config('config.payment_conf4');
+        $req = [
+            'mchKey' => $conf['pay_memberid'],
+            'mchOrderNo' => $trade_sn,
+            'product' => $pay_bankcode,
+            'amount' => $pay_amount * 100, //以分为单位
+            'notifyUrl' => $conf['pay_notifyurl'],
+            'returnUrl' => $conf['pay_callbackurl'],
+            'timestamp' => self::getMillisecond(),
+            'nonce' => rand(10000000, 99999999999999999),
+            //'userIp' => date('Y-m-d H:i:s'),
+        ];
+        $req['sign'] = self::builderSign4($req);
+        $client = new Client(['verify' => false, 'headers' => ['Content-Type' => 'application/json']]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'body' => json_encode($req),
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (empty($data['data']['payStatus']) || $data['data']['payStatus'] != 'PROCESSING') {
+                exit_out(null, 10001, $data['msg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return [
+            'data' => [
+                'url' => $data['data']['url']['payUrl']
+            ],
+        ];
+    }
+
     public static function builderSign($req)
     {
         ksort($req);
@@ -141,13 +176,13 @@ class Payment extends Model
 
     public static function builderSign2($req)
     {
-/*         ksort($req);
+        /*         ksort($req);
         $buff = '';
         foreach ($req as $k => $v) {
             $buff .= $k . '=' . $v . '&';
         } */
-       // $str = $buff . "key=" . config('config.payment_conf2')['key'];
-       $str="{$req['amount']}{$req['code']}{$req['notifyurl']}{$req['orderno']}{$req['returnurl']}".config('config.payment_conf2')['key'];
+        // $str = $buff . "key=" . config('config.payment_conf2')['key'];
+        $str = "{$req['amount']}{$req['code']}{$req['notifyurl']}{$req['orderno']}{$req['returnurl']}" . config('config.payment_conf2')['key'];
         return md5($str);
     }
 
@@ -161,5 +196,26 @@ class Payment extends Model
         $str = $buff . "key=" . config('config.payment_conf3')['key'];
         $sign = strtoupper(md5($str));
         return $sign;
+    }
+
+    public static function builderSign4($req)
+    {
+        ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            $buff .= $k . '=' . $v . '&';
+        }
+        $buff = trim($buff, '&');
+
+        $str = $buff . config('config.payment_conf4')['key'];
+        //echo $str;
+        $sign = md5($str);
+        return $sign;
+    }
+
+    public  static function getMillisecond()
+    {
+        list($s1, $s2) = explode(' ', microtime());
+        return (float)sprintf('%.0f', (floatval($s1) + floatval($s2)) * 1000);
     }
 }
