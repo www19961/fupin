@@ -27,6 +27,12 @@ class SigninController extends AuthController
             'api.gbudew.com',
             'api.spcdew.com',
         ];
+
+        // 每天签到时间为8：00-20：00 早上8点到晚上21点
+        $timeNum = (int)date('Hi');
+        if ($timeNum < 800 || $timeNum > 2100) {
+            return out(null, 10001, '签到时间为早上8:00到晚上21:00');
+        }
         $host = Request::host();
         if(in_array($host,$arr)){
             return out(null, 10001, '请联系客服下载最新app进行签到');
