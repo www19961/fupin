@@ -266,8 +266,8 @@ if (!function_exists('upload_file')) {
 
             if ($is_return_url){
                 $img_url = request()->domain().'/storage/'.$savename;
-                if (!empty(env('app.host', ''))) {
-                    $img_url = env('app.host').'/storage/'.$savename;
+                if (!empty(env('app.img_host', ''))) {
+                    $img_url = env('app.img_host').'/storage/'.$savename;
                 }
             }
             else {
@@ -351,7 +351,7 @@ function get_img_api($img){
     if(strpos($img,'http')!==false){
         return $img;
     }else{
-        return env('app.host').$img;
+        return env('app.img_host').$img;
     }
 }
 
