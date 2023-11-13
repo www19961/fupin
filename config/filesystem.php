@@ -26,7 +26,7 @@ return [
             'secretKey'=>'fpIoS16R_4HdcVOVOQejtcMW-6nuKXsmUc60HqAZ',//七牛云的配置,secretKey
             'bucket'=>'qiniuoo',					//七牛云的配置,bucket空间名
             //'domain'=>'s2dgpwe6t.hn-bkt.clouddn.com'					//七牛云的配置,domain,域名
-            'domain'=>'xjh.sm9119.cn'					//七牛云的配置,domain,域名
+            'domain'=>'xjh.liushugh.cn',				//七牛云的配置,domain,域名
         ],
     ],
 ];
