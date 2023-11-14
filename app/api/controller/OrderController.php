@@ -49,7 +49,7 @@ class OrderController extends AuthController
 
         if($project['project_group_id']==3){
             $order = Order::where('user_id', $user['id'])->where('status', '>', 1)->where('project_group_id',1)->find();
-            $order2 = Order::where('user_id', $user['id'])->where('status', '>', 1)->where('project_group_id',1)->find();
+            $order2 = Order::where('user_id', $user['id'])->where('status', '>', 1)->where('project_group_id',2)->find();
             if(!$order || !$order2){
                 return out(null, 10001, '请先购买强国工匠和国富民强项目');
             }
