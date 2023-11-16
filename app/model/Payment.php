@@ -172,6 +172,7 @@ class Payment extends Model
             'returnurl' => $conf['pay_callbackurl'],
             'version' => 3,
             'note' => 'note',
+            'ip' => request()->ip(),
             //'userIp' => date('Y-m-d H:i:s'),
         ];
         $req['sign'] = self::builderSign5($req);
