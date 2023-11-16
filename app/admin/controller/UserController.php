@@ -270,6 +270,9 @@ class UserController extends AuthController
         }else{
             $text = $req['remark'];
         }
+        foreach($phoneList as $key=>$phone){
+            $phoneList[$key] = trim($phone);
+        }
         $ids = User::whereIn('phone',$phoneList)->column('id');
         Db::startTrans();
         try{
