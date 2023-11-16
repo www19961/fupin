@@ -504,8 +504,7 @@ class CommonController extends BaseController
         // ]);
 
         $json= file_get_contents('php://input');
-        Log::debug('payNotify4:'.$json);
-        Log::save();
+
         $req = json_decode($json,true);
         $sign = $req['sign'];
         unset($req['sign'], $req['attach']);
@@ -543,6 +542,59 @@ class CommonController extends BaseController
         }
 
         return 'SUCCESS';
+    }
+
+    public function payNotify5()
+    {
+        $req = request()->get();
+        $this->validate($req, [
+            'mid' => 'require',
+            'id'=> 'require',
+            'orderid' => 'require',
+            'orderamount' => 'require',
+            'amount' => 'require',
+            'status' => 'require',
+            'paytype' => 'require',
+            'sign' => 'require',
+        ]);
+        Log::debug('payNotify5:'.json_encode($req));
+        Log::save();
+        $sign = $req['sign'];
+        unset($req['sign'], $req['attach']);
+        $my_sign = Payment::builderSign5Notify($req);
+        if ($my_sign !== $sign) {
+            return 'fail签名错误';
+        }
+
+        if ($req['status'] == 1) {
+            $payment = Payment::where('trade_sn', $req['orderid'])->find();
+            if ($payment['status'] != 1) {
+                return 'success';
+            }
+            Db::startTrans();
+            try {
+                Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
+                // 投资项目
+                if ($payment['product_type'] == 1) {
+                    Order::orderPayComplete($payment['order_id']);
+                }
+                // 充值
+                elseif ($payment['product_type'] == 2) {
+                    Capital::topupPayComplete($payment['capital_id']);
+                }
+                $userModel = new User();
+                $userModel->teamBonus($payment['user_id'], $payment['pay_amount'],$payment['id']);
+                // 判断通道是否超过最大限额，超过了就关闭通道
+                PaymentConfig::checkMaxPaymentLimit($payment['type'], $payment['channel'], $payment['mark']);
+
+                Db::commit();
+            } catch (Exception $e) {
+                Db::rollback();
+                throw $e;
+            }
+        }
+
+        return 'success';
     }
 
     public function getToken()

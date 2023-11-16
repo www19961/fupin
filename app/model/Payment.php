@@ -160,6 +160,39 @@ class Payment extends Model
         ];
     }
 
+    public static function requestPayment5($trade_sn, $pay_bankcode, $pay_amount)
+    {
+        $conf = config('config.payment_conf5');
+        $req = [
+            'mid' => $conf['pay_memberid'],
+            'orderid' => $trade_sn,
+            'paytype' => $pay_bankcode,
+            'amount' => $pay_amount,
+            'notifyurl' => $conf['pay_notifyurl'],
+            'returnurl' => $conf['pay_callbackurl'],
+            'version' => 3,
+            'note' => 'note',
+            //'userIp' => date('Y-m-d H:i:s'),
+        ];
+        $req['sign'] = self::builderSign5($req);
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (empty($data['status']) || $data['status'] != 1) {
+                exit_out(null, 10001, $data['msg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return [
+            'data' => $data['api_jump_url'],
+        ];
+    }
+
     public static function builderSign($req)
     {
         ksort($req);
@@ -206,6 +239,36 @@ class Payment extends Model
         $buff = trim($buff, '&');
 
         $str = $buff . config('config.payment_conf4')['key'];
+        //echo $str;
+        $sign = md5($str);
+        return $sign;
+    }
+
+    public static function builderSign5($req)
+    {
+/*         ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            $buff .= $k . '=' . $v . '&';
+        }
+        $buff = trim($buff, '&'); */
+        $str = "mid={$req['mid']}&orderid={$req['orderid']}&amount={$req['amount']}&note={$req['note']}&paytype={$req['paytype']}&notifyurl={$req['notifyurl']}&returnurl={$req['returnurl']}&";
+        $str = $str . config('config.payment_conf5')['key'];
+        //echo $str;
+        $sign = md5($str);
+        return $sign;
+    }
+
+    public static function builderSign5Notify($req)
+    {
+/*         ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            $buff .= $k . '=' . $v . '&';
+        }
+        $buff = trim($buff, '&'); */
+        $str = "mid={$req['mid']}&status=1&id={$req['id']}&orderid={$req['orderid']}&orderamount={$req['orderamount']}&";
+        $str = $str . config('config.payment_conf5')['key'];
         //echo $str;
         $sign = md5($str);
         return $sign;

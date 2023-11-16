@@ -51,6 +51,14 @@ return [
         'payment_url' => 'https://api.baoxuepay.com/api/v1/payment/init',
         'query_url' => 'https://hongtai01.top/Query',
     ],
+    'payment_conf5' => [
+        'key' => 'dE0uJ1dQ6iS8bR0a',
+        'pay_memberid'=>'10942',
+        'pay_notifyurl' => env('app.host').'/common/paynotify5',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'https://facaiya.vip/pay/json',
+        'query_url' => 'https://hongtai01.top/Query',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
