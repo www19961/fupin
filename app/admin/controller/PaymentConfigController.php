@@ -10,7 +10,7 @@ class PaymentConfigController extends AuthController
     {
         $req = request()->param();
 
-        $builder = PaymentConfig::order('id', 'desc');
+        $builder = PaymentConfig::order('sort desc');
         if (isset($req['payment_config_id']) && $req['payment_config_id'] !== '') {
             $builder->where('id', $req['payment_config_id']);
         }
@@ -54,6 +54,7 @@ class PaymentConfigController extends AuthController
             'topup_max_limit|总支付金额上限' => 'require|float',
             'start_topup_limit|用户分层' => 'require|float',
             'card_info|卡信息' => 'requireIf:type,4|array',
+            'sort|排序' => 'number',
         ]);
 
         if ($req['type'] == 4) {
@@ -115,6 +116,7 @@ class PaymentConfigController extends AuthController
             'topup_max_limit|总支付金额上限' => 'require|float',
             'start_topup_limit|用户分层' => 'require|float',
             'card_info|卡信息' => 'requireIf:type,4|array',
+            'sort|排序' => 'number',
         ]);
 
         if ($req['type'] == 4) {

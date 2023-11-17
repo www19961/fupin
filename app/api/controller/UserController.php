@@ -14,6 +14,7 @@ use app\model\UserRelation;
 use app\model\KlineChartNew;
 use app\model\Capital;
 use app\model\Certificate;
+use app\model\Payment;
 use app\model\UserDelivery;
 use think\facade\Db;
 use Exception;
@@ -633,7 +634,7 @@ class UserController extends AuthController
         $userModel = new User();
         $toupTotal = $userModel->getTotalTopupAmountAttr(0,$user);
         $data = [];
-        foreach (config('map.payment_config.channel_map') as $k => $v) {
+/*         foreach (config('map.payment_config.channel_map') as $k => $v) {
             //$paymentConfig = PaymentConfig::where('type', $req['type'])->where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $user['total_payment_amount'])->order('start_topup_limit', 'desc')->find();
             $paymentConfig = PaymentConfig::where('status', 1)->where('channel', $k)->where('start_topup_limit', '<=', $toupTotal)->order('start_topup_limit', 'desc')->find();
             if (!empty($paymentConfig)) {
@@ -641,7 +642,8 @@ class UserController extends AuthController
                 $confs = PaymentConfig::where('status', 1)->where('channel', $k)->where('start_topup_limit', $paymentConfig['start_topup_limit'])->select()->toArray();
                 $data = array_merge($data, $confs);
             }
-        }
+        } */
+        $data = PaymentConfig::Where('status',1)->where('start_topup_limit', '<=', $toupTotal)->order('sort desc')->select();
         $img =[1=>'wechat.jpg',2=>'alipay.jpg',3=>'unionpay.jpg',4=>'unionpay.jpg',5=>'unionpay.jpg',6=>'unionpay.jpg',7=>'unionpay.jpg',8=>'unionpay.jpg',];
         foreach($data as &$item){
             $item['img'] = env('app.img_host').'/storage/pay_img/'.$img[$item['type']];

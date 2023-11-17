@@ -46,6 +46,7 @@
                             <th>总支付金额上限</th>
                             <th>用户分层金额</th>
                             <th>已支付金额</th>
+                            <th>排序</th>
                             <th>操作</th>
                         </tr>
                         <?php foreach ($data as $k => $v) { ?>
@@ -74,6 +75,7 @@
                                 <td>{$v['topup_max_limit']}</td>
                                 <td>{$v['start_topup_limit']}</td>
                                 <td>{$v['payment_amount']}</td>
+                                <td>{$v['sort']}</td>
                                 <td>
                                     <a {:auth_show_judge('PaymentConfig/editPaymentConfig')} class="btn btn-flat
                                     btn-info btn-xs" href="{:url('admin/PaymentConfig/showPaymentConfig', ['id' =>

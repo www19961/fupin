@@ -154,6 +154,16 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">排序</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="sort" class="form-control"
+                                   placeholder="排序" value="{$data['sort']??'0'}">
+                        </div>
+                        <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">数字越大越排在前</div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
                         <div class="col-xs-12 col-sm-8 col-md-6 col-lg-5 text-center">
                             <button type="button" class="btn btn-flat btn-primary" onclick="sub()">提 交</button>
                             <button type="button" class="btn btn-flat btn-default"
