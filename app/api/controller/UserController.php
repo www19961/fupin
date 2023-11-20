@@ -128,9 +128,9 @@ class UserController extends AuthController
         $user = $this->user;
         $is_three_stage = User::isThreeStage($user['id']);
 
-        if(!$is_three_stage){
+        //if(!$is_three_stage){
             return out(null,10001,'暂未满足条件');
-        }
+        //}
         $user = $this->user;
         $msg = Apply::add($user['id'],3);
         if($msg==""){

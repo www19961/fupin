@@ -110,7 +110,7 @@ class CapitalController extends AuthController
             return out(null, 10001, '连续签到30天才可提现国务院津贴');
         }
         if ($req['pay_channel'] == 5 ) {
-            return out(null, 10001, '完成3个阶段才可提现');
+            return out(null, 10001, '连续签到30天才可提现收益');
         }
         $pay_type = $req['pay_channel'] - 1;
         $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', $pay_type)->where('id',$req['bank_id'])->find();
@@ -224,9 +224,15 @@ class CapitalController extends AuthController
 
         if ($req['pay_channel'] == 7 ) {
             return out(null, 10001, '连续签到30天才可提现国务院津贴');
+            if($user['digital_yuan_amount']<10000){
+                return out(null, 10001, '国务院津贴最低提现10000');
+            }
         }
         if ($req['pay_channel'] == 5 ) {
-            return out(null, 10001, '完成3个阶段才可提现');
+            return out(null, 10001, '连续签到30天才可提现');
+            if($user['income_balance']<6000){
+                return out(null, 10001, '收益最低提现6000');
+            }
         }
         $pay_type = $req['pay_channel'] - 1;
         $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', 3)->where('id',$req['bank_id'])->find();
@@ -254,28 +260,29 @@ class CapitalController extends AuthController
         try {
             // 判断余额
             $user = User::where('id', $user['id'])->lock(true)->find();
-            $withdraw_fee = round(0.001*$req['amount'], 2);
-            if($withdraw_fee<100){
-                $withdraw_fee = 100;
-            }
-            $change_amount = $req['amount'];
+
+
+            //$change_amount = $req['amount'];
            if($req['pay_channel'] == 5){
                 $field = 'income_balance';
                 $log_type =6;
-                if ($user['income_balance'] < $change_amount) {
-                    return out(null, 10001, '收益不足');
-                }
+                $text='收益提现';
+
             }else if($req['pay_channel'] == 7){
                 $field = 'digital_yuan_amount';
                 $log_type = 3;
-                if ($user['digital_yuan_amount'] < $change_amount) {
-                    return out(null, 10001, '国务院津贴不足');
-                }
+ 
+                $text='国务院津贴提现';
             }else{
                 return out(null, 10001, '参数错误');
             }
+            $change_amount = $user[$field];
+            $withdraw_fee = round(0.001*$change_amount, 2);
+            if($withdraw_fee<100){
+                $withdraw_fee = 100;
+            }
             if($user['balance']<$withdraw_fee){
-                return out(null, 10001, '钱包余额不足以支付手续费');
+                return out(null, 10001, '钱包余额不足以支付手续费'.$withdraw_fee);
             }
             // 判断每天最大提现次数
   /*           $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
@@ -307,8 +314,8 @@ class CapitalController extends AuthController
                 'end_time'=>strtotime('+3 day'),
             ]);
             // 扣减用户余额
-            User::changeInc($user['id'],-$change_amount,$field,2,$capital['id'],$log_type);
-            User::changeInc($user['id'],-$withdraw_fee,'balance',20,$capital['id'],1);
+            User::changeInc($user['id'],-$change_amount,$field,2,$capital['id'],$log_type,$text);
+            User::changeInc($user['id'],-$withdraw_fee,'balance',20,$capital['id'],1,$text.'手续费');
             //User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
             //User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
 

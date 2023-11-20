@@ -13,7 +13,7 @@ class Apply extends Model
         }
         $data = [
             'user_id'=>$userId,
-            'type'=>1,
+            'type'=>$type,
         ];
         Apply::create($data);
         return "";
