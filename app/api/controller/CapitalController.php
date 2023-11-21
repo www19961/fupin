@@ -108,7 +108,7 @@ class CapitalController extends AuthController
 
 
         $pay_type = $req['pay_channel'] - 1;
-        $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', $pay_type)->where('id',$req['bank_id'])->find();
+        $payAccount = PayAccount::where('user_id', $user['id'])->where('id',$req['bank_id'])->find();
         if (empty($payAccount)) {
             return out(null, 802, '请先设置此收款方式');
         }
