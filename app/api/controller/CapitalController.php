@@ -106,12 +106,7 @@ class CapitalController extends AuthController
             return out(null, 801, '请先设置支付密码');
         }
 
-        if ($req['pay_channel'] == 7 ) {
-            return out(null, 10001, '连续签到30天才可提现国务院津贴');
-        }
-        if ($req['pay_channel'] == 5 ) {
-            return out(null, 10001, '连续签到30天才可提现收益');
-        }
+
         $pay_type = $req['pay_channel'] - 1;
         $payAccount = PayAccount::where('user_id', $user['id'])->where('pay_type', $pay_type)->where('id',$req['bank_id'])->find();
         if (empty($payAccount)) {
@@ -126,9 +121,9 @@ class CapitalController extends AuthController
         if ($req['pay_channel'] == 3 && dbconfig('alipay_withdrawal_switch') == 0) {
             return out(null, 10001, '暂未开启支付宝提现');
         }
-        if ($req['pay_channel'] == 7 && dbconfig('digital_withdrawal_switch') == 0) {
+/*         if ($req['pay_channel'] == 7 && dbconfig('digital_withdrawal_switch') == 0) {
             return out(null, 10001, '连续签到30天才可提现国务院津贴');
-        }
+        } */
 
         // 判断单笔限额
         if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
@@ -142,10 +137,23 @@ class CapitalController extends AuthController
         if ($timeNum < 800 || $timeNum > 2000) {
             return out(null, 10001, '提现时间为早上8:00到晚上20:00');
         }
+        $user = User::where('id', $user['id'])->lock(true)->find();
+        if ($req['pay_channel'] == 7 ) {
+            if($user['digital_yuan_amount']<10000){
+                return out(null, 10001, '国务院津贴最低提现10000');
+            }
+        }
+        if ($req['pay_channel'] == 5 ) {
+            if($user['income_balance']<6000){
+                return out(null, 10001, '收益最低提现6000');
+            }
+        }
+
+        
         Db::startTrans();
         try {
             // 判断余额
-            $user = User::where('id', $user['id'])->lock(true)->find();
+            
             // if ($user['invite_bonus'] < $req['amount']) {
             //     return out(null, 10001, '可提现余额不足');
             // }
@@ -223,13 +231,13 @@ class CapitalController extends AuthController
         }
 
         if ($req['pay_channel'] == 7 ) {
-            return out(null, 10001, '连续签到30天才可提现国务院津贴');
+            //return out(null, 10001, '连续签到30天才可提现国务院津贴');
             if($user['digital_yuan_amount']<10000){
                 return out(null, 10001, '国务院津贴最低提现10000');
             }
         }
         if ($req['pay_channel'] == 5 ) {
-            return out(null, 10001, '连续签到30天才可提现');
+            //return out(null, 10001, '连续签到30天才可提现');
             if($user['income_balance']<6000){
                 return out(null, 10001, '收益最低提现6000');
             }
