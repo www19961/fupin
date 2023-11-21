@@ -80,8 +80,8 @@ class UserController extends AuthController
         $car = Apply::where('user_id',$user['id'])->where('type',3)->find();
         $user['is_sub_medal'] = $subCount>=500?1:0;
         $user['is_apply_medal'] = $medal?1:0;
-        $user['is_apply_house'] = $house?1:0;
-        $user['is_apply_car'] = $car?1:0;
+        $user['is_apply_house'] = 0;
+        $user['is_apply_car'] = 0;
         $user['is_three_stage'] = User::isThreeStage($user['id']);
 /*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
@@ -121,7 +121,7 @@ class UserController extends AuthController
         if($msg==""){
             return out();
         }else{
-            return out(null,10001,$msg);
+            return out(null,10002,$msg);
         }
     }
     public function applyCar(){
@@ -136,7 +136,7 @@ class UserController extends AuthController
         if($msg==""){
             return out();
         }else{
-            return out(null,10001,$msg);
+            return out(null,10002,$msg);
         }
     }
 
