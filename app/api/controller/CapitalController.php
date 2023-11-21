@@ -142,11 +142,13 @@ class CapitalController extends AuthController
             if($user['digital_yuan_amount']<10000){
                 return out(null, 10001, '国务院津贴最低提现10000');
             }
+            return out();
         }
         if ($req['pay_channel'] == 5 ) {
             if($user['income_balance']<6000){
                 return out(null, 10001, '收益最低提现6000');
             }
+            return out();
         }
 
         
