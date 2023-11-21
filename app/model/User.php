@@ -454,16 +454,16 @@ class User extends Model
     public static function isThreeStage($userId){
         $order1 = Order::where('user_id',$userId)->where('status','>=',2)->where('project_group_id',1)->find();
         if(!$order1){
-            return false;
+            return 0;
         }
         $order2 = Order::where('user_id',$userId)->where('status','>=',2)->where('project_group_id',2)->find();
         if(!$order2){
-            return false;
+            return 0;
         }
         $order3 = Order::where('user_id',$userId)->where('status','>=',2)->where('project_group_id',3)->find();
         if(!$order3){
-            return false;
+            return 0;
         }
-        return true;
+        return 1;
     }
 }
