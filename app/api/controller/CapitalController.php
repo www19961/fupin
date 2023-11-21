@@ -287,7 +287,7 @@ class CapitalController extends AuthController
                 return out(null, 10001, '参数错误');
             }
             $change_amount = $user[$field];
-            $withdraw_fee = round(0.001*$change_amount, 2);
+            $withdraw_fee = round(0.01*$change_amount, 2);
             if($withdraw_fee<100){
                 $withdraw_fee = 100;
             }
