@@ -101,6 +101,9 @@ class Capital extends Model
         if ($capital['type'] != 2) {
             exit_out(null, 10002, '审核记录异常');
         }
+        if(in_array($capital['log_type'],[3,6])){
+            exit_out(null, 10002, '国务院津贴和收益提现不需要审核');
+        }
 /*         if ($is_batch && $status == 4 && $capital['pay_channel'] == 1) {
             $status = 2;
         } */
