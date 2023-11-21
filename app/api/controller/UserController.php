@@ -121,7 +121,7 @@ class UserController extends AuthController
         if($msg==""){
             return out();
         }else{
-            return out(null,10002,$msg);
+            return out(null,10002,"预约看房申请已提交，请耐心等待，留意好您的手机。");
         }
     }
     public function applyCar(){
@@ -136,7 +136,7 @@ class UserController extends AuthController
         if($msg==""){
             return out();
         }else{
-            return out(null,10002,$msg);
+            return out(null,10002,"预约提车申请已提交，请耐心等待，留意好您的手机。");
         }
     }
 
