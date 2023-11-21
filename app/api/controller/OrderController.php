@@ -36,7 +36,7 @@ class OrderController extends AuthController
             return out(null, 10001, '支付密码错误');
         }
 
-        $project = Project::where('id', $req['project_id'])->find();
+        $project = Project::where('id', $req['project_id'])->where('status',1)->find();
         if(!$project){
             return out(null, 10001, '项目不存在');
         }
