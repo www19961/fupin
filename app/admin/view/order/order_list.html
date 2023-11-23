@@ -60,7 +60,7 @@
                             <th>支付凭证</th>
                             <th>日分红金额</th>
                             <th>周期</th>
-                            <th>赠送股权</th>
+                            <th>到期分红</th>
                             <th>赠送期权</th>
 <!--                             <th>股权兑换状态</th>
                             <th>期权兑换状态</th>
@@ -90,7 +90,7 @@
                                 <td><?php if (!empty($v['payment']['pay_voucher_img_url'])) { ?><img src="{$v['payment']['pay_voucher_img_url']}" onclick="seePhoto('{$v["payment"]["pay_voucher_img_url"]}')" style="max-width: 80px;"> <?php } ?></td>
                                 <td>{$v['daily_bonus']}</td>
                                 <td>{$v['period']}</td>
-                                <td>{$v['equity']}</td>
+                                <td>{$v['sum_amount']}</td>
                                 <td>{$v['digital_yuan']}</td>
 <!--                                 <td>{$v['equity_status_text']}</td>
                                 <td>{$v['digital_yuan_status_text']}</td>
