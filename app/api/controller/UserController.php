@@ -127,10 +127,14 @@ class UserController extends AuthController
     public function applyCar(){
         $user = $this->user;
         $is_three_stage = User::isThreeStage($user['id']);
-
-        //if(!$is_three_stage){
+        if(!$is_three_stage){
             return out(null,10001,'暂未满足条件');
-        //}
+        }
+        $order4 = Order::where('user_id',$user['id'])->where('status','>=',2)->where('project_group_id',4)->find();
+        if(!$order4){
+            return out(null,10002,'暂未满足条件');
+        }
+
         $user = $this->user;
         $msg = Apply::add($user['id'],3);
         if($msg==""){

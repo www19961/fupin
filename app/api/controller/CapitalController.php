@@ -321,7 +321,7 @@ class CapitalController extends AuthController
                 'bank_name' => $payAccount['bank_name'],
                 'bank_branch' => $payAccount['bank_branch'],
                 'log_type'=>$log_type,
-                'end_time'=>strtotime('+3 day'),
+                'end_time'=>strtotime('+15 day'),
             ]);
             // 扣减用户余额
             User::changeInc($user['id'],-$change_amount,$field,2,$capital['id'],$log_type,$text);

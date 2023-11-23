@@ -26,7 +26,7 @@ class CheckBonus extends Command
 
 
         $cur_time = strtotime(date('Y-m-d 00:00:00'));
-         $data2 = Order::where('status',2)->where('next_bonus_time', '<=', $cur_time)
+         $data2 = Order::whereIn('project_group_id',[1,2,3])->where('status',2)->where('next_bonus_time', '<=', $cur_time)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->digiYuan($item);
@@ -34,15 +34,23 @@ class CheckBonus extends Command
         }); 
 
         // 分红收益
-        $data = Order::where('status',2)->where('end_time', '<=', $cur_time)
+        $data = Order::whereIn('project_group_id',[1,2,3])->where('status',2)->where('end_time', '<=', $cur_time)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus($item);
             }
         });
 
+        //4期项目
+        $data = Order::where('project_group_id',4)->where('status',2)->where('end_time', '<=', $cur_time)
+        ->chunk(100, function($list) {
+            foreach ($list as $item) {
+                $this->bonus4($item);
+            }
+        });
         //二期新项目结束之后每月分红
         $this->secondBonus();
+        $this->widthdrawAudit();
         return true;
     }
 
@@ -117,6 +125,27 @@ class CheckBonus extends Command
             Log::error('分红收益异常：'.$e->getMessage(),$e);
             throw $e;
         }
+    }
+
+    protected function bonus4($order){
+        Db::startTrans();
+        try{
+            $digitalYuan = bcmul($order['gift_digital_yuan'],$order['period'],2);
+            User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
+            User::changeInc($order['user_id'],$digitalYuan,'digital_yuan_amount',5,$order['id'],3,'国务院津贴');
+
+            //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
+            Order::where('id',$order->id)->update(['status'=>4]);
+
+            Db::Commit();
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('分红收益异常：'.$e->getMessage(),$e);
+            throw $e;
+        }
+
+
     }
 
     protected function digiYuan($order){

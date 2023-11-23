@@ -3,11 +3,17 @@
 namespace app\common\command;
 
 use app\model\Order;
+use app\model\PassiveIncomeRecord;
 use app\model\User;
 use app\model\UserRelation;
+use app\model\UserSignin;
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
+use think\facade\Db;
+
+use Exception;
+use think\facade\Log;
 
 class CheckSubsidy extends Command
 {
@@ -18,28 +24,51 @@ class CheckSubsidy extends Command
 
     protected function execute(Input $input, Output $output)
     {   
-        $this->test();
-        //数字建设补贴
-/*         $execute_day = date('Ymd');
-        $data = SubsidyIncomeRecord::alias('s')->join('order o','s.order_id = o.id')->field('s.*,o.status as ostatus,o.sum_amount,o.period')->where('s.status','<',3)->where('s.execute_day', '<', $execute_day)->where('s.is_finish', 0)->select();
-        if(!empty($data)){
-            foreach($data as $v){
-                if($v['ostatus'] != 2){
-                    SubsidyIncomeRecord::where('id',$v['id'])->update(['is_finish' => 1]);
-                }else{
-                   $new_days = $v['days'] + 1;
-                   $amount = round($v['sum_amount'] / $v['period'],2);
-                   SubsidyIncomeRecord::where('id',$v['id'])->update([
-                        'status' => 2,
-                        'execute_day' => $execute_day,
-                        'days' => $new_days,
-                        'amount' => $v['amount']+$amount,
-                   ]);
-                }
-            }
-        } */
-
+        $this->all();
         return true;
+    }
+
+    protected function all(){
+        $data = Order::where('status',2)
+        ->chunk(100, function($list) {
+            foreach ($list as $item) {
+                $this->bonus($item);
+            }
+        });
+    }
+
+    protected function bonus($order){
+        Db::startTrans();
+        try{
+            echo "正在处理订单{$order['id']}\n";
+            $alreadyAmount = PassiveIncomeRecord::where('order_id',$order['id'])->sum('amount');
+            $digitalYuan = bcmul($order['single_gift_digital_yuan'],$order['period']) - $alreadyAmount;
+            User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
+            $gainBonus = bcadd($order['gain_bonus'],$digitalYuan,2);
+           
+            if($digitalYuan>0){
+                Order::where('id',$order->id)->update(['status'=>4,'gain_bonus'=>$gainBonus]);
+                User::changeInc($order['user_id'],$digitalYuan,'digital_yuan_amount',5,$order['id'],3,'结算');
+                PassiveIncomeRecord::create([
+                    'project_group_id'=>$order['project_group_id'],
+                    'user_id' => $order['user_id'],
+                    'order_id' => $order['id'],
+                    'execute_day' => date('Ymd'),
+                    'amount'=>$digitalYuan,
+                    'days'=>0,
+                    'is_finish'=>1,
+                    'status'=>3,
+                    'type'=>1,
+                ]); 
+            }else{
+                Order::where('id',$order->id)->update(['status'=>4]);
+            }
+            Db::Commit();
+        }catch(\Exception $e){
+            Db::rollback();
+            Log::error('分红收益异常：'.$order['id'].' '.$e->getMessage(),$e);
+            throw $e;
+        }
     }
 
     protected function test(){
@@ -65,5 +94,59 @@ class CheckSubsidy extends Command
         foreach($countData as $k=>$v){
             echo "{$v['id']} {$v['phone']} $k {$v['no']} {$v['have']}\n";
         }
+    }
+
+    public function test2(){
+        $data = [
+            '5'=>0,
+            '10'=>0,
+        ];
+        $num = 0;
+        User::whereRaw(' id  not in (select user_id from mp_user_relation) ')->chunk(1000,function($list) use (&$data,&$num){
+            foreach($list as $key=>$item){
+                $num++;
+                echo "正在处理第".($num)." 个用户{$key}\n";
+               $days =  $this->lianxuSignIn($item);
+
+                if($days>=10){
+                    $data['10']++;
+                }else if($days>=5){
+                    $data['5']++;
+                }
+            }
+        });
+        print_r($data);
+    }
+
+    public function lianxuSignIn($item){
+        $signIns = UserSignin::where('user_id',$item['id'])->order('signin_date asc')->select();
+        $date1 = "";
+        $signMax = 0;
+        $signInDays = 0;
+        foreach($signIns as $signIn){
+            if($signInDays >= 10){
+                $signMax = $signInDays;
+                break;
+            }
+            if($date1!=""){
+                $targetDate = date('Y-m-d',strtotime("+1 day",strtotime($date1)));
+                if($targetDate == $signIn['signin_date']){
+                    $signInDays++;
+                }else{
+                    if($signInDays>$signMax){
+                        $signMax = $signInDays;
+                    }
+                    $signInDays=0;
+                }
+                $date1 = $signIn['signin_date'];
+            }else{
+                $date1=$signIn['signin_date'];
+            }
+
+        }
+        if($signInDays>$signMax){
+            $signMax = $signInDays;
+        }
+        return $signMax+1;
     }
 }
