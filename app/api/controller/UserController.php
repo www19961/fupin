@@ -138,7 +138,6 @@ class UserController extends AuthController
             }
         }
 
-        $user = $this->user;
         $msg = Apply::add($user['id'],3);
         if($msg==""){
             return out();
