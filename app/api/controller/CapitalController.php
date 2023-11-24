@@ -134,7 +134,7 @@ class CapitalController extends AuthController
         }
         // 每天提现时间为8：00-20：00 早上8点到晚上20点
         $timeNum = (int)date('Hi');
-        if ($timeNum < 800 || $timeNum > 2000) {
+        if (!in_array($req['pay_channel'],[5,7]) && ($timeNum < 800 || $timeNum > 2000)) {
             return out(null, 10001, '提现时间为早上8:00到晚上20:00');
         }
         $user = User::where('id', $user['id'])->lock(true)->find();
