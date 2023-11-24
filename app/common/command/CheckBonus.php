@@ -21,7 +21,7 @@ class CheckBonus extends Command
         $this->setName('checkBonus')->setDescription('项目分红收益和被动收益，每天的0点1分执行');
     }
 
-    protected function execute(Input $input, Output $output)
+    public function execute(Input $input, Output $output)
     {   
 
 
@@ -54,11 +54,11 @@ class CheckBonus extends Command
         return true;
     }
 
-    protected function widthdrawAudit(){
+    public function widthdrawAudit(){
         Capital::where('status',1)->where('type',2)->whereIn('log_type',[3,6])->where('end_time','<=',time())->update(['status'=>2]);
     }
 
-    protected function secondBonus(){
+    public function secondBonus(){
         $yesterday = date("Y-m-d",strtotime("-1 day"));
         $day = date("d",strtotime($yesterday));
         $month = date("m",strtotime($yesterday));
@@ -109,7 +109,7 @@ class CheckBonus extends Command
         });
     }
 
-    protected function bonus($order){
+    public function bonus($order){
         Db::startTrans();
         try{
             User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
@@ -127,10 +127,11 @@ class CheckBonus extends Command
         }
     }
 
-    protected function bonus4($order){
+    public function bonus4($order){
         Db::startTrans();
         try{
-            $digitalYuan = bcmul($order['gift_digital_yuan'],$order['period'],2);
+            //$digitalYuan = bcmul($order['single_gift_digital_yuan'],$order['period'],2);
+            $digitalYuan = $order['single_gift_digital_yuan'];
             User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
             User::changeInc($order['user_id'],$digitalYuan,'digital_yuan_amount',5,$order['id'],3,'国务院津贴');
 
