@@ -13,3 +13,4 @@
 /app/common/command/CheckBonus_old2.php
 /public/chatlink.html
 /test/TestCheckBonus.php
+/vendor/bin/.phpunit.result.cache

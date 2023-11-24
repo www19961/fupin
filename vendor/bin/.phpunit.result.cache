@@ -1,1 +1,1 @@
-{"version":1,"defects":[],"times":{"test\\TestCheckBonus::testCheckBonus":0.008}}
+{"version":1,"defects":{"test\\TestCheckBonus::testCheckBonus":5,"test\\TestCheckBonus::testCheckBonus2":5},"times":{"test\\TestCheckBonus::testCheckBonus":0.087,"test\\TestCheckBonus::testCheckBonus2":0.07}}
