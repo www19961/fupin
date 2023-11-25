@@ -627,7 +627,7 @@ class CommonController extends BaseController
 
         if ($req['status'] == 2) {
             $payment = Payment::where('trade_sn', $req['mchOrderNo'])->find();
-            if ($payment['status'] != 2) {
+            if ($payment['status'] != 1) {
                 return 'success';
             }
             Db::startTrans();
