@@ -599,7 +599,9 @@ class CommonController extends BaseController
 
     public function payNotify6()
     {
-        $req = request()->get();
+        $req = request()->param();
+        Log::debug('payNotify6:'.json_encode($req));
+        Log::save();
         $this->validate($req, [
             'payOrderId' => 'require',
             'mchId'=> 'require',
@@ -616,8 +618,7 @@ class CommonController extends BaseController
             'reqTime'=>'require',
             'sign' => 'require',
         ]);
-        Log::debug('payNotify6:'.json_encode($req));
-        Log::save();
+
         $sign = $req['sign'];
         unset($req['sign'], $req['attach']);
         $my_sign = Payment::builderSign6Notify($req);
