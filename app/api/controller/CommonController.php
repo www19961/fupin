@@ -605,14 +605,13 @@ class CommonController extends BaseController
         $this->validate($req, [
             'payOrderId' => 'require',
             'mchId'=> 'require',
-            'appId' => 'require',
+            'appId' => '',
             'productId' => 'require',
             'mchOrderNo' => 'require',
             'amount' => 'require',
             'income' => 'require',
             'status' => 'require',
-            'channelOrderNo' => 'require',
-            'param2' => 'require',
+            'channelOrderNo' => '',
             'paySuccTime' => 'require',
             'backType'=>'require',
             'reqTime'=>'require',
@@ -621,13 +620,13 @@ class CommonController extends BaseController
 
         $sign = $req['sign'];
         unset($req['sign'], $req['attach']);
-        $my_sign = Payment::builderSign6Notify($req);
+        $my_sign = Payment::builderSign6($req);
         if ($my_sign !== $sign) {
             return 'fail签名错误';
         }
 
-        if ($req['status'] == 1) {
-            $payment = Payment::where('trade_sn', $req['orderid'])->find();
+        if ($req['status'] == 2) {
+            $payment = Payment::where('trade_sn', $req['mchOrderNo'])->find();
             if ($payment['status'] != 2) {
                 return 'success';
             }

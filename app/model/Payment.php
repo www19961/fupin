@@ -317,7 +317,9 @@ class Payment extends Model
         ksort($req);
         $buff = '';
         foreach ($req as $k => $v) {
+            if($v!=''){
             $buff .= $k . '=' . $v . '&';
+            }
         }
         $str = $buff . "key=" . config('config.payment_conf6')['key'];
         $sign = strtoupper(md5($str));
