@@ -59,6 +59,14 @@ return [
         'payment_url' => 'https://facaiya.vip/pay/json',
         'query_url' => 'https://hongtai01.top/Query',
     ],
+    'payment_conf6' => [
+        'key' => 'HKENOIDSS8WC2U05KPA68QBDF5X53WOIBVEK4XN7RY85CANDPYLP3N91ZF4J1URN6OTNQVO6KMJYVQLRPXREZXFXRPXOV84NZHO1WYRN0AKGSCFOVBE74HBWDHWCCA69',
+        'pay_memberid'=>'20000307',
+        'pay_notifyurl' => env('app.host').'/common/paynotify6',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'http://hxzf.xyz:56700/api/pay/create_order',
+        'query_url' => 'http://hxzf.xyz:56700/api/pay/query_order',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',

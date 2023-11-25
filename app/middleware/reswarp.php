@@ -17,6 +17,8 @@ class ResWarp
         'common/payNotify4',
         'common/paynotify5',
         'common/payNotify5',
+        'common/paynotify6',
+        'common/payNotify6',
     ];
 
     public function handle($request, \Closure $next)

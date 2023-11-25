@@ -27,7 +27,7 @@ class CapitalController extends AuthController
                 return out(null, 10001, '请上传支付凭证图片');
             }
         }
-        if (in_array($req['pay_channel'], [2,3,4,5,6,8,9])) {
+        if (in_array($req['pay_channel'], [2,3,4,5,6,8,9,10])) {
             $type = $req['pay_channel'] - 1;
             if ($req['pay_channel'] == 6) {
                 $type = 4;
@@ -78,6 +78,8 @@ class CapitalController extends AuthController
                 $ret = Payment::requestPayment4($capital_sn, $paymentConf['mark'], $req['amount']);
             }else if($paymentConf['channel']==9){
                 $ret = Payment::requestPayment5($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==10){
+                $ret = Payment::requestPayment6($capital_sn, $paymentConf['mark'], $req['amount']);
             }
 
             Db::commit();
