@@ -95,7 +95,7 @@ class CapitalController extends AuthController
             $builder->where('c.created_at', '<=', $req['end_date'] . ' 23:59:59');
         }
 
-        if(!empty($req['log_type'])){
+        if(isset($req['log_type']) && $req['log_type'] !== ''){
             $builder->where('c.log_type', $req['log_type']);
         }
 
