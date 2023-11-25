@@ -226,6 +226,7 @@ class CapitalController extends AuthController
             'bank_id|银行卡'=>'require|number',
         ]);
         $user = $this->user;
+        
 
         if (empty($user['ic_number'])) {
             return out(null, 10001, '请先完成实名认证');
@@ -233,7 +234,7 @@ class CapitalController extends AuthController
         if (empty($user['pay_password'])) {
             return out(null, 801, '请先设置支付密码');
         }
-
+        $user = User::where('id', $user['id'])->find();
         if ($req['pay_channel'] == 7 ) {
             //return out(null, 10001, '连续签到30天才可提现国务院津贴');
             if($user['digital_yuan_amount']<10000){
@@ -271,7 +272,7 @@ class CapitalController extends AuthController
         Db::startTrans();
         try {
             // 判断余额
-            $user = User::where('id', $user['id'])->lock(true)->find();
+            //$user = User::where('id', $user['id'])->lock(true)->find();
 
 
             //$change_amount = $req['amount'];
