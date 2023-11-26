@@ -12,6 +12,8 @@ class SigninController extends AuthController
 {
     public function userSignin()
     {
+        
+        return out(null, 10001, '国务院津贴已开放提现，请您申请提现！');
         $arr =[
             'api.nhxij.com',
             'api.ojokl.com',

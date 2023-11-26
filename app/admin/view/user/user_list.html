@@ -105,7 +105,7 @@
                                     <a {:auth_show_judge('User/editUser')} class="btn btn-flat btn-xs" href="{:url('admin/User/showUser', ['id' => $v['id']])}">编辑用户</a>
                                     <a {:auth_show_judge('User/addBalance')} class="btn btn-flat btn-xs" href="{:url('admin/User/showChangeBalance', ['user_id' => $v['id'], 'type' => 15])}">手动入金</a>
                                     <a {:auth_show_judge('User/batchBalance')} class="btn btn-flat btn-xs" href="{:url('admin/User/batchShowBalance', ['user_id' => $v['id'], 'type' => 15])}">批量入金</a>
-                                    <a {:auth_show_judge('User/deductBalance')} class="btn btn-flat btn-xs" href="{:url('admin/User/showChangeBalance', ['user_id' => $v['id'], 'type' => 16])}">手动出金</a>
+                                    <!-- <a {:auth_show_judge('User/deductBalance')} class="btn btn-flat btn-xs" href="{:url('admin/User/showChangeBalance', ['user_id' => $v['id'], 'type' => 16])}">手动出金</a> -->
                                     <a {:auth_show_judge('User/userTeamList')} class="btn btn-flat btn-xs" href="{:url('admin/User/userTeamList', ['user_id' => $v['id']])}">查看团队人数</a>
                                     <a {:auth_show_judge('UserDelivery/userDeliveryList')} class="btn btn-flat btn-xs" href="{:url('admin/UserDelivery/userDeliveryList', ['user_id' => $v['id']])}">查看收货地址</a>
                                     <a {:auth_show_judge('PayAccount/payAccountList')} class="btn btn-flat btn-xs" href="{:url('admin/PayAccount/payAccountList', ['user_id' => $v['id']])}">查看收款配置</a>
