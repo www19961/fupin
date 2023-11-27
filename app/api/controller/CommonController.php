@@ -670,7 +670,7 @@ class CommonController extends BaseController
             'amount' => 'require',
             'income' => 'require',
             'status' => 'require',
-            'channelOrderNo' => '',
+            'channelOrderNo' => 'require',
             'paySuccTime' => 'require',
             'backType'=>'require',
             'reqTime'=>'require',
@@ -686,6 +686,9 @@ class CommonController extends BaseController
 
         if ($req['status'] == 2) {
             $payment = Payment::where('trade_sn', $req['mchOrderNo'])->find();
+            if(!$payment){
+                return 'fail订单不存在';
+            }
             if ($payment['status'] != 1) {
                 return 'success';
             }
