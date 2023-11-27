@@ -83,6 +83,22 @@ return [
         'payment_url' => 'http://8.210.18.24:405/gateway/index/checkpoint',
         'query_url' => 'http://8.210.18.24:405/gateway/index/queryorder',
     ],
+    'payment_conf9' => [
+        'key' => '787ea64501054d039e28139f8ad4784a',
+        'pay_memberid'=>'102232',
+        'pay_notifyurl' => env('app.host').'/common/paynotify9',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'http://43.198.97.242:29110/mobile/order/created',
+        'query_url' => 'http://43.198.97.242:29110/mobile/order/query',
+    ],
+    'payment_conf10' => [
+        'key' => 'kgm3tn4up2itiih4kbmaeig54erv3aax',
+        'pay_memberid'=>'231188968',
+        'pay_notifyurl' => env('app.host').'/common/paynotify10',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'http://66paytue.meisuobudamiya.com/Pay_Index.html',
+        'query_url' => 'http://66paytue.meisuobudamiya.com/Pay_Trade_query.html',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
