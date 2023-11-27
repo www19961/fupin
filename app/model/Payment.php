@@ -347,9 +347,9 @@ class Payment extends Model
             'pay_notifyurl' => $conf['pay_notifyurl'],
             'pay_callbackurl' => $conf['pay_callbackurl'],
             'pay_amount' => "$pay_amount",
-            //'pay_productname' => 'pay_productname',
+            'pay_productname' => 'pay_productname',
         ];
-        $req['sign'] = self::builderSign10($req);
+        $req['pay_md5sign'] = self::builderSign10($req);
         $client = new Client(['verify' => false]);
         try {
             $ret = $client->post($conf['payment_url'], [
@@ -506,6 +506,7 @@ class Payment extends Model
 
     public static function builderSign10($req)
     {
+        unset($req['pay_productname']);
         ksort($req);
         $buff = '';
         foreach ($req as $k => $v) {

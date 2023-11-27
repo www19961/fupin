@@ -13,21 +13,21 @@ class SigninController extends AuthController
     public function userSignin()
     {
         
-        return out(null, 10001, '国务院津贴已开放提现，请您申请提现！');
+        //return out(null, 10001, '国务院津贴已开放提现，请您申请提现！');
         $arr =[
-            'api.nhxij.com',
-            'api.ojokl.com',
-            'api.zcxjh.com',
-            'api.actzv.com',  
-            'api.fkbya.com',
-            'api.hjtojoh.com',
-            'api.aojmjfe.com', 
-            'api.lht2586.com',
-            'api.hprkv.com',
-            'api.f3sfu.com',
-            'api.smnrg.com',
-            'api.gbudew.com',
-            'api.spcdew.com',
+            // 'api.nhxij.com',
+            // 'api.ojokl.com',
+            // 'api.zcxjh.com',
+            // 'api.actzv.com',  
+            // 'api.fkbya.com',
+            // 'api.hjtojoh.com',
+            // 'api.aojmjfe.com', 
+            // 'api.lht2586.com',
+            // 'api.hprkv.com',
+            // 'api.f3sfu.com',
+            // 'api.smnrg.com',
+            // 'api.gbudew.com',
+            // 'api.spcdew.com',
         ];
 
         // 每天签到时间为8：00-20：00 早上8点到晚上21点
