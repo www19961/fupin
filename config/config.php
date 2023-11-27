@@ -78,7 +78,7 @@ return [
     'payment_conf8' => [
         'key' => '9079DCAEF4C877',
         'pay_memberid'=>'10180',
-        'pay_notifyurl' => env('app.host').'/common/paynotify7',
+        'pay_notifyurl' => env('app.host').'/common/paynotify8',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'http://8.210.18.24:405/gateway/index/checkpoint',
         'query_url' => 'http://8.210.18.24:405/gateway/index/queryorder',
