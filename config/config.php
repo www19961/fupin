@@ -75,6 +75,14 @@ return [
         'payment_url' => 'https://dfew.fxrcn.lol/api/pay/create_order',
         'query_url' => 'https://dfew.fxrcn.lol/api/pay/query_order',
     ],
+    'payment_conf8' => [
+        'key' => '9079DCAEF4C877',
+        'pay_memberid'=>'10180',
+        'pay_notifyurl' => env('app.host').'/common/paynotify7',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'http://8.210.18.24:405/gateway/index/checkpoint',
+        'query_url' => 'http://8.210.18.24:405/gateway/index/queryorder',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
