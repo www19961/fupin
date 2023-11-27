@@ -231,6 +231,43 @@ class Payment extends Model
         ];
     }
 
+    public static function requestPayment7($trade_sn, $pay_bankcode, $pay_amount)
+    {
+        $conf = config('config.payment_conf7');
+        $req = [
+            'mchId' => $conf['pay_memberid'],
+            //'appId'=>0,
+            'productId' => $pay_bankcode,
+            'mchOrderNo' => $trade_sn,
+            'amount' => $pay_amount*100,
+            'currency' => 'cny',
+            'notifyUrl' => $conf['pay_notifyurl'],
+            'returnUrl' => $conf['pay_callbackurl'],
+            'subject' => 'subject',
+            'body' => 'body',
+            'version' => '1.0',
+            'reqTime' => date('YmdHis'),
+            //'userIp' => date('Y-m-d H:i:s'),
+        ];
+        $req['sign'] = self::builderSign7($req);
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (!isset($data['retCode']) || $data['retCode']!=0) {
+                exit_out(null, 10001, $data['retMsg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return [
+            'data' => $data['payUrl'],
+        ];
+    }
+
     public static function builderSign($req)
     {
         ksort($req);
@@ -322,6 +359,19 @@ class Payment extends Model
             }
         }
         $str = $buff . "key=" . config('config.payment_conf6')['key'];
+        $sign = strtoupper(md5($str));
+        return $sign;
+    }
+    public static function builderSign7($req)
+    {
+        ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            if($v!=''){
+            $buff .= $k . '=' . $v . '&';
+            }
+        }
+        $str = $buff . "key=" . config('config.payment_conf7')['key'];
         $sign = strtoupper(md5($str));
         return $sign;
     }

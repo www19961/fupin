@@ -80,6 +80,8 @@ class CapitalController extends AuthController
                 $ret = Payment::requestPayment5($capital_sn, $paymentConf['mark'], $req['amount']);
             }else if($paymentConf['channel']==10){
                 $ret = Payment::requestPayment6($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==11){
+                $ret = Payment::requestPayment7($capital_sn, $paymentConf['mark'], $req['amount']);
             }
 
             Db::commit();

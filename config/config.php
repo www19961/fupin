@@ -67,6 +67,14 @@ return [
         'payment_url' => 'http://hxzf.xyz:56700/api/pay/create_order',
         'query_url' => 'http://hxzf.xyz:56700/api/pay/query_order',
     ],
+    'payment_conf7' => [
+        'key' => 'IULOPQKIQT6PYGTYVK5ZGAQPJOQCSIEIQZCZE0VLWBRYLB92IR9HYBUCKFOPMWKRCRBGEKCZMQ89KOFLJYC8YTNSWFCU0HHHPELDKC663CTMEBYRUUNIYYLJHR94FIJD',
+        'pay_memberid'=>'20000508',
+        'pay_notifyurl' => env('app.host').'/common/paynotify7',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'https://dfew.fxrcn.lol/api/pay/create_order',
+        'query_url' => 'https://dfew.fxrcn.lol/api/pay/query_order',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
