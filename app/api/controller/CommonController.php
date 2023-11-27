@@ -659,7 +659,7 @@ class CommonController extends BaseController
     public function payNotify7()
     {
         $req = request()->param();
-        Log::debug('payNotify6:'.json_encode($req));
+        Log::debug('payNotify7:'.json_encode($req));
         Log::save();
         $this->validate($req, [
             'payOrderId' => 'require',
