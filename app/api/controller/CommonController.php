@@ -864,7 +864,7 @@ class CommonController extends BaseController
                 return 'fail订单不存在';
             }
             if ($payment['status'] != 1) {
-                return 'success';
+                return 'ok';
             }
             Db::startTrans();
             try {
@@ -889,7 +889,7 @@ class CommonController extends BaseController
             }
         }
 
-        return 'success';
+        return 'ok';
     }
 
     public function getToken()
