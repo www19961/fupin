@@ -517,6 +517,8 @@ class UserController extends AuthController
         $upUser = User::where('id',$user['up_user_id'])->field('phone,is_agent')->find();
         if($upUser){
             $data['parent_name'] = $upUser['phone'];
+            $data['parent_name'] = substr_replace($data['parent_name'],'****',3,4);
+
             $data['parent_is_agent'] = $upUser['is_agent'];
         }
         
