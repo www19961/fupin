@@ -149,15 +149,15 @@ class CapitalController extends AuthController
         }
         $user = User::where('id', $user['id'])->lock(true)->find();
         if ($req['pay_channel'] == 7 ) {
-            //if($user['digital_yuan_amount']<10000){
-                return out(null, 10001, '提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
-            //}
+            if($user['digital_yuan_amount']<10000){
+                return out(null, 10001, '国务院津贴最低提现10000');
+            }
             return out();
         }
         if ($req['pay_channel'] == 5 ) {
-            //if($user['income_balance']<6000){
-                return out(null, 10001, '提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
-            //}
+            if($user['income_balance']<6000){
+                return out(null, 10001, '收益最低提现6000');
+            }
             return out();
         }
 
