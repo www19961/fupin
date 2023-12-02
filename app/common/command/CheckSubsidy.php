@@ -24,9 +24,10 @@ class CheckSubsidy extends Command
 
     protected function execute(Input $input, Output $output)
     {   
-        $this->all();
+        //$this->all();
         return true;
     }
+
 
     protected function all(){
         $data = Order::where('status',2)

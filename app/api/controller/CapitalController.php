@@ -298,8 +298,8 @@ class CapitalController extends AuthController
                 return out(null, 10001, '参数错误');
             }
             $change_amount = $user[$field];
-            $withdraw_fee_ratio = dbconfig('withdraw_fee_ratio');
-            $withdraw_fee_min = dbconfig('withdraw_fee_min');
+            $withdraw_fee_ratio = dbconfig('withdraw_fee_ratio2');
+            $withdraw_fee_min = dbconfig('withdraw_fee_ratio2_min');
             $withdraw_fee = round($withdraw_fee_ratio/100*$change_amount, 2);
             if($withdraw_fee<$withdraw_fee_min){
                 $withdraw_fee = $withdraw_fee_min;
@@ -325,7 +325,7 @@ class CapitalController extends AuthController
                 'type' => 2,
                 'pay_channel' => $payMethod,
                 'amount' => -$change_amount,
-                'withdraw_amount' => $req['amount'],
+                'withdraw_amount' => $change_amount,
                 'withdraw_fee' => $withdraw_fee,
                 'realname' => $payAccount['name'],
                 'phone' => $payAccount['phone'],
