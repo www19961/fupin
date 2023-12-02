@@ -95,7 +95,7 @@ class CapitalController extends AuthController
             $builder->where('c.created_at', '<=', $req['end_date'] . ' 23:59:59');
         }
 
-        if(!empty($req['log_type'])){
+        if(isset($req['log_type']) && $req['log_type'] !== ''){
             $builder->where('c.log_type', $req['log_type']);
         }
 
@@ -143,17 +143,17 @@ class CapitalController extends AuthController
                 }
                 create_excel($list, [
                     'id' => '序号',
-                    'account_type' => '用户',
-                    'capital_sn' => '单号',
-                    'withdraw_status_text' => '状态',
-                    'pay_channel_text' => '支付渠道',
+                    // 'account_type' => '用户',
+                    // 'capital_sn' => '单号',
+                    // 'withdraw_status_text' => '状态',
+                    // 'pay_channel_text' => '支付渠道',
                     'amountCapital' => '提现金额',
                     'withdraw_amount' => '到账金额',
                     'realname' => '收款人实名',
                     'payMethod' => '收款账号',
-                    'shenheUser' => '审核用户',
-                    'audit_remark' => '拒绝理由',
-                    'audit_date' => '审核时间',
+                    // 'shenheUser' => '审核用户',
+                    // 'audit_remark' => '拒绝理由',
+                    // 'audit_date' => '审核时间',
                     'created_at' => '创建时间'
                 ], '提现记录-' . date('YmdHis'));
             }

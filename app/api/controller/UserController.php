@@ -128,16 +128,14 @@ class UserController extends AuthController
         $user = $this->user;
         $count = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
         if($count<1000){
-            $is_three_stage = User::isThreeStage($user['id']);
-            if(!$is_three_stage){
-                return out(null,10001,'暂未满足条件');
+            $projectIds = [53,54,55,56,57];
+            foreach($projectIds as $v){
+                $order = Order::where('user_id',$user['id'])->where('project_group_id',4)->where('project_id',$v)->where('status','>=',2)->find();
+                if(!$order){
+                    return out(null,10001,'暂未满足条件');
+                }
             }
-            $order4 = Order::where('user_id',$user['id'])->where('status','>=',2)->where('project_group_id',4)->find();
-            if(!$order4){
-                return out(null,10002,'暂未满足条件');
-            }
-        }
-
+       }
         $msg = Apply::add($user['id'],3);
         if($msg==""){
             return out();
@@ -519,6 +517,8 @@ class UserController extends AuthController
         $upUser = User::where('id',$user['up_user_id'])->field('phone,is_agent')->find();
         if($upUser){
             $data['parent_name'] = $upUser['phone'];
+            $data['parent_name'] = substr_replace($data['parent_name'],'****',3,4);
+
             $data['parent_is_agent'] = $upUser['is_agent'];
         }
         
