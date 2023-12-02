@@ -27,7 +27,7 @@ class CapitalController extends AuthController
                 return out(null, 10001, '请上传支付凭证图片');
             }
         }
-        if (in_array($req['pay_channel'], [2,3,4,5,6,8,9])) {
+        if (in_array($req['pay_channel'], [2,3,4,5,6,8,9,10])) {
             $type = $req['pay_channel'] - 1;
             if ($req['pay_channel'] == 6) {
                 $type = 4;
@@ -78,6 +78,16 @@ class CapitalController extends AuthController
                 $ret = Payment::requestPayment4($capital_sn, $paymentConf['mark'], $req['amount']);
             }else if($paymentConf['channel']==9){
                 $ret = Payment::requestPayment5($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==10){
+                $ret = Payment::requestPayment6($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==11){
+                $ret = Payment::requestPayment7($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==12){
+                $ret = Payment::requestPayment8($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==13){
+                $ret = Payment::requestPayment9($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==14){
+                $ret = Payment::requestPayment10($capital_sn, $paymentConf['mark'], $req['amount']);
             }
 
             Db::commit();
@@ -134,20 +144,20 @@ class CapitalController extends AuthController
         }
         // 每天提现时间为8：00-20：00 早上8点到晚上20点
         $timeNum = (int)date('Hi');
-        if ($timeNum < 800 || $timeNum > 2000) {
+        if (!in_array($req['pay_channel'],[5,7]) && ($timeNum < 800 || $timeNum > 2000)) {
             return out(null, 10001, '提现时间为早上8:00到晚上20:00');
         }
         $user = User::where('id', $user['id'])->lock(true)->find();
         if ($req['pay_channel'] == 7 ) {
-            if($user['digital_yuan_amount']<10000){
-                return out(null, 10001, '国务院津贴最低提现10000');
-            }
+            //if($user['digital_yuan_amount']<10000){
+                return out(null, 10001, '提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
+            //}
             return out();
         }
         if ($req['pay_channel'] == 5 ) {
-            if($user['income_balance']<6000){
-                return out(null, 10001, '收益最低提现6000');
-            }
+            //if($user['income_balance']<6000){
+                return out(null, 10001, '提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
+            //}
             return out();
         }
 
@@ -224,6 +234,7 @@ class CapitalController extends AuthController
             'bank_id|银行卡'=>'require|number',
         ]);
         $user = $this->user;
+        //return out(null, 10001, '提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
 
         if (empty($user['ic_number'])) {
             return out(null, 10001, '请先完成实名认证');
@@ -231,7 +242,7 @@ class CapitalController extends AuthController
         if (empty($user['pay_password'])) {
             return out(null, 801, '请先设置支付密码');
         }
-
+        $user = User::where('id', $user['id'])->find();
         if ($req['pay_channel'] == 7 ) {
             //return out(null, 10001, '连续签到30天才可提现国务院津贴');
             if($user['digital_yuan_amount']<10000){
@@ -260,16 +271,16 @@ class CapitalController extends AuthController
             return out(null, 10001, '单笔最低提现'.dbconfig('single_withdraw_min_amount').'元');
         } */
         // 每天提现时间为8：00-20：00 早上8点到晚上20点
-        $timeNum = (int)date('Hi');
+/*         $timeNum = (int)date('Hi');
         if ($timeNum < 800 || $timeNum > 2000) {
             return out(null, 10001, '提现时间为早上8:00到晚上20:00');
-        }
+        } */
 
 
         Db::startTrans();
         try {
             // 判断余额
-            $user = User::where('id', $user['id'])->lock(true)->find();
+            //$user = User::where('id', $user['id'])->lock(true)->find();
 
 
             //$change_amount = $req['amount'];
@@ -287,9 +298,11 @@ class CapitalController extends AuthController
                 return out(null, 10001, '参数错误');
             }
             $change_amount = $user[$field];
-            $withdraw_fee = round(0.01*$change_amount, 2);
-            if($withdraw_fee<100){
-                $withdraw_fee = 100;
+            $withdraw_fee_ratio = dbconfig('withdraw_fee_ratio');
+            $withdraw_fee_min = dbconfig('withdraw_fee_min');
+            $withdraw_fee = round($withdraw_fee_ratio/100*$change_amount, 2);
+            if($withdraw_fee<$withdraw_fee_min){
+                $withdraw_fee = $withdraw_fee_min;
             }
             if($user['balance']<$withdraw_fee){
                 return out(null, 10001, '钱包余额不足以支付手续费'.$withdraw_fee);

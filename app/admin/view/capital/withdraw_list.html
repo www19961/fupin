@@ -57,6 +57,7 @@
                             <th>类别</th>
                             <th>提现金额</th>
                             <th>到账金额</th>
+                            <th>手续费</th>
                             <th>收款人实名</th>
                             <th>收款账号</th>
                             <th>审核用户</th>
@@ -86,6 +87,7 @@
                                 </td>
                                 <td>{:round(0 - $v['amount'], 2)}</td>
                                 <td>{$v['withdraw_amount']}</td>
+                                <td>{$v['withdraw_fee']}</td>
                                 <td>{$v['realname']}</td>
                                 <td><?php if ($v['bank_name'] !='') { ?> 银行：{$v['bank_name']}<br>支行：{$v['bank_branch']}<br>卡号：{$v['account']} <?php } else { ?>{$v['account']} <?php } ?></td>
                                 <td>{$v['adminUser']['nickname'] ?? ''}</td>
