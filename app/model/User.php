@@ -466,4 +466,25 @@ class User extends Model
         }
         return 1;
     }
+
+    public static function myHouse($userId){
+        $apply = Apply::where('user_id',$userId)->where('type',2)->find();
+        if(!$apply){
+            return ['msg'=>'请先预约看房'];
+        }
+        $order = Order::where('user_id',$userId)->where('project_group_id',3)->where('status','>=',2)->select();
+        $priceMax = [];
+        foreach($order as $item){
+            if($priceMax==[]){
+                $priceMax = $item;
+            }
+            if(!$priceMax && $item['single_amount']>$priceMax['single_amount']){
+                $priceMax = $item;
+            }
+        }
+        if(empty($priceMax)){
+            return ['msg'=>'请先购买房产'];
+        }
+        return ['msg'=>'','house'=>$priceMax];
+    }
 }

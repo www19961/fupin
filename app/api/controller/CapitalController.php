@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\model\Capital;
+use app\model\HouseFee;
 use app\model\PayAccount;
 use app\model\Payment;
 use app\model\PaymentConfig;
@@ -348,6 +349,46 @@ class CapitalController extends AuthController
         } catch (Exception $e) {
             Db::rollback();
             throw $e;
+        }
+
+        return out();
+    }
+
+    public function houseFee(){
+        $user = $this->user;
+        $data = User::myHouse($user['id']);
+        if($data['msg']!=''){
+            return out(null, 10001, $data['msg']);
+        }
+        $houseFee = HouseFee::where('user_id',$user['id'])->find();
+        if($houseFee){
+            return out(null, 10001, '已经缴纳过房屋基金');
+        }
+        $house = $data['house'];
+        $feeConf = config('map.project.project_house');
+        $size = $feeConf[$house['project_id']];
+        $unitPrice = 62.5;
+        $fee = bcmul($size,$unitPrice,2);
+        $user = User::where('id', $user['id'])->find();
+        if($user['balance']<$fee){
+            return out(null, 10001, '钱包余额不足'.$fee);
+        }
+        Db::startTrans();
+        try{
+            User::changeInc($user['id'],-$fee,'balance',21,0,1,'房屋基金');
+            HouseFee::create([
+                'user_id'=>$user['id'],
+                'order_id'=>$house['id'],
+                'project_id'=>$house['project_id'],
+                'unit_amount'=>$unitPrice,
+                'fee_amount'=>$fee,
+                'size'=>$size,
+            ]);
+            Db::commit();
+        }catch(Exception $e){
+            Db::rollback();
+            return out(null, 10001, $e->getMessage(),$e);
+            //throw $e;
         }
 
         return out();
