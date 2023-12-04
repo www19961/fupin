@@ -478,7 +478,7 @@ class User extends Model
             if($priceMax==[]){
                 $priceMax = $item;
             }
-            if(!$priceMax && $item['single_amount']>$priceMax['single_amount']){
+            if($priceMax && $item['single_amount']>$priceMax['single_amount']){
                 $priceMax = $item;
             }
         }
