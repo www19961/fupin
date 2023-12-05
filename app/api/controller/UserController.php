@@ -152,9 +152,11 @@ class UserController extends AuthController
         }
         $house = $data['house'];
         $coverImg = Project::where('id',$house['project_id'])->value('cover_img');
+        $houseFee = \app\model\HouseFee::where('user_id',$user['id'])->find();
         $data = [
             'name'=>$house['project_name'],
             'cover_img'=>$coverImg,
+            'is_house_fee'=>$houseFee?1:0,
         ];
         
         return out($data);
