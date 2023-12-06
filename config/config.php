@@ -48,8 +48,8 @@ return [
         'pay_memberid'=>'100188',
         'pay_notifyurl' => env('app.host').'/common/paynotify4',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
-        'payment_url' => 'https://api.baoxuepay.com/api/v1/payment/init',
-        'query_url' => 'https://hongtai01.top/Query',
+        'payment_url' => 'https://api.bhopfntv.baoxuepay.com/api/v1/payment/init',
+        'query_url' => 'https://api.bhopfntv.baoxuepay.com/api/v1/payment/query',
     ],
     'payment_conf5' => [
         'key' => 'dE0uJ1dQ6iS8bR0a',
