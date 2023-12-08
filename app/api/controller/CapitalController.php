@@ -89,6 +89,9 @@ class CapitalController extends AuthController
                 $ret = Payment::requestPayment9($capital_sn, $paymentConf['mark'], $req['amount']);
             }else if($paymentConf['channel']==14){
                 $ret = Payment::requestPayment10($capital_sn, $paymentConf['mark'], $req['amount']);
+            
+            }else if($paymentConf['channel']==15){
+                $ret = Payment::requestPayment11($capital_sn, $paymentConf['mark'], $req['amount']);
             }
 
             Db::commit();
@@ -238,7 +241,7 @@ class CapitalController extends AuthController
             'bank_id|银行卡'=>'require|number',
         ]);
         $user = $this->user;
-        return out(null, 10001, '提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
+        //return out(null, 10001, '提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
 
         if (empty($user['ic_number'])) {
             return out(null, 10001, '请先完成实名认证');

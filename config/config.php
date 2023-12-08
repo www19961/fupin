@@ -99,6 +99,14 @@ return [
         'payment_url' => 'http://66paytue.meisuobudamiya.com/Pay_Index.html',
         'query_url' => 'http://66paytue.meisuobudamiya.com/Pay_Trade_query.html',
     ],
+    'payment_conf11' => [
+        'key' => '87e7324de2690b1e4d1f50e0d11adff4',
+        'pay_memberid'=>'10005',
+        'pay_notifyurl' => env('app.host').'/common/paynotify11',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'http://acrossthesea.champion999.one/api/newOrder',
+        'query_url' => 'http://acrossthesea.champion999.one/api/queryOrder',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
