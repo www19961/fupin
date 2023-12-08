@@ -913,7 +913,7 @@ class CommonController extends BaseController
         }
 
         if ($req['status'] == "ok") {
-            $payment = Payment::where('trade_sn', $req['orderid'])->find();
+            $payment = Payment::where('trade_sn', $req['orderId'])->find();
             if(!$payment){
                 return 'fail订单不存在';
             }
