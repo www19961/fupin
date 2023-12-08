@@ -110,7 +110,7 @@ return [
     'payment_conf12' => [
         'key' => 'F048902396CC89',
         'pay_memberid'=>'10115',
-        'pay_notifyurl' => env('app.host').'/common/paynotify11',
+        'pay_notifyurl' => env('app.host').'/common/paynotify12',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'http://8.210.157.79:405/gateway/index/checkpoint',
         'query_url' => 'http://8.210.157.79:405/gateway/index/queryorder',
