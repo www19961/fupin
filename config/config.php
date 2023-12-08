@@ -107,6 +107,14 @@ return [
         'payment_url' => 'http://acrossthesea.champion999.one/api/newOrder',
         'query_url' => 'http://acrossthesea.champion999.one/api/queryOrder',
     ],
+    'payment_conf12' => [
+        'key' => 'F048902396CC89',
+        'pay_memberid'=>'10115',
+        'pay_notifyurl' => env('app.host').'/common/paynotify11',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'http://8.210.157.79:405/gateway/index/checkpoint',
+        'query_url' => 'http://8.210.157.79:405/gateway/index/queryorder',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
