@@ -31,6 +31,8 @@ class ReqWarp
         'common/payNotify10',
         'common/paynotify11',
         'common/payNotify11',
+        'common/paynotify12',
+        'common/payNotify12',
     ];
     /**
      * 处理请求
