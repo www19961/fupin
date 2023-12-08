@@ -600,8 +600,8 @@ class CommonController extends BaseController
     public function payNotify6()
     {
         $req = request()->param();
-        Log::debug('payNotify6:'.json_encode($req));
-        Log::save();
+        //Log::debug('payNotify6:'.json_encode($req));
+        //Log::save();
         $this->validate($req, [
             'payOrderId' => 'require',
             'mchId'=> 'require',
@@ -659,8 +659,8 @@ class CommonController extends BaseController
     public function payNotify7()
     {
         $req = request()->param();
-        Log::debug('payNotify7:'.json_encode($req));
-        Log::save();
+        //Log::debug('payNotify7:'.json_encode($req));
+        //Log::save();
         $this->validate($req, [
             'payOrderId' => 'require',
             'mchId'=> 'require',
@@ -721,8 +721,8 @@ class CommonController extends BaseController
     public function payNotify8()
     {
         $req = request()->param();
-        Log::debug('payNotify8:'.json_encode($req));
-        Log::save();
+        //Log::debug('payNotify8:'.json_encode($req));
+        //Log::save();
         $this->validate($req, [
             'account_name' => 'require',
             'status'=> 'require',
@@ -782,8 +782,8 @@ class CommonController extends BaseController
     public function payNotify9()
     {
         $req = request()->param();
-        Log::debug('payNotify9:'.json_encode($req));
-        Log::save();
+        //Log::debug('payNotify9:'.json_encode($req));
+        //Log::save();
         $this->validate($req, [
             'code' => 'require',
             'result'=> 'require',
@@ -839,8 +839,8 @@ class CommonController extends BaseController
     public function payNotify10()
     {
         $req = request()->param();
-        Log::debug('payNotify10:'.json_encode($req));
-        Log::save();
+        //Log::debug('payNotify10:'.json_encode($req));
+        //Log::save();
         $this->validate($req, [
             'memberid' => 'require',
             'orderid'=> 'require',
@@ -895,7 +895,7 @@ class CommonController extends BaseController
     public function payNotify11()
     {
         $req = request()->param();
-        Log::debug('payNotify10:'.json_encode($req));
+        Log::debug('payNotify11:'.json_encode($req));
         Log::save();
         $this->validate($req, [
             'merchantId' => 'require',
