@@ -78,6 +78,7 @@ class UserController extends AuthController
         $medal = Apply::where('user_id',$user['id'])->where('type',1)->find();
         $house = Apply::where('user_id',$user['id'])->where('type',2)->find();
         $car = Apply::where('user_id',$user['id'])->where('type',3)->find();
+        $cardAuth = Apply::where('user_id',$user['id'])->where('type',5)->find();
         $user['is_sub_medal'] = $subCount>=500?1:0;
         $user['is_apply_medal'] = $medal?1:0;
         $user['is_apply_house'] = $house?1:0;
@@ -85,6 +86,7 @@ class UserController extends AuthController
         $user['is_three_stage'] = User::isThreeStage($user['id']);
         $user['is_card_order'] = User::isCardOrder($user['id']);
         $user['no_withdraw'] = $user['digital_yuan_amount']+$user['income_balance'];
+        $user['is_card_auth'] = $cardAuth?1:0;
 /*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
             ['id'=>'12346','name'=>'13312341235'],
