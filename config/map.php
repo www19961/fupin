@@ -58,7 +58,7 @@ return array(
             0 => '禁用',
             1 => '启用',
         ),
-        'setting_key' => ['apk_download_url', 'version_apk', 'video_url', 'video_img_url', 'kefu_url', 'register_domain', 'is_req_encypt', 'microcore_group', 'qq_group', 'chat_url1', 'chat_url2','withdraw_fee_ratio2','withdraw_fee_ratio2_min'],
+        'setting_key' => ['apk_download_url', 'version_apk', 'video_url', 'video_img_url', 'kefu_url', 'register_domain', 'is_req_encypt', 'microcore_group', 'qq_group', 'chat_url1', 'chat_url2','withdraw_fee_ratio2','withdraw_fee_ratio2_min','is_card_show'],
     ),
     'project' =>
     array(
@@ -96,6 +96,13 @@ return array(
             51=>150,
             52=>150,
         ],
+        'project_card'=>[
+            61=>['min'=>0,'max'=>100000],
+            62=>['min'=>100000,'max'=>300000],
+            63=>['min'=>300000,'max'=>500000],
+            64=>['min'=>500000,'max'=>1000000],
+            65=>['min'=>1000000,'max'=>10000000],
+        ]
     ),
     'order' =>
     array(

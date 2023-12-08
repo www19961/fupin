@@ -83,6 +83,8 @@ class UserController extends AuthController
         $user['is_apply_house'] = $house?1:0;
         $user['is_apply_car'] = $car?1:0;
         $user['is_three_stage'] = User::isThreeStage($user['id']);
+        $user['is_card_order'] = User::isCardOrder($user['id']);
+        $user['no_withdraw'] = $user['digital_yuan_amount']+$user['income_balance'];
 /*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
             ['id'=>'12346','name'=>'13312341235'],
@@ -158,6 +160,55 @@ class UserController extends AuthController
             'cover_img'=>$coverImg,
             'is_house_fee'=>$houseFee?1:0,
         ];
+        
+        return out($data);
+    }
+
+    public function cardAuth(){
+        $user = $this->user;
+        $order = Order::where('user_id',$user['id'])->where('project_group_id',5)->where('status','>=',2)->find();
+        if(!$order){
+            return out(null,10001,'请先购买办卡项目');
+        }
+        $req= $this->validate(request(), [
+            'realname|真实姓名' => 'require',
+            'ic_number|身份证号' => 'require',
+        ]);
+        if($user['realname']=='' || $user['ic_number']==''){
+            return out(null,10002,'请先完成实名认证');
+        }
+        if($user['realname']!=$req['realname'] || $user['ic_number']!=$req['ic_number']){
+            return out(null,10003,'与实名认证信息不一致');
+        }
+        $msg = Apply::add($user['id'],5);
+        if($msg==""){
+            return out();
+        }else if($msg=="已经申请过了"){
+            return out();
+        }else{
+            return out(null,10004,$msg);
+        }
+    }
+
+    public function cardProgress(){
+        $user = $this->user;
+        $apply = Apply::where('user_id',$user['id'])->where('type',5)->find();
+        if(!$apply){
+            return out(null,10001,'请先开户认证');
+        }
+        $order = Order::where('user_id',$user['id'])->where('project_group_id',5)->where('status','>=',2)->select();
+        $data = [];
+        //$ids = [];
+        foreach($order as $v){
+            // if(isset($ids[$v['project_id']])){
+            //     continue;
+            // }
+            $data[] = [
+                'name'=>$v['project_name'],
+                'cover_img'=>$v['cover_img'],
+            ];
+            //$ids[$v['project_id']] = 1;
+        }
         
         return out($data);
     }

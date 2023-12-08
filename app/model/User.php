@@ -487,4 +487,28 @@ class User extends Model
         }
         return ['msg'=>'','house'=>$priceMax];
     }
+
+    public static function isCardOrder($userId){
+        $order = Order::where('user_id',$userId)->where('project_group_id',5)->where('status','>=',2)->find();
+        if(!$order){
+            return 0;
+        }
+        return 1;
+    }
+
+    public static function cardWithdrawSum($userId){
+        $user = User::where('id',$userId)->find();
+        $alreayCount = Capital::where('user_id',$userId)->where('type',2)->whereIn('log_type',[3,6])->sum('amount');
+        $sum = abs($alreayCount)+$user['digital_yuan_amount']+$user['income_balance'];
+        return $sum;
+    }
+
+    public static function cardRecommend($sum){
+        $conf = config('map.project.project_card');
+        foreach($conf as $k=>$v){
+            if($sum>=$v['min'] && $sum<$v['max']){
+                return $k;
+            }
+        }
+    }
 }
