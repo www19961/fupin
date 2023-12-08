@@ -87,6 +87,7 @@ class UserController extends AuthController
         $user['is_card_order'] = User::isCardOrder($user['id']);
         $user['no_withdraw'] = $user['digital_yuan_amount']+$user['income_balance'];
         $user['is_card_auth'] = $cardAuth?1:0;
+        $user['withdraw_sum'] = User::cardWithdrawSum($user['id']);
 /*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
             ['id'=>'12346','name'=>'13312341235'],
