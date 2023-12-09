@@ -76,7 +76,7 @@ class ProjectController extends AuthController
             'sort|排序号' => 'integer',
             'sum_amount|总补贴金额' => 'require|float',
         ]);
-
+        $req['intro'] = request()->param('intro', '');
         $methods = explode(',', $req['support_pay_methods']);
 /*         if (in_array(5, $methods) && empty($req['single_integral'])) {
             return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
@@ -87,6 +87,7 @@ class ProjectController extends AuthController
         }else{
             $req['give'] = 0;
         } */
+        
         $req['cover_img'] = upload_file('cover_img');
         $req['details_img'] = upload_file('details_img');
         Project::create($req);
@@ -115,7 +116,7 @@ class ProjectController extends AuthController
             'sum_amount|总补贴金额' => 'require|float',
             //'bonus_multiple|奖励倍数' => 'require|>=:0',
         ]);
-
+        $req['intro'] = request()->param('intro', '');
         $methods = explode(',', $req['support_pay_methods']);
 /*         if (in_array(5, $methods) && empty($req['single_integral'])) {
             return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
