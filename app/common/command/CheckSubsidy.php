@@ -24,18 +24,41 @@ class CheckSubsidy extends Command
 
     protected function execute(Input $input, Output $output)
     {   
-        //$this->all();
+        $this->all();
         return true;
     }
 
 
     protected function all(){
-        $data = Order::where('status',2)
+        $data = Order::where('status',2)->where('project_group_id',4)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
-                $this->bonus($item);
+                $this->bonus4($item);
             }
         });
+    }
+
+    public function bonus4($order){
+        Db::startTrans();
+        try{
+            echo "正在处理订单{$order['id']}\n";
+            //$digitalYuan = bcmul($order['single_gift_digital_yuan'],$order['period'],2);
+            $digitalYuan = $order['single_gift_digital_yuan'];
+            User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
+            User::changeInc($order['user_id'],$digitalYuan,'digital_yuan_amount',5,$order['id'],3,'国务院津贴');
+
+            //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
+            Order::where('id',$order->id)->update(['status'=>4]);
+
+            Db::Commit();
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('分红收益异常：'.$e->getMessage(),$e);
+            throw $e;
+        }
+
+
     }
 
     protected function bonus($order){
