@@ -387,7 +387,7 @@ class CapitalController extends AuthController
         }
         Db::startTrans();
         try{
-            User::changeInc($user['id'],-$fee,'balance',21,0,1,'房屋基金');
+            User::changeInc($user['id'],-$fee,'balance',21,0,1,'房屋维修基金');
             HouseFee::create([
                 'user_id'=>$user['id'],
                 'order_id'=>$house['id'],
