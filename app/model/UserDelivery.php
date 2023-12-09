@@ -15,7 +15,7 @@ class UserDelivery extends Model
     {
         $delivery = UserDelivery::where('user_id', $user['id'])->find();
         if ($delivery) {
-            UserDelivery::where('user_id', $user['id'])->update($req);
+            UserDelivery::where('user_id', $user['id'])->update(['address'=>$req['address']]);
         }
         else {
             $req['user_id'] = $user['id'];
