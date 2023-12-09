@@ -368,6 +368,111 @@ class Payment extends Model
         ];
     }
 
+
+    public static function requestPayment11($trade_sn, $pay_bankcode, $pay_amount)
+    {
+        $conf = config('config.payment_conf11');
+        $req = [
+            'merchantId' => $conf['pay_memberid'],
+            'orderId' => $trade_sn,
+            'notifyUrl' => $conf['pay_notifyurl'],
+            'orderAmount' => "$pay_amount",
+            'channelType'=>$pay_bankcode,
+        ];
+        $req['sign'] = self::builderSign11($req);
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (!isset($data['code']) || $data['code']!=200) {
+                exit_out(null, 10001, $data['msg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return [
+            'data' => $data['data']['payUrl'],
+        ];
+    }
+
+    public static function requestPayment12($trade_sn, $pay_bankcode, $pay_amount)
+    {
+        $conf = config('config.payment_conf12');
+        $req = [
+            'account_id' => $conf['pay_memberid'],
+            //'appId'=>0,
+            'content_type' => 'json',
+            'thoroughfare' => $pay_bankcode,
+            'out_trade_no' => $trade_sn,
+            'amount' => "$pay_amount.00",
+            'callback_url' => $conf['pay_notifyurl'],
+            'success_url' => $conf['pay_callbackurl'],
+            'error_url'=>$conf['pay_callbackurl'],
+            'timestamp' => strtotime(date("Y-m-d H:i:s")),
+            'ip'=>request()->ip(),
+            'deviceos'=>sysType(),
+            'payer_ip'=>'123456789',
+            //'userIp' => date('Y-m-d H:i:s'),
+        ];
+        $req['sign'] = self::builderSign12($req);
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (!isset($data['code']) || $data['code']!=200) {
+                exit_out(null, 10001, $data['msg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return [
+            'data' => $data['data']['pay_url'],
+        ];
+    }
+
+    public static function requestPayment13($trade_sn, $pay_bankcode, $pay_amount)
+    {
+        $conf = config('config.payment_conf13');
+        $req = [
+            'mchId' => $conf['pay_memberid'],
+            'appId'=>'fd777c32478d4d4aafd19facefe540d9',
+            'productId' => $pay_bankcode,
+            'mchOrderNo' => $trade_sn,
+            'amount' => $pay_amount*100,
+            'currency' => 'cny',
+            'clientIp'=>request()->ip(),
+            'device'=>rand(000000,999999),
+            'notifyUrl' => $conf['pay_notifyurl'],
+            'returnUrl' => $conf['pay_callbackurl'],
+            'subject' => 'subject',
+            'body' => 'body',
+            //'userIp' => date('Y-m-d H:i:s'),
+        ];
+        $req['sign'] = self::builderSign13($req);
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (!isset($data['retCode']) || $data['retCode']!='SUCCESS') {
+                exit_out(null, 10001, $data['retMsg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return [
+            'data' => $data['payParams']['payUrl'],
+        ];
+    }
+
     public static function builderSign($req)
     {
         ksort($req);
@@ -515,6 +620,47 @@ class Payment extends Model
             }
         }
         $str = $buff . "key=" . config('config.payment_conf10')['key'];
+        $sign = strtoupper(md5($str));
+        return $sign;
+    }
+    public static function builderSign11($req)
+    {
+        ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            if($v!=''){
+            $buff .= $k . '=' . $v . '&';
+            }
+        }
+        $str = $buff . "key=" . config('config.payment_conf11')['key'];
+        $sign = md5($str);
+        return $sign;
+    }
+
+    public static function builderSign12($req)
+    {
+        ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            if($v!=''){
+            $buff .= $k . '=' . $v . '&';
+            }
+        }
+        $str = $buff . "key=" . config('config.payment_conf12')['key'];
+        $sign = md5($str);
+        return $sign;
+    }
+
+    public static function builderSign13($req)
+    {
+        ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            if($v!=''){
+            $buff .= $k . '=' . $v . '&';
+            }
+        }
+        $str = $buff . "key=" . config('config.payment_conf13')['key'];
         $sign = strtoupper(md5($str));
         return $sign;
     }

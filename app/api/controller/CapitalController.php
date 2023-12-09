@@ -89,6 +89,15 @@ class CapitalController extends AuthController
                 $ret = Payment::requestPayment9($capital_sn, $paymentConf['mark'], $req['amount']);
             }else if($paymentConf['channel']==14){
                 $ret = Payment::requestPayment10($capital_sn, $paymentConf['mark'], $req['amount']);
+            
+            }else if($paymentConf['channel']==15){
+                $ret = Payment::requestPayment11($capital_sn, $paymentConf['mark'], $req['amount']);
+            
+            }else if($paymentConf['channel']==16){
+                $ret = Payment::requestPayment12($capital_sn, $paymentConf['mark'], $req['amount']);
+            
+            }else if($paymentConf['channel']==17){
+                $ret = Payment::requestPayment13($capital_sn, $paymentConf['mark'], $req['amount']);
             }
 
             Db::commit();
@@ -150,12 +159,15 @@ class CapitalController extends AuthController
         }
         $user = User::where('id', $user['id'])->lock(true)->find();
         if ($req['pay_channel'] == 7 ) {
+            return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
             if($user['digital_yuan_amount']<10000){
                 return out(null, 10001, '国务院津贴最低提现10000');
             }
             return out();
         }
         if ($req['pay_channel'] == 5 ) {
+            return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
+
             if($user['income_balance']<6000){
                 return out(null, 10001, '收益最低提现6000');
             }
