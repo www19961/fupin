@@ -949,8 +949,8 @@ class CommonController extends BaseController
     public function payNotify12()
     {
         $req = request()->param();
-        Log::debug('payNotify12:'.json_encode($req));
-        Log::save();
+        //Log::debug('payNotify12:'.json_encode($req));
+        //Log::save();
         $this->validate($req, [
             'account_name' => 'require',
             'status'=> 'require',
@@ -975,6 +975,67 @@ class CommonController extends BaseController
 
         if ($req['pay_status'] == 4) {
             $payment = Payment::where('trade_sn', $req['out_trade_no'])->find();
+            if(!$payment){
+                return 'fail订单不存在';
+            }
+            if ($payment['status'] != 1) {
+                return 'success';
+            }
+            Db::startTrans();
+            try {
+                Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
+                // 投资项目
+                if ($payment['product_type'] == 1) {
+                    Order::orderPayComplete($payment['order_id']);
+                }
+                // 充值
+                elseif ($payment['product_type'] == 2) {
+                    Capital::topupPayComplete($payment['capital_id']);
+                }
+                $userModel = new User();
+                $userModel->teamBonus($payment['user_id'], $payment['pay_amount'],$payment['id']);
+                // 判断通道是否超过最大限额，超过了就关闭通道
+                PaymentConfig::checkMaxPaymentLimit($payment['type'], $payment['channel'], $payment['mark']);
+
+                Db::commit();
+            } catch (Exception $e) {
+                Db::rollback();
+                throw $e;
+            }
+        }
+
+        return 'success';
+    }
+
+    public function payNotify13()
+    {
+        $req = request()->param();
+        Log::debug('payNotify13:'.json_encode($req));
+        Log::save();
+        $this->validate($req, [
+            'payOrderId' => 'require',
+            'mchId'=> 'require',
+            'appId' => 'require',
+            'productId' => 'require',
+            'mchOrderNo' => 'require',
+            'amount' => 'require',
+            'income' => 'require',
+            'status' => 'require',
+            'paySuccTime' => 'require',
+            'backType'=>'require',
+            'reqTime'=>'require',
+            'sign' => 'require',
+        ]);
+
+        $sign = $req['sign'];
+        unset($req['sign']);
+        $my_sign = Payment::builderSign13($req);
+        if ($my_sign !== $sign) {
+            return 'fail签名错误';
+        }
+
+        if ($req['status'] == 2) {
+            $payment = Payment::where('trade_sn', $req['mchOrderNo'])->find();
             if(!$payment){
                 return 'fail订单不存在';
             }

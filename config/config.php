@@ -115,6 +115,14 @@ return [
         'payment_url' => 'http://8.210.157.79:405/gateway/index/checkpoint',
         'query_url' => 'http://8.210.157.79:405/gateway/index/queryorder',
     ],
+    'payment_conf13' => [
+        'key' => 'DOTDHW5V4QAQJ9EKUENOKBIYMD8COTJABF6PVRVWYQWGM7XY5EIQYDYVXXUHU27UM3FD6LKETSSKMI39RXAWOFABP2KGDMGURIDFRJOLNEQKDK6IKWWWAIYR7F6VDQ2M',
+        'pay_memberid'=>'20000013',
+        'pay_notifyurl' => env('app.host').'/common/paynotify13',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'https://fzf.app/api/pay/create_order',
+        'query_url' => 'https://fzf.app/api/pay/query_order',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
