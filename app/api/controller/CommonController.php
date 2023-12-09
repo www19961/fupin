@@ -1023,7 +1023,6 @@ class CommonController extends BaseController
             'status' => 'require',
             'paySuccTime' => 'require',
             'backType'=>'require',
-            'reqTime'=>'require',
             'sign' => 'require',
         ]);
 
