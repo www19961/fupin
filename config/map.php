@@ -160,6 +160,7 @@ return array(
             18 => '转账',
             19 => '收款',
             20 => '提现手续费',
+            21 => '房屋维修基金',
         ),
         'balance_type_map' =>
         array(
@@ -183,6 +184,7 @@ return array(
             18 => '转账',
             19 => '收款',
             20 => '提现手续费',
+            21 => '房屋维修基金',
         ),
         'integral_type_map' =>
         array(
