@@ -100,10 +100,11 @@ class CheckBonus extends Command
                         User::changeInc($item['user_id'],$amount,'income_balance',6,$item['id'],6,'二期项目每月分红');
                         Db::commit();
                     } catch (Exception $e) {
+                        Log::error('二期项目每月分红异常：'.$e->getMessage(),$e);
                         Db::rollback();
                         throw $e;
                     }
-                    return true;
+                    //return true;
                }
             }
         });
