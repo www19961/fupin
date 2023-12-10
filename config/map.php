@@ -416,5 +416,9 @@ return array(
             // 'api.smnrg.com',
             // 'api.gbudew.com',
             // 'api.spcdew.com',
+            // 'api.smnrg.com',
+            // 'api.gbudew.com',
+            // 'api.spcdew.com',
+            // 'api.fengyansh.cn',
     ],
 );
