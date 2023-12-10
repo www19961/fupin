@@ -11,5 +11,6 @@ return [
         'activeRank'  =>  'app\common\command\ActiveRank',
         'checkSubsidy'  =>  'app\common\command\CheckSubsidy',
         'sendCashReward'  =>  'app\common\command\SendCashReward',
+        'widthdrawAudit'  =>  'app\common\command\WithdrawAudit',
     ],
 ];

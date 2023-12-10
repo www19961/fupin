@@ -14,7 +14,7 @@ use Exception;
 use think\facade\Log;
 use app\model\Capital;
 
-class ActiveRank extends Command
+class WithdrawAudit extends Command
 {
     protected function configure()
     {
