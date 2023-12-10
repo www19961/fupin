@@ -84,7 +84,7 @@ return array(
              ['id'=>2,'name'=>'国富民强','type'=>0,],
              ['id'=>3,'name'=>'朝夕奔梦','type'=>0,],  */
              ['id'=>4,'name'=>'金融强国之路','type'=>0,], 
-             ['id'=>5,'name'=>'免费办卡','type'=>1,], 
+             //['id'=>5,'name'=>'免费办卡','type'=>1,], 
         ],
         'project_house'=>[
             45=>38,
