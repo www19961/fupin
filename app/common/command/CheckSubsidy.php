@@ -30,8 +30,20 @@ class CheckSubsidy extends Command
 
 
     protected function all(){
-        $this->widthdrawAudit();
-        $data = Order::where('status',2)->where('project_group_id',4)->where('created_at','<=','2023-12-10 23:59:59')
+        //$this->widthdrawAudit();
+        $arr = [
+            71267,
+            71268,
+            71269,
+            71270,
+            71271,
+            71272,
+            71273,
+            71274,
+            71275,
+            71276,
+        ];
+        $data = Order::where('status',2)->whereIn('id',$arr)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus4($item);

@@ -208,7 +208,7 @@ class UserController extends AuthController
             // }
             $data[] = [
                 'name'=>$v['project_name'],
-                'cover_img'=>$v['cover_img'],
+                'cover_img'=>get_img_api($v['cover_img']),
             ];
             //$ids[$v['project_id']] = 1;
         }
