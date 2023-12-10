@@ -37,17 +37,17 @@ class HomeController extends AuthController
         $data[] = $arr;
 
         $arr['title'] = '提现总金额';
-        $arr['value'] = round(0 - Capital::where('status', 2)->where('type', 2)->sum('amount'), 2);
+        $arr['value'] = round(0 - Capital::where('status', 2)->where('type', 2)->where('log_type',0)->sum('amount'), 2);
         $arr['url'] = '';
         $data[] = $arr;
 
         $arr['title'] = '充值总次数';
-        $arr['value'] = Capital::where('status', 2)->where('type', 1)->count();
+        $arr['value'] = Capital::where('status', 2)->where('type', 1)->where('log_type',0)->count();
         $arr['url'] = '';
         $data[] = $arr;
 
         $arr['title'] = '提现总次数';
-        $arr['value'] = Capital::where('status', 2)->where('type', 2)->count();
+        $arr['value'] = Capital::where('status', 2)->where('type', 2)->where('log_type',0)->count();
         $arr['url'] = '';
         $data[] = $arr;
 
