@@ -24,8 +24,8 @@ class WithdrawAudit extends Command
 
     protected function execute(Input $input, Output $output)
     { 
-        Capital::where('status',1)->where('type',2)->whereIn('log_type',[3,6])->where('end_time','<=',time())->update(['status'=>2]);
-        echo 'widthdrawAudit run success';
+        $ret = Capital::where('status',1)->where('type',2)->whereIn('log_type',[3,6])->where('end_time','<=',time())->update(['status'=>2]);
+        echo 'widthdrawAudit run success,updated '.$ret;
     }
 
 }
