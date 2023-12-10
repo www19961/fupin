@@ -14,11 +14,11 @@ use Exception;
 use think\facade\Log;
 use app\model\Capital;
 
-class WithdrawAudit extends Command
+class AutoWithdrawAudit extends Command
 {
     protected function configure()
     {
-        $this->setName('widthdrawAudit')
+        $this->setName('autoWithdrawAudit')
             ->setDescription('津贴收益提现自动审核');
     }
 
