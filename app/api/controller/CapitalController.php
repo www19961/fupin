@@ -160,7 +160,15 @@ class CapitalController extends AuthController
         if (!in_array($req['pay_channel'],[5,7]) && ($timeNum < 800 || $timeNum > 2000)) {
             return out(null, 10001, '提现时间为早上8:00到晚上20:00');
         }
+       
         $user = User::where('id', $user['id'])->lock(true)->find();
+        if($req['pay_channel'] == 7 || $req['pay_channel'] == 5){
+            $order = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',4)->where('status','>=',2)->find();
+            if(!$order){
+                return out(null, 10001, '请先购买金融强国之路项目');
+            }
+        }
+            
         if ($req['pay_channel'] == 7 ) {
             //return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
             if($user['digital_yuan_amount']<10000){
@@ -260,6 +268,12 @@ class CapitalController extends AuthController
         }
         if (empty($user['pay_password'])) {
             return out(null, 801, '请先设置支付密码');
+        }
+        if($req['pay_channel'] == 7 || $req['pay_channel'] == 5){
+            $order = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',4)->where('status','>=',2)->find();
+            if(!$order){
+                return out(null, 10001, '请先购买金融强国之路项目');
+            }
         }
         $user = User::where('id', $user['id'])->find();
         if ($req['pay_channel'] == 7 ) {
