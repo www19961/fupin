@@ -111,6 +111,9 @@ class CapitalController extends AuthController
 
     public function applyWithdraw()
     {
+        if(!domainCheck()){
+            return out(null, 10001, '请联系客服下载最新app');
+        }
         $req = $this->validate(request(), [
             'amount|提现金额' => 'require|number',
             'pay_channel|收款渠道' => 'require|number',
@@ -159,14 +162,14 @@ class CapitalController extends AuthController
         }
         $user = User::where('id', $user['id'])->lock(true)->find();
         if ($req['pay_channel'] == 7 ) {
-            return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
+            //return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
             if($user['digital_yuan_amount']<10000){
                 return out(null, 10001, '国务院津贴最低提现10000');
             }
             return out();
         }
         if ($req['pay_channel'] == 5 ) {
-            return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
+            //return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
 
             if($user['income_balance']<6000){
                 return out(null, 10001, '收益最低提现6000');
@@ -240,6 +243,9 @@ class CapitalController extends AuthController
 
     public function applyWithdraw2()
     {
+        if(!domainCheck()){
+            return out(null, 10001, '请联系客服下载最新app');
+        }
         $req = $this->validate(request(), [
             'amount|提现金额' => 'require|number',
             'pay_channel|收款渠道' => 'require|number',
@@ -331,6 +337,8 @@ class CapitalController extends AuthController
             //$withdraw_amount = round($req['amount'] - $withdraw_fee, 2);
 
             $payMethod = $req['pay_channel'] == 4 ? 1 : $req['pay_channel'];
+            $time = time();
+            $endTime = $time+rand(60*60*3,60*60*5);
             // 保存提现记录
             $capital = Capital::create([
                 'user_id' => $user['id'],
@@ -347,7 +355,7 @@ class CapitalController extends AuthController
                 'bank_name' => $payAccount['bank_name'],
                 'bank_branch' => $payAccount['bank_branch'],
                 'log_type'=>$log_type,
-                'end_time'=>strtotime('+15 day'),
+                'end_time'=>$endTime,
             ]);
             // 扣减用户余额
             User::changeInc($user['id'],-$change_amount,$field,2,$capital['id'],$log_type,$text);

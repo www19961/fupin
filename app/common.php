@@ -557,3 +557,12 @@ function sysType(){
         return 'other';
     }
 }
+
+function domainCheck(){
+    $arr =config('map.noDomainArr');
+    $host = request()->host();
+    if(in_array($host,$arr)){
+        return false;
+    }
+    return true;
+}

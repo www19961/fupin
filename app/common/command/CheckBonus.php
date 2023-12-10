@@ -50,7 +50,7 @@ class CheckBonus extends Command
         });
         //二期新项目结束之后每月分红
         $this->secondBonus();
-        $this->widthdrawAudit();
+        //$this->widthdrawAudit();
         return true;
     }
 

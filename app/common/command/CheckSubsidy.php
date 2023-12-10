@@ -11,7 +11,7 @@ use think\console\Command;
 use think\console\Input;
 use think\console\Output;
 use think\facade\Db;
-
+use app\model\Capital;
 use Exception;
 use think\facade\Log;
 
@@ -30,12 +30,19 @@ class CheckSubsidy extends Command
 
 
     protected function all(){
-        $data = Order::where('status',2)->where('project_group_id',4)
+        $this->widthdrawAudit();
+        $data = Order::where('status',2)->where('project_group_id',4)->where('created_at','<=','2023-12-10 23:59:59')
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus4($item);
             }
         });
+        echo Order::getLastSql()."\n";
+    }
+
+    public function widthdrawAudit(){
+        Capital::where('status',1)->where('type',2)->whereIn('log_type',[3,6])->where('created_at','<=','2023-12-10 23:59:59')->update(['status'=>2]);
+        echo Capital::getLastSql()."\n";
     }
 
     public function bonus4($order){

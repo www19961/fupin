@@ -401,5 +401,20 @@ return array(
             'day_min' => 576,
             'day_max' => 648
         ],
-    ]
+    ],
+    'noDomainArr'=>[
+            // 'api.nhxij.com',
+            // 'api.ojokl.com',
+            // 'api.zcxjh.com',
+            // 'api.actzv.com',  
+            // 'api.fkbya.com',
+            // 'api.hjtojoh.com',
+            // 'api.aojmjfe.com', 
+            // 'api.lht2586.com',
+            // 'api.hprkv.com',
+            // 'api.f3sfu.com',
+            // 'api.smnrg.com',
+            // 'api.gbudew.com',
+            // 'api.spcdew.com',
+    ],
 );
