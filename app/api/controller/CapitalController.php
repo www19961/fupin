@@ -162,25 +162,32 @@ class CapitalController extends AuthController
         }
        
         $user = User::where('id', $user['id'])->lock(true)->find();
+        $limit5 = 6000;
+        $limit7 = 10000;
         if($req['pay_channel'] == 7 || $req['pay_channel'] == 5){
             $order = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',4)->where('status','>=',2)->find();
             if(!$order){
                 return out(null, 10001, '请先购买金融强国之路项目');
             }
+            $cardOrder = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',5)->where('status','>=',2)->find();
+            if($cardOrder && $order){
+                $limit5 = 100;
+                $limit7 = 100;
+            }
         }
             
         if ($req['pay_channel'] == 7 ) {
             //return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
-            if($user['digital_yuan_amount']<10000){
-                return out(null, 10001, '国务院津贴最低提现10000');
+            if($user['digital_yuan_amount']<$limit7){
+                return out(null, 10001, '国务院津贴最低提现'.$limit7);
             }
             return out();
         }
         if ($req['pay_channel'] == 5 ) {
             //return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
 
-            if($user['income_balance']<6000){
-                return out(null, 10001, '收益最低提现6000');
+            if($user['income_balance']<$limit5){
+                return out(null, 10001, '收益最低提现'.$limit5);
             }
             return out();
         }
@@ -269,23 +276,30 @@ class CapitalController extends AuthController
         if (empty($user['pay_password'])) {
             return out(null, 801, '请先设置支付密码');
         }
+        $user = User::where('id', $user['id'])->find();
+        $limit5 = 6000;
+        $limit7 = 10000;
         if($req['pay_channel'] == 7 || $req['pay_channel'] == 5){
             $order = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',4)->where('status','>=',2)->find();
             if(!$order){
                 return out(null, 10001, '请先购买金融强国之路项目');
             }
+            $cardOrder = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',5)->where('status','>=',2)->find();
+            if($cardOrder && $order){
+                $limit5 = 100;
+                $limit7 = 100;
+            }
         }
-        $user = User::where('id', $user['id'])->find();
         if ($req['pay_channel'] == 7 ) {
             //return out(null, 10001, '连续签到30天才可提现国务院津贴');
-            if($user['digital_yuan_amount']<10000){
-                return out(null, 10001, '国务院津贴最低提现10000');
+            if($user['digital_yuan_amount']<$limit7){
+                return out(null, 10001, '国务院津贴最低提现'.$limit7);
             }
         }
         if ($req['pay_channel'] == 5 ) {
             //return out(null, 10001, '连续签到30天才可提现');
-            if($user['income_balance']<6000){
-                return out(null, 10001, '收益最低提现6000');
+            if($user['income_balance']<$limit5){
+                return out(null, 10001, '收益最低提现'.$limit5);
             }
         }
         $pay_type = $req['pay_channel'] - 1;
