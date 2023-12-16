@@ -26,9 +26,9 @@ class SigninController extends AuthController
         // if(in_array($host,$arr)){
         //     return out(null, 10001, '请联系客服下载最新app进行签到');
         // }
-        if(!domainCheck()){
-            return out(null, 10001, '请联系客服下载最新app进行签到');
-        }
+        // if(!domainCheck()){
+        //     return out(null, 10001, '请联系客服下载最新app进行签到');
+        // }
         $user = $this->user;
         $signin_date = date('Y-m-d');
 
