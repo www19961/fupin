@@ -24,8 +24,68 @@ class CheckSubsidy extends Command
 
     protected function execute(Input $input, Output $output)
     {   
-        $this->all();
+        //$this->all();
+        $this->fixSecondBonus();
         return true;
+    }
+
+    public function fixSecondBonus(){
+        $yesterday = date("Y-m-d",strtotime("-1 day"));
+        $day = date("d",strtotime($yesterday));
+        $month = date("m",strtotime($yesterday));
+        $sql="select *  from mp_order where project_group_id = 2 and status=4 and created_at BETWEEN '2023-11-1 00:00:00' and '2023-11-09 :23:59:59' and id not in(
+            select relation_id from mp_user_balance_log where remark='二期项目每月分红'
+            )";
+        $data = Db::query($sql);
+        foreach($data as $item){
+
+            echo "正在处理订单{$item['id']}\n";
+            $time = time();
+            $nowMonth = intval(date("m",$time));
+             $endMonth = intval(date("m",$item['end_time']));
+             $executeDay = date('Ym').date("d",strtotime($item['created_at']));
+               if($nowMonth>$endMonth){
+                    $passiveIncome = PassiveIncomeRecord::where('order_id',$item['id'])->where('user_id',$item['user_id'])->where('execute_day',$executeDay)->where('type',2)->find();
+                    if(!empty($passiveIncome)){
+                        //已经分红
+                        return;
+                    }
+                    $passiveIncome = PassiveIncomeRecord::where('order_id',$item['id'])->where('user_id',$item['user_id'])->order('execute_day','desc')->where('type',2)->find();
+                    if(!$passiveIncome){
+                        $day=0;
+                    }else{
+                        $day=$passiveIncome['days'];
+                    }
+                    $day+=1;
+                    Db::startTrans();
+                    try {
+                        $amount = $item['sum_amount'];
+                        PassiveIncomeRecord::create([
+                                'project_group_id'=>$item['project_group_id'],
+                                'user_id' => $item['user_id'],
+                                'order_id' => $item['id'],
+                                'execute_day' => $executeDay,
+                                'amount'=>$amount,
+                                'days'=>$day,
+                                'is_finish'=>1,
+                                'status'=>3,
+                                'type'=>2,
+                            ]); 
+                        $gain_bonus = bcadd($item['gain_bonus'],$amount,2);
+                        Order::where('id', $item['id'])->update(['gain_bonus'=>$gain_bonus]);
+                        User::changeInc($item['user_id'],$amount,'income_balance',6,$item['id'],6,'二期项目每月分红');
+                        Db::commit();
+                    } catch (Exception $e) {
+                        Log::error('二期项目每月分红异常：'.$e->getMessage(),$e);
+                        Db::rollback();
+                        throw $e;
+                    }
+                    //return true;
+               }
+              // break;
+            }
+            
+
     }
 
 
