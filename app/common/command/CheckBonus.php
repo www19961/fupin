@@ -41,8 +41,8 @@ class CheckBonus extends Command
             }
         });
 
-        //4期项目
-        $data = Order::where('project_group_id',4)->where('status',2)->where('end_time', '<=', $cur_time)
+        //456期项目
+        $data = Order::whereIn('project_group_id',[4,6])->where('status',2)->where('end_time', '<=', $cur_time)
         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus4($item);
