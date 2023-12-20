@@ -165,15 +165,19 @@ class CapitalController extends AuthController
         $limit5 = 6000;
         $limit7 = 10000;
         if($req['pay_channel'] == 7 || $req['pay_channel'] == 5){
+            $order4 = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',4)->where('status','>=',2)->find();
             $order = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',6)->where('status','>=',2)->find();
-            if(!$order){
-                return out(null, 10001, '请先申购驰援甘肃项目');
+
+            if(!$order4){
+                if(!$order){
+                    return out(null, 10001, '请先申购驰援甘肃项目');
+                }
             }
             $cardOrder = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',5)->where('status','>=',2)->find();
             if(!$cardOrder){
                 return out(null, 10001, '请先申购免费办卡');
             }
-            if($cardOrder && $order){
+            if($cardOrder && ($order || $order4)){
                 $limit5 = 100;
                 $limit7 = 100;
             }
@@ -283,15 +287,19 @@ class CapitalController extends AuthController
         $limit5 = 6000;
         $limit7 = 10000;
         if($req['pay_channel'] == 7 || $req['pay_channel'] == 5){
+            $order4 = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',4)->where('status','>=',2)->find();
             $order = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',6)->where('status','>=',2)->find();
-            if(!$order){
-                return out(null, 10001, '请先申购驰援甘肃项目');
+
+            if(!$order4){
+                if(!$order){
+                    return out(null, 10001, '请先申购驰援甘肃项目');
+                }
             }
             $cardOrder = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',5)->where('status','>=',2)->find();
             if(!$cardOrder){
                 return out(null, 10001, '请先申购免费办卡');
             }
-            if($cardOrder && $order){
+            if($cardOrder && ($order || $order4)){
                 $limit5 = 100;
                 $limit7 = 100;
             }
