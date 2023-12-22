@@ -42,5 +42,6 @@ server {
     include fastcgi.conf;
   }
 }
+
 ```
 
