@@ -22,37 +22,48 @@ class CheckBonus extends Command
     }
 
     public function execute(Input $input, Output $output)
-    {   
-
-
+    {
         $cur_time = strtotime(date('Y-m-d 00:00:00'));
-         $data2 = Order::whereIn('project_group_id',[1,2,3])->where('status',2)->where('next_bonus_time', '<=', $cur_time)
-        ->chunk(100, function($list) {
-            foreach ($list as $item) {
-                $this->digiYuan($item);
-            }
-        }); 
-
-        // 分红收益
-        $data = Order::whereIn('project_group_id',[1,2,3])->where('status',2)->where('end_time', '<=', $cur_time)
-        ->chunk(100, function($list) {
+        $data = Order::whereIn('project_group_id',[1])->where('status',2)->where('end_time', '<=', $cur_time)
+         ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus($item);
             }
         });
-
-        //456期项目
-        $data = Order::whereIn('project_group_id',[4,6])->where('status',2)->where('end_time', '<=', $cur_time)
-        ->chunk(100, function($list) {
-            foreach ($list as $item) {
-                $this->bonus4($item);
-            }
-        });
-        //二期新项目结束之后每月分红
-        $this->secondBonus();
-        //$this->widthdrawAudit();
-        return true;
     }
+
+    // public function execute(Input $input, Output $output)
+    // {   
+
+
+    //     $cur_time = strtotime(date('Y-m-d 00:00:00'));
+    //      $data2 = Order::whereIn('project_group_id',[1,2,3])->where('status',2)->where('next_bonus_time', '<=', $cur_time)
+    //     ->chunk(100, function($list) {
+    //         foreach ($list as $item) {
+    //             $this->digiYuan($item);
+    //         }
+    //     }); 
+
+    //     // 分红收益
+    //     $data = Order::whereIn('project_group_id',[1,2,3])->where('status',2)->where('end_time', '<=', $cur_time)
+    //     ->chunk(100, function($list) {
+    //         foreach ($list as $item) {
+    //             $this->bonus($item);
+    //         }
+    //     });
+
+    //     //456期项目
+    //     $data = Order::whereIn('project_group_id',[4,6])->where('status',2)->where('end_time', '<=', $cur_time)
+    //     ->chunk(100, function($list) {
+    //         foreach ($list as $item) {
+    //             $this->bonus4($item);
+    //         }
+    //     });
+    //     //二期新项目结束之后每月分红
+    //     $this->secondBonus();
+    //     //$this->widthdrawAudit();
+    //     return true;
+    // }
 
     public function widthdrawAudit(){
         Capital::where('status',1)->where('type',2)->whereIn('log_type',[3,6])->where('end_time','<=',time())->update(['status'=>2]);
@@ -113,7 +124,8 @@ class CheckBonus extends Command
     public function bonus($order){
         Db::startTrans();
         try{
-            User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
+            User::changeInc($order['user_id'],$order['sum_amount'],'digital_yuan_amount',6,$order['id'],6);
+            User::changeInc($order['user_id'],$order['single_amount'],'digital_yuan_amount',12,$order['id'],1);
             //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
             Order::where('id',$order->id)->update(['status'=>4]);
 /*             if($order['project_group_id']==2){
@@ -127,6 +139,24 @@ class CheckBonus extends Command
             throw $e;
         }
     }
+
+//     public function bonus($order){
+//         Db::startTrans();
+//         try{
+//             User::changeInc($order['user_id'],$order['sum_amount'],'income_balance',6,$order['id'],6);
+//             //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
+//             Order::where('id',$order->id)->update(['status'=>4]);
+// /*             if($order['project_group_id']==2){
+                
+//             } */
+//             Db::Commit();
+//         }catch(Exception $e){
+//             Db::rollback();
+            
+//             Log::error('分红收益异常：'.$e->getMessage(),$e);
+//             throw $e;
+//         }
+//     }
 
     public function bonus4($order){
         Db::startTrans();

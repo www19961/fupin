@@ -221,23 +221,42 @@ class Order extends Model
         return round(PassiveIncomeRecord::where('order_id', $data['id'])->value('amount')*$data['buy_num'], 2);
     }
 
-    public static function orderPayComplete($order_id)
+    public static function orderPayComplete($order_id, $project, $user_id)
     {
         $order = Order::where('id', $order_id)->find();
+
+        if($project['project_group_id'] == 1) {
+            $end_time = strtotime("+{$project['period']} day", strtotime(date('Y-m-d', strtotime($project['created_at']))));
+            Order::where('id', $order['id'])->update([
+                'status' => 2,
+                'pay_time' => time(),
+                'end_time' => $end_time,    //$next_bonus_time + $order['period']*24*3600,
+                'gain_bonus' => 0,
+                'next_bonus_time' => $end_time,
+                //'equity_status' => 2,
+                //'digital_yuan_status' => 2
+            ]);
+        } elseif ($project['project_group_id'] == 2) {
+            User::changeInc($user_id,$project['withdrawal_limit'],'withdrawal_limit',22,$order['id'],5);
+            User::changeInc($user_id,$project['digital_red_package'],'digital_yuan_amount',23,$order['id'],3);
+            Order::where('id', $order['id'])->update([
+                'status' => 4,
+                'pay_time' => time(),
+                'end_time' => time(),    //$next_bonus_time + $order['period']*24*3600,
+                'gain_bonus' => 0,
+                'next_bonus_time' => time(),
+            ]);
+        }
+
+        return !0;
+
+
         // 更新订单
         //$dividend_cycle = explode(' ',$order['dividend_cycle']);
         $next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+1 day')));
         //$end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.($dividend_cycle[0] * $order['period']).' '.$dividend_cycle[1])));
         $end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['period'].' day')));
-        Order::where('id', $order['id'])->update([
-            'status' => 2,
-            'pay_time' => time(),
-            'end_time' => $end_time,    //$next_bonus_time + $order['period']*24*3600,
-            'gain_bonus' => 0,
-            'next_bonus_time' => $next_bonus_time,
-            //'equity_status' => 2,
-            //'digital_yuan_status' => 2
-        ]);
+
 
         $certificate = Certificate::where('user_id',$order['user_id'])->where('project_group_id',$order['project_group_id'])->find();
         if(!$certificate){

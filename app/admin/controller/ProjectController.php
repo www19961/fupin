@@ -67,14 +67,17 @@ class ProjectController extends AuthController
             //'total_num|总份数' => 'require|integer',
             //'sham_buy_num|虚拟购买份数' => 'integer',
             //'daily_bonus_ratio|单份日分红金额' => 'require|float',
-            'period|周期' => 'require|number|>:0',
+            'period|周期' => 'requireIf:project_group_id,1|number|>:0',
             //'single_gift_equity|单份赠送股权' => 'integer',
-            'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
+            // 'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
             'is_recommend|是否推荐' => 'require|integer',
             //'give|赠送项目' => 'max:100',
             'support_pay_methods|支付方式' => 'require|max:100',
             'sort|排序号' => 'integer',
-            'sum_amount|总补贴金额' => 'require|float',
+            'sum_amount|总补贴金额' => 'requireIf:project_group_id,1|float',
+            'virtually_progress|虚拟进度' => 'integer',
+            'withdrawal_limit|赠送日提现额度	' => 'integer',
+            'digital_red_package|赠送数字红包	' => 'integer'
         ]);
         $req['intro'] = request()->param('intro', '');
         $methods = explode(',', $req['support_pay_methods']);
@@ -106,15 +109,18 @@ class ProjectController extends AuthController
             //'total_num|总份数' => 'require|integer',
             //'sham_buy_num|虚拟购买份数' => 'integer',
             //'daily_bonus_ratio|单份日分红金额' => 'require|float',
-            'period|周期' => 'require|number|>:0',
+            'period|周期' => 'requireIf:project_group_id,1|number|>:0',
             //'single_gift_equity|单份赠送股权' => 'integer',
             'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
             'is_recommend|是否推荐' => 'require|integer',
             //'give|赠送项目' => 'max:100',
             'support_pay_methods|支持的支付方式' => 'require|max:100',
             'sort|排序号' => 'integer',
-            'sum_amount|总补贴金额' => 'require|float',
+            'sum_amount|总补贴金额' => 'requireIf:project_group_id,1|float',
             //'bonus_multiple|奖励倍数' => 'require|>=:0',
+            'virtually_progress|虚拟进度' => 'integer',
+            'withdrawal_limit|赠送日提现额度	' => 'integer',
+            'digital_red_package|赠送数字红包	' => 'integer'
         ]);
         $req['intro'] = request()->param('intro', '');
         $methods = explode(',', $req['support_pay_methods']);

@@ -51,7 +51,7 @@
                             <th>分红周期(时间)</th>
  -->                            <th>分红总次数(天)</th>
                             <th>总收益金额</th>
-                            <th>国务院津贴</th>
+                            <!-- <th>国务院津贴</th> -->
 <!--                             <th>已购买份数</th>
                             <th>虚拟购买份数</th> -->
 <!--                             <th>进度开关</th>
@@ -59,7 +59,8 @@
                             <th>是否推荐</th>
                             <th>支付方式</th>
 <!--                             <th>倍数</th>
- -->                            <th>排序号</th>
+ -->                            <th>虚拟进度</th>
+                             <th>排序号</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
@@ -76,7 +77,7 @@
                                 <td>{$v['dividend_cycle']}</td>
  -->                                <td>{$v['period']}</td>
                                 <td>{$v['sum_amount']}</td>
-                                <td>{$v['single_gift_digital_yuan']}</td>
+                                <!-- <td>{$v['single_gift_digital_yuan']}</td> -->
 <!--                                 <td>{$v['total_buy_num']}</td>
                                 <td>{$v['sham_buy_num']}</td>
  -->                               <!--  <td>
@@ -118,9 +119,10 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>{$v['sort']}</td>
 
                                 <td>{$v['support_pay_methods_text']}</td>
+                                <td>{$v['virtually_progress']}</td>
+                                <td>{$v['sort']}</td>
                                 <td>{$v['created_at']}</td>
                                 <td>
                                     <a {:auth_show_judge('Project/editProject')} class="btn btn-flat btn-info btn-xs"

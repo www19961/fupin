@@ -131,7 +131,7 @@
                             <input type="text" name="period" class="form-control" placeholder="分红天数"
                                    value="{$data['period']??''}">
                         </div>
-                        <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
+                        <!-- <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div> -->
                     </div>
                 </div>
                 <div class="row dd_input_group">
@@ -143,7 +143,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row dd_input_group">
+                <!-- <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">国务院津贴</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
@@ -152,7 +152,7 @@
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">每日*</div>
                     </div>
-                </div>
+                </div> -->
 <!--                 <div class="row dd_input_group">
                     <div class="form-group">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">虚拟购买份数</label>
@@ -210,6 +210,33 @@
                             </select>
                         </div>
                         <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 dd_ts" style="margin-left: -15px;">*</div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">赠送日提现额度</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="withdrawal_limit" class="form-control" placeholder="请输入赠送日提现额度"
+                                   value="{$data['withdrawal_limit']??''}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">赠送数字红包</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="digital_red_package" class="form-control" placeholder="请输入赠送数字红包"
+                                   value="{$data['digital_red_package']??''}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row dd_input_group">
+                    <div class="form-group">
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">虚拟进度</label>
+                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
+                            <input type="text" name="virtually_progress" class="form-control" placeholder="请输入虚拟进度(默认0)"
+                                   value="{$data['virtually_progress']??0}">
+                        </div>
                     </div>
                 </div>
                 <div class="row dd_input_group">

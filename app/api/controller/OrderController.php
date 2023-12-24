@@ -14,7 +14,152 @@ use think\facade\Db;
 
 class OrderController extends AuthController
 {
+
     public function placeOrder()
+    {
+        $req = $this->validate(request(), [
+            'project_id' => 'require|number',
+            'pay_method' => 'require|number',
+            'payment_config_id' => 'requireIf:pay_method,2|requireIf:pay_method,3|requireIf:pay_method,4|requireIf:pay_method,6|number',
+            'pay_password|支付密码' => 'requireIf:pay_method,1|requireIf:pay_method,5',
+            'pay_voucher_img_url|支付凭证' => 'requireIf:pay_method,6|url',
+        ]);
+        $user = $this->user;
+
+        if (empty($user['pay_password'])) {
+            return out(null, 801, '请先设置支付密码');
+        }
+        if (!empty($req['pay_password']) && $user['pay_password'] !== sha1(md5($req['pay_password']))) {
+            return out(null, 10001, '支付密码错误');
+        }
+
+        $project = Project::where('id', $req['project_id'])->where('status',1)->find();
+        if(!$project){
+            return out(null, 10001, '项目不存在');
+        }
+
+        if (!in_array($req['pay_method'], $project['support_pay_methods'])) {
+            return out(null, 10001, '不支持该支付方式');
+        }
+
+        Db::startTrans();
+        try {
+            $user = User::where('id', $user['id'])->lock(true)->find();
+            $project = Project::field('id project_id,name project_name,class,project_group_id,cover_img,single_amount,single_integral,total_num,daily_bonus_ratio,sum_amount,dividend_cycle,period,single_gift_equity,single_gift_digital_yuan,sham_buy_num,progress_switch,bonus_multiple,settlement_method')
+                        ->where('id', $req['project_id'])
+                        ->lock(true)
+                        ->append(['all_total_buy_num'])
+                        ->find()
+                        ->toArray();
+
+            $pay_amount = $project['single_amount'];
+            $pay_integral = 0;
+
+            if ($req['pay_method'] == 1 && $pay_amount >  $user['topup_balance']) {
+                exit_out(null, 10002, '余额不足');
+            }
+            //没有团队奖励支付方式先屏蔽
+            // if ($req['pay_method'] == 5) {
+            //     $pay_integral = $project['single_amount'];
+            //     if ($pay_integral > $user['team_bonus_balance']) {
+            //         exit_out(null, 10003, '团队奖励不足');
+            //     }
+            // }
+
+            if (in_array($req['pay_method'], [2,3,4,6])) {
+                $type = $req['pay_method'] - 1;
+                if ($req['pay_method'] == 6) {
+                    $type = 4;
+                }
+                $paymentConf = PaymentConfig::userCanPayChannel($req['payment_config_id'], $type, $pay_amount);
+            }
+
+            if (isset(config('map.order')['pay_method_map'][$req['pay_method']]) === false) {
+                exit_out(null, 10005, '支付渠道不存在');
+            }
+
+            if (empty($req['pay_method'])) {
+                exit_out(null, 10005, '支付渠道不存在');
+            }
+
+            $order_sn = build_order_sn($user['id']);
+
+
+            $project['user_id'] = $user['id'];
+            $project['up_user_id'] = $user['up_user_id'];
+            $project['order_sn'] = $order_sn;
+            $project['buy_num'] = 1;
+            $project['pay_method'] = $req['pay_method'];
+            $project['price'] = $pay_amount;
+
+            $order = Order::create($project);
+
+            if ($req['pay_method']==1) {
+                // 扣余额
+                User::changeInc($user['id'],-$pay_amount,'topup_balance',3,$order['id'],1);
+                // 累计总收益和赠送数字人民币  到期结算
+                // 订单支付完成
+                Order::orderPayComplete($order['id'], $project, $user['id']);
+            }
+            //没有团队奖励支付方式先屏蔽
+            // else if($req['pay_method']==5){
+            //     // 扣团队奖励
+            //     User::changeInc($user['id'],-$pay_amount,'team_bonus_balance',3,$order['id'],2);
+            //     // 累计总收益和赠送数字人民币  到期结算
+            //     // 订单支付完成
+            //     Order::orderPayComplete($order['id']);
+            // }
+            // 发起第三方支付
+            if (in_array($req['pay_method'], [2,3,4,6])) {
+                $card_info = '';
+                if (!empty($paymentConf['card_info'])) {
+                    $card_info = json_encode($paymentConf['card_info']);
+                    if (empty($card_info)) {
+                        $card_info = '';
+                    }
+                }
+                // 创建支付记录
+                Payment::create([
+                    'user_id' => $user['id'],
+                    'trade_sn' => $order_sn,
+                    'pay_amount' => $pay_amount,
+                    'order_id' => $order['id'],
+                    'payment_config_id' => $paymentConf['id'],
+                    'channel' => $paymentConf['channel'],
+                    'mark' => $paymentConf['mark'],
+                    'type' => $paymentConf['type'],
+                    'card_info' => $card_info,
+                    'product_type'=>1,
+                    'pay_voucher_img_url'=>$req['pay_voucher_img_url'],
+                ]);
+                // 发起支付
+                if ($paymentConf['channel'] == 1) {
+                    $ret = Payment::requestPayment($order_sn, $paymentConf['mark'], $pay_amount);
+                }
+                elseif ($paymentConf['channel'] == 2) {
+                    $ret = Payment::requestPayment2($order_sn, $paymentConf['mark'], $pay_amount);
+                }
+                elseif ($paymentConf['channel'] == 3) {
+                    $ret = Payment::requestPayment3($order_sn, $paymentConf['mark'], $pay_amount);
+                }else if($paymentConf['channel']==8){
+                    $ret = Payment::requestPayment4($order_sn, $paymentConf['mark'], $pay_amount);
+                }else if($paymentConf['channel']==9){
+                    $ret = Payment::requestPayment5($order_sn, $paymentConf['mark'], $pay_amount);
+                }
+            }
+
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+
+        return out(['order_id' => $order['id'] ?? 0, 'trade_sn' => $trade_sn ?? '', 'type' => $ret['type'] ?? '', 'data' => $ret['data'] ?? '']);
+
+    }
+
+
+    public function placeOrder_bak()
     {
         $req = $this->validate(request(), [
             'project_id' => 'require|number',

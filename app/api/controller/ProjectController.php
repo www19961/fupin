@@ -9,10 +9,20 @@ class ProjectController extends AuthController
 {
     public function projectList()
     {
-        $data = Project::where('status', 1)->where('class',1)->order(['sort' => 'asc', 'id' => 'desc'])->append(['daily_bonus'])->paginate();
+        $req = $this->validate(request(), [
+            'project_group_id' => 'number'
+        ]);
+        $data = Project::field('id, name, intro, cover_img, details_img, single_amount, sum_amount, period, support_pay_methods, virtually_progress')
+                ->where('status', 1)
+                ->where('class',1)
+                ->where('project_group_id',$req['project_group_id'] ?? 1)
+                ->order(['sort' => 'asc', 'id' => 'desc'])
+                ->append(['daily_bonus'])
+                ->paginate();
         foreach($data as $item){
             //$item['intro']="";
-            $item['project_income']=$item['sum_amount'];
+            //$item['project_income']=$item['sum_amount'];
+            $item['project_end_time'] = date("m月d日", strtotime("+{$item['period']} day", strtotime($item['created_at'])));
         }
         return out($data);
     }
