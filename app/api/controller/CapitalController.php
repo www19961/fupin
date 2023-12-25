@@ -162,65 +162,18 @@ class CapitalController extends AuthController
         }
        
         $user = User::where('id', $user['id'])->lock(true)->find();
-        $limit5 = 6000;
-        $limit7 = 10000;
-        if($req['pay_channel'] == 7 || $req['pay_channel'] == 5){
-            $order4 = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',4)->where('status','>=',2)->find();
-            $order = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',6)->where('status','>=',2)->find();
-
-            if(!$order4){
-                if(!$order){
-                    return out(null, 10001, '请先申购驰援甘肃项目');
-                }
-            }
-            $cardOrder = \app\model\Order::where('user_id',$user['id'])->where('project_group_id',5)->where('status','>=',2)->find();
-            if(!$cardOrder){
-                return out(null, 10001, '请先申购免费办卡');
-            }
-            if($cardOrder && ($order || $order4)){
-                $limit5 = 100;
-                $limit7 = 100;
-            }
-        }
-            
-        if ($req['pay_channel'] == 7 ) {
-            //return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
-            if($user['digital_yuan_amount']<$limit7){
-                return out(null, 10001, '国务院津贴最低提现'.$limit7);
-            }
-            return out();
-        }
-        if ($req['pay_channel'] == 5 ) {
-            //return out(null,10001,'提现通道已经关闭，请申购“金融强国之路”项目，待到周期（15天）结束即可提现到账');
-
-            if($user['income_balance']<$limit5){
-                return out(null, 10001, '收益最低提现'.$limit5);
-            }
-            return out();
-        }
+ 
 
         
         Db::startTrans();
         try {
-            // 判断余额
-            
-            // if ($user['invite_bonus'] < $req['amount']) {
-            //     return out(null, 10001, '可提现余额不足');
-            // }
-           // if($req['pay_channel'] < 7){
-                $field = 'team_bonus_balance';
-                $log_type =2;
-                if ($user['team_bonus_balance'] < $req['amount']) {
-                    return out(null, 10001, '团队奖励余额不足');
-                }
-            //}
-            // }elseif($req['pay_channel'] == 7){
-            //     $field = 'digital_yuan_amount';
-            //     $log_type = '3';
-            //     if ($user['digital_yuan_amount'] < $req['amount']) {
-            //         return out(null, 10001, '可提现数字人民币不足');
-            //     }
-            // }
+
+            $field = 'topup_balance';
+            $log_type =2;
+            if ($user[$field] < $req['amount']) {
+                return out(null, 10001, '现金余额不足');
+            }
+   
             // 判断每天最大提现次数
             $num = Capital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
             if ($num >= dbconfig('per_day_withdraw_max_num')) {

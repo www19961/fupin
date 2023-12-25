@@ -75,7 +75,7 @@ class UserController extends AuthController
         } 
         
         $subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
-        $medal = Apply::where('user_id',$user['id'])->where('type',1)->find();
+/*         $medal = Apply::where('user_id',$user['id'])->where('type',1)->find();
         $house = Apply::where('user_id',$user['id'])->where('type',2)->find();
         $car = Apply::where('user_id',$user['id'])->where('type',3)->find();
         $cardAuth = Apply::where('user_id',$user['id'])->where('type',5)->find();
@@ -87,7 +87,7 @@ class UserController extends AuthController
         $user['is_card_order'] = User::isCardOrder($user['id']);
         $user['no_withdraw'] = $user['digital_yuan_amount']+$user['income_balance'];
         $user['is_card_auth'] = $cardAuth?1:0;
-        $user['withdraw_sum'] = User::cardWithdrawSum($user['id']);
+        $user['withdraw_sum'] = User::cardWithdrawSum($user['id']); */
 /*         $user['up_users'] = [
             ['id'=>'12345','name'=>'13312341234'],
             ['id'=>'12346','name'=>'13312341235'],
@@ -520,14 +520,14 @@ class UserController extends AuthController
             User::changeBalance($user['up_user_id'], dbconfig('direct_recommend_reward_amount'), 7, $user['id']);
         }
 
-        // 把注册赠送的股权给用户
-        EquityYuanRecord::where('user_id', $user['id'])->where('type', 1)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
+        // // 把注册赠送的股权给用户
+        // EquityYuanRecord::where('user_id', $user['id'])->where('type', 1)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
         
-                // 把注册赠送的数字人民币给用户
-        EquityYuanRecord::where('user_id', $user['id'])->where('type', 2)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
+        //         // 把注册赠送的数字人民币给用户
+        // EquityYuanRecord::where('user_id', $user['id'])->where('type', 2)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
 
-        // 把注册赠送的贫困补助金给用户
-        EquityYuanRecord::where('user_id', $user['id'])->where('type', 3)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
+        // // 把注册赠送的贫困补助金给用户
+        // EquityYuanRecord::where('user_id', $user['id'])->where('type', 3)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
 
         return out();
     }

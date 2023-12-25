@@ -85,6 +85,7 @@ class CommonController extends BaseController
             'realname|姓名'=>['require','regex'=>'/^[\x{4e00}-\x{9fa5}\x{9fa6}-\x{9fef}\x{3400}-\x{4db5}\x{20000}-\x{2ebe0}·]{2,20}+$/u'],
             'ic_number|身份证号' => 'require|idCard',
             'vt|验证'=>'require',
+            'qq|qq'=>'number',
             //'captcha|验证码' => 'require|max:6',
         ]);
 
@@ -325,7 +326,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update(['online_sn' => $req['transaction_id'], 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -418,7 +419,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update(['online_sn' => $req['orderno'], 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -469,7 +470,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update(['online_sn' => $req['transaction_id'], 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -523,7 +524,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update(['online_sn' => $req['serialOrderNo'], 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -576,7 +577,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -635,7 +636,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -697,7 +698,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -758,7 +759,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -815,7 +816,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -871,7 +872,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -925,7 +926,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -986,7 +987,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -1046,7 +1047,7 @@ class CommonController extends BaseController
                 Payment::where('id', $payment['id'])->update([ 'payment_time' => time(), 'status' => 2]);
                 // 投资项目
                 if ($payment['product_type'] == 1) {
-                    Order::orderPayComplete($payment['order_id']);
+                    Order::warpOrderComplete($payment['order_id']);
                 }
                 // 充值
                 elseif ($payment['product_type'] == 2) {
@@ -1089,7 +1090,7 @@ class CommonController extends BaseController
         //$user = User::getUserByToken();
         
         $system =[];
-        //$system = Cache::get('system_'.$req['type'],[]);
+        $system = Cache::get('system_'.$req['type'],[]);
         
         if(empty($system) || $system == null){
             $builder =  SystemInfo::where('status', 1);

@@ -332,21 +332,23 @@ class Order extends Model
             //     'status'=>3,
             // ]); 
         //增加投资金额  注意积分兑换的不算投资金额
-        if ($order['pay_method'] != 5) {
+/*         if ($order['pay_method'] != 5) {
             User::where('id', $order['user_id'])->inc('invest_amount', $order['buy_amount'])->update();
-        }
+        } */
         // 判断激活
         $up_user_id = User::where('id', $order['user_id'])->value('up_user_id');
         if (!empty($up_user_id)) {
             $upUser = User::where('id', $up_user_id)->find();
             $now_level = $upUser['level'];
         }
+
+        //Todo::用户激活移动到申请资产恢复扣钱之后
         if ($order['user']['is_active'] == 0 && $order['pay_method'] != 5) {
             User::where('id', $order['user_id'])->update(['is_active' => 1, 'active_time' => time()]);
             // 下级用户激活
             UserRelation::where('sub_user_id', $order['user_id'])->update(['is_active' => 1]);
             // 判断上级是否升级vip
-            if (!empty($up_user_id)) {
+/*             if (!empty($up_user_id)) {
                 $up_user = User::where('id', $up_user_id)->find();
                 $new_level = LevelConfig::where('min_topup_amount', '<=', $up_user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
 
@@ -354,7 +356,7 @@ class Order extends Model
                     $now_level = $new_level;
                     User::where('id', $up_user_id)->update(['level' => $new_level]);
                 }
-            }
+            } */
         }
 
         // 如果不是积分兑换才算直推奖励和团队奖励
@@ -476,5 +478,16 @@ class Order extends Model
         // }
 
         return true;
+    }
+
+    public static function warpOrderComplete($order_id){
+        try{
+            $order = Order::where('id',$order_id)->find();
+            $project = Project::where('id',$order['project_id'])->find();
+            self::orderPayComplete($order['id'], $project, $order['user_id']);
+        }catch(Exception $e){
+            \think\facade\Log::error('warpOrderComplete:'.$e->getMessage().$e->getLine().$e->getFile());
+            throw $e;
+        }
     }
 }

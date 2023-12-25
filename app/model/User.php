@@ -404,6 +404,10 @@ class User extends Model
     }
 
     public function teamBonus($user_id,$amount,$paymentId){
+        //总充值金额
+        //if ($order['pay_method'] != 5) {
+            User::where('id', $user_id)->inc('invest_amount', $amount)->update();
+        //} 
         $user = User::where('id',$user_id)->field('up_user_id,invest_amount')->find();
         if(empty($user)){
             throw new Exception('用户不存在');
