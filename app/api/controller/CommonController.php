@@ -1137,6 +1137,6 @@ class CommonController extends BaseController
     }
 
     public function test(){
-        return 1;
+        return out(['test'=>1]);
     }
 }
