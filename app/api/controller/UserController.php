@@ -31,14 +31,19 @@ class UserController extends AuthController
         $user = $this->user;
 
         //$user = User::where('id', $user['id'])->append(['equity', 'digital_yuan', 'my_bonus', 'total_bonus', 'profiting_bonus', 'exchange_equity', 'exchange_digital_yuan', 'passive_total_income', 'passive_receive_income', 'passive_wait_income', 'subsidy_total_income', 'team_user_num', 'team_performance', 'can_withdraw_balance'])->find()->toArray();
-        $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,team_bonus_balance,income_balance,digital_yuan_amount,created_at')->find()->toArray();
+        $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,topup_balance,poverty_subsidy_amount,digital_yuan_amount,created_at')->find()->toArray();
     
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
         $user['address'] = '';
+        $user['wallet_address'] = '';
         unset($user['password'], $user['pay_password']);
         $delivery=UserDelivery::where('user_id', $user['id'])->find();
         if($delivery){
             $user['address']=$delivery['address'];
+        }
+        $wallet_address = WalletAddress::where('user_id', $user['id'])->find();
+        if($wallet_address){
+            $user['wallet_address']=$wallet_address['address'];
         }
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
@@ -58,7 +63,7 @@ class UserController extends AuthController
         // }elseif($user['level'] < $zhishu_level){
         //     User::where('id', $user['id'])->update(['level' => $zhishu_level]);
         // }
-        $upUserId = $user['up_user_id'];
+/*         $upUserId = $user['up_user_id'];
         $user['up_users'] = [];
         for($i=0;$i<3;$i++){
            if($upUserId==0){
@@ -73,9 +78,9 @@ class UserController extends AuthController
                 break;
            }
            
-        } 
+        }  */
         
-        $subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
+        //$subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
 /*         $medal = Apply::where('user_id',$user['id'])->where('type',1)->find();
         $house = Apply::where('user_id',$user['id'])->where('type',2)->find();
         $car = Apply::where('user_id',$user['id'])->where('type',3)->find();
@@ -638,7 +643,7 @@ class UserController extends AuthController
 
         $total_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->count();
         $active_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->where('is_active', 1)->count();
-        $realname_num = UserRelation::alias('r')->join('mp_user u','r.user_id = u.id')->where('user_id',$user['id'])->where('level', $req['level'])->where('u.realname','<>','')->count();
+        $realname_num = UserRelation::alias('r')->join('mp_user u','r.user_id = u.id')->where('user_id',$user['id'])->where('u.level', $req['level'])->where('u.realname','<>','')->count();
 
 
         $list = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->field('sub_user_id')->paginate();
