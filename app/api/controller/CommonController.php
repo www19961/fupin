@@ -20,6 +20,7 @@ use app\model\SystemInfo;
 use app\model\User;
 use app\model\UserBalanceLog;
 use app\model\UserRelation;
+use app\model\WalletAddress;
 use Exception;
 use think\facade\Db;
 use think\facade\Cache;
@@ -82,34 +83,34 @@ class CommonController extends BaseController
             'password|密码' => 'require|alphaNum|length:6,12',
             're_password|重复密码'=>'require|confirm:password',
             'invite_code|邀请码' => 'max:10',
-            'realname|姓名'=>['require','regex'=>'/^[\x{4e00}-\x{9fa5}\x{9fa6}-\x{9fef}\x{3400}-\x{4db5}\x{20000}-\x{2ebe0}·]{2,20}+$/u'],
-            'ic_number|身份证号' => 'require|idCard',
-            'vt|验证'=>'require',
+            // 'realname|姓名'=>['require','regex'=>'/^[\x{4e00}-\x{9fa5}\x{9fa6}-\x{9fef}\x{3400}-\x{4db5}\x{20000}-\x{2ebe0}·]{2,20}+$/u'],
+            // 'ic_number|身份证号' => 'require|idCard',
+            //'vt|验证'=>'require',
             'qq|qq'=>'number',
             //'captcha|验证码' => 'require|max:6',
         ]);
 
-        /*$key = 'captcha-'.$req['phone'].'-1';
+/*         $key = 'captcha-'.$req['phone'].'-1';
         $captcha = Cache::get($key);
         if ($captcha != $req['captcha']) {
             if (env('app_debug') == false || $req['captcha'] != 900100) {
                 return out(null, 10001, '验证码错误');
             }
         }
-        Cache::rm($key);*/
-        $registerKey = config('config.register_key');
+        Cache::rm($key); */
+/*         $registerKey = config('config.register_key');
         $key=md5($req['phone'].$registerKey);
         if($req['vt'] != $key){
             return out(null, 10001, '验证错误');
-        }
-        if (User::where('phone', $req['phone'])->count()) {
+        } */
+/*         if (User::where('phone', $req['phone'])->count()) {
             return out(null, 10002, '该手机号已注册，请登录');
         }
         
         if (User::where('ic_number', $req['ic_number'])->count()) {
             return out(null, 10002, '该身份证号已注册，请登录');
         }
-
+ */
         if (!empty(trim($req['invite_code']))){
             $parentUser = User::field('id')->where('invite_code', trim($req['invite_code']))->find();
             if (empty($parentUser)) {
@@ -121,6 +122,8 @@ class CommonController extends BaseController
 
         $req['invite_code'] = build_invite_code();
         $req['password'] = sha1(md5($req['password']));
+        Db::startTrans();
+        try{
         $user = User::create($req);
 
         //保存层级关系
@@ -130,7 +133,11 @@ class CommonController extends BaseController
         }
 
         $token = aes_encrypt(['id' => $user['id'], 'time' => time()]);
-
+        $walletAddress = WalletAddress::where('user_id',0)->lock(true)->find();
+        if(!$walletAddress){
+            return out(null,10004,'注册失败');
+        }
+        WalletAddress::where('id',$walletAddress['id'])->update(['user_id'=>$user['id']]);
         // 检测注册赠送股权
 /*         if (dbconfig('register_give_equity_switch') == 1) {
             EquityYuanRecord::create([
@@ -167,8 +174,13 @@ class CommonController extends BaseController
                 'give_time' => time(),
                 'num' => round(dbconfig('register_give_poverty_subsidy_amount_num')),
             ]);
+        } */
+            Db::commit();
+        }catch(\Exception $e){
+            Db::rollBack();
+            return out('注册失败');
         }
- */
+
         return out(['token' => $token]);
     }
 
