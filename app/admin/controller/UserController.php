@@ -180,34 +180,34 @@ class UserController extends AuthController
             'remark' => 'max:50',
         ]);
         $adminUser = $this->adminUser;
-        $filed = 'balance';
+        $filed = 'topup_balance';
         $log_type = 0;
         $balance_type = 1;
-        $text = '余额';
+        $text = '现金';
         switch($req['type']){
             case 1:
-                $filed = 'balance';
+                $filed = 'topup_balance';
                 $log_type = 1;
                 $balance_type = 15;
                 break;
             case 2:
-                $filed = 'team_bonus_balance';
+                $filed = 'poverty_subsidy_amount';
                 $log_type = 2;
                 $balance_type = 8;
-                $text = '团队奖励';
+                $text = '生活补助';
                 break;
             case 3:
-                $filed = 'income_balance';
-                $log_type = 6;
-                $balance_type = 6;
-                $text = '收益';
+                $filed = 'digital_yuan_amount';
+                $log_type = 3;
+                $balance_type = 5;
+                $text = '数字人民币';
                 break;
-            case 4:
+/*             case 4:
                 $filed = 'digital_yuan_amount';
                 $log_type = 3;
                 $balance_type = 5;
                 $text = '国务院津贴';
-                break;
+                break; */
             default:
                 return out(null, 10001, '类型错误');
         }
@@ -238,27 +238,21 @@ class UserController extends AuthController
         $text = '余额';
         switch($req['type']){
             case 1:
-                $filed = 'balance';
+                $filed = 'topup_balance';
                 $log_type = 1;
                 $balance_type = 15;
                 break;
             case 2:
-                $filed = 'team_bonus_balance';
+                $filed = 'poverty_subsidy_amount';
                 $log_type = 2;
                 $balance_type = 8;
-                $text = '团队奖励';
+                $text = '生活补助';
                 break;
             case 3:
-                $filed = 'income_balance';
-                $log_type = 6;
-                $balance_type = 6;
-                $text = '收益';
-                break;
-            case 4:
                 $filed = 'digital_yuan_amount';
                 $log_type = 3;
                 $balance_type = 5;
-                $text = '国务院津贴';
+                $text = '数字人民币';
                 break;
             default:
                 return out(null, 10001, '类型错误');
