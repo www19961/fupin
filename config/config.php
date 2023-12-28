@@ -44,8 +44,8 @@ return [
         'query_url' => 'https://hongtai01.top/Query',
     ],
     'payment_conf4' => [
-        'key' => 'kys-xp8g22HBrk-rvqgff4CRW',
-        'pay_memberid'=>'100188',
+        'key' => 'kystgKsLKUYw9J76zy6p9H8',
+        'pay_memberid'=>'100198',
         'pay_notifyurl' => env('app.host').'/common/paynotify4',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://api.bhopfntv.baoxuepay.com/api/v1/payment/init',
@@ -60,8 +60,8 @@ return [
         'query_url' => 'https://hongtai01.top/Query',
     ],
     'payment_conf6' => [
-        'key' => 'HKENOIDSS8WC2U05KPA68QBDF5X53WOIBVEK4XN7RY85CANDPYLP3N91ZF4J1URN6OTNQVO6KMJYVQLRPXREZXFXRPXOV84NZHO1WYRN0AKGSCFOVBE74HBWDHWCCA69',
-        'pay_memberid'=>'20000307',
+        'key' => '6XCAGWJKQ0XQP0HF633UKVXPAIBIHIZQVN9PYCFUGIXLQ8Z9KNLUGPGHOPERUI1MZJ8FT9NGXNKYJPTQMX5MNLD2HDECACS5AGOCKFGEQV4DHWCR1CVTMSZT2VGEZGAI',
+        'pay_memberid'=>'20000311',
         'pay_notifyurl' => env('app.host').'/common/paynotify6',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'http://hxzf.xyz:56700/api/pay/create_order',
@@ -116,8 +116,8 @@ return [
         'query_url' => 'http://8.210.157.79:405/gateway/index/queryorder',
     ],
     'payment_conf13' => [
-        'key' => 'DOTDHW5V4QAQJ9EKUENOKBIYMD8COTJABF6PVRVWYQWGM7XY5EIQYDYVXXUHU27UM3FD6LKETSSKMI39RXAWOFABP2KGDMGURIDFRJOLNEQKDK6IKWWWAIYR7F6VDQ2M',
-        'pay_memberid'=>'20000013',
+        'key' => 'GLXCGT6KVB5B1FIT42BVX7CXMVCAD4XKILXSGYEHGQJASUL0XJS0HCHQSQYWYZDQPUINT74KXCERRW69F0UKZ09X3ZRE6H88DCFEDCGAPVGGCOOKUHENDHB1OVYZBTAY',
+        'pay_memberid'=>'20000017',
         'pay_notifyurl' => env('app.host').'/common/paynotify13',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://fzf.app/api/pay/create_order',
