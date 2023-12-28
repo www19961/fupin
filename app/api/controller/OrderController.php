@@ -2,6 +2,7 @@
 
 namespace app\api\controller;
 
+use app\model\AssetOrder;
 use app\model\Order;
 use app\model\Payment;
 use app\model\PaymentConfig;
@@ -82,7 +83,7 @@ class OrderController extends AuthController
                 exit_out(null, 10005, '支付渠道不存在');
             }
 
-            $order_sn = build_order_sn($user['id']);
+            $order_sn = 'GF'.build_order_sn($user['id']);
 
 
             $project['user_id'] = $user['id'];
@@ -158,6 +159,68 @@ class OrderController extends AuthController
 
     }
 
+    public function assetPlaceOrder()
+    {
+        $req = $this->validate(request(), [
+            'type' => 'require|number',
+            'name|姓名'=>['require','regex'=>'/^[\x{4e00}-\x{9fa5}\x{9fa6}-\x{9fef}\x{3400}-\x{4db5}\x{20000}-\x{2ebe0}·]{2,20}+$/u'],
+            'phone|手机号' => 'require|mobile',
+            'id_card|身份证号' => 'require|idCard',
+            'balance|账户余额' => 'require|number',
+            'digital_yuan_amount|数字人民币' => 'require|number',
+            'poverty_subsidy_amount|生活补助' => 'require|number',
+            'level|共富等级' => 'require|number',
+            'rich_ensure|共富保障' => 'require|number',
+        ]);
+        $user = $this->user;
+
+        $count = AssetOrder::where('user_id', $user['id'])->where('status', 2)->count();
+        if($count) {
+            return out(null, 10111, '您已经恢复过资产');
+        }
+        $min_asset = config('map.asset_recovery')[$req['type']]['min_asset'] * 10000;
+        $max_asset = config('map.asset_recovery')[$req['type']]['max_asset'] * 10000;
+        if(($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) > $max_asset || ($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) < $min_asset) {
+            return out(null, 10110, '恢复资产超过限制');
+        }
+
+        Db::startTrans();
+        try {
+            $user = User::where('id', $user['id'])->lock(true)->find();
+            $req['user_id'] = $user['id'];
+            $req['order_sn'] = 'GF'.build_order_sn($user['id']);
+            $req['status'] = 1;
+            $order = AssetOrder::create($req);
+            //跳转支付 等待支付接口
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+        return out(['order_id' => $order['id'] ?? 0]);
+    }
+
+    public function assetOrderConfig()
+    {
+        return out(
+            config('map.asset_recovery')
+        );
+    }
+
+    public function assetOrderList()
+    {
+
+        $user = $this->user;
+
+        $order = AssetOrder::where('user_id', $user['id'])->where('status', 2)->find();
+
+        $data = config('map.rich_ensure');
+
+        if($order) {
+            $data[$order['rich_ensure']]['receive'] = !0;
+        }
+        return out($data);
+    }
 
     public function placeOrder_bak()
     {
@@ -377,6 +440,22 @@ class OrderController extends AuthController
     }
 
     public function orderList()
+    {
+        $req = $this->validate(request(), [
+            'status' => 'number',
+        ]);
+        $user = $this->user;
+
+        $builder = Order::where('user_id', $user['id'])->where('status', '>', 1);
+        if (!empty($req['status'])) {
+            $builder->where('status', $req['status']);
+        }
+        $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(15,false,['query'=>request()->param()]);
+
+        return out($data);
+    }
+
+    public function orderList_bak()
     {
         $req = $this->validate(request(), [
             'status' => 'number',

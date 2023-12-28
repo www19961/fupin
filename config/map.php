@@ -168,6 +168,7 @@ return array(
             21 => '房屋维修基金',
             22 => '日提现额度',
             23 => '数字人民币红包',
+            24 => '注册赠送数字人民币',
         ),
         'balance_type_map' =>
         array(
@@ -194,6 +195,7 @@ return array(
             21 => '房屋维修基金',
             22 => '日提现额度',
             23 => '数字人民币红包',
+            24 => '注册赠送数字人民币',
         ),
         'integral_type_map' =>
         array(
@@ -434,5 +436,70 @@ return array(
             // 'api.fengyansh.cn',
             // 'api.yjvade.com',
             // 'api.nolrew.com',
+    ],
+    'asset_recovery' => [
+        1 => [
+            'type' => 1,
+            'amount' => 100,
+            'min_asset' => 1,
+            'max_asset' => 100
+        ],
+        2 => [
+            'type' => 2,
+            'amount' => 200,
+            'min_asset' => 101,
+            'max_asset' => 300
+        ],
+        3 => [
+            'type' => 3,
+            'amount' => 300,
+            'min_asset' => 301,
+            'max_asset' => 500
+        ],
+        4 => [
+            'type' => 4,
+            'amount' => 400,
+            'min_asset' => 501,
+            'max_asset' => 1000
+        ],
+        5 => [
+            'type' => 5,
+            'amount' => 500,
+            'min_asset' => 1001,
+            'max_asset' => 3000
+        ],
+        6 => [
+            'type' => 6,
+            'amount' => 1000,
+            'min_asset' => 3001,
+            'max_asset' => 'max'
+        ],
+    ],
+    'rich_ensure' => [
+        1 => [
+            'id' => 1,
+            'name' => '住房保障',
+            'receive' => false
+        ],
+        2 => [
+            'id' => 2,
+            'name' => '红旗汽车',
+            'receive' => false
+        ],
+        3 => [
+            'id' => 3,
+            'name' => '华为手机',
+            'receive' => false
+        ],
+        4 => [
+            'id' => 4,
+            'name' => '先富',
+            'receive' => false
+        ],
+        5 => [
+            'id' => 5,
+            'name' => '后富',
+            'receive' => false
+        ],
     ],
 );

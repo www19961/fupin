@@ -515,6 +515,9 @@ class UserController extends AuthController
 
         User::where('id', $user['id'])->update($req);
 
+        //注册赠送100万数字人民币
+        User::changeInc($user['id'], 1000000,'digital_yuan_amount',24,0,3);
+
         // 给直属上级额外奖励
         if (!empty($user['up_user_id'])) {
             User::changeBalance($user['up_user_id'], dbconfig('direct_recommend_reward_amount'), 7, $user['id']);
