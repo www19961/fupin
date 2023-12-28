@@ -103,14 +103,15 @@ class CommonController extends BaseController
         if($req['vt'] != $key){
             return out(null, 10001, '验证错误');
         } */
-/*         if (User::where('phone', $req['phone'])->count()) {
-            return out(null, 10002, '该手机号已注册，请登录');
-        }
+/*        
         
         if (User::where('ic_number', $req['ic_number'])->count()) {
             return out(null, 10002, '该身份证号已注册，请登录');
         }
  */
+        if (User::where('phone', $req['phone'])->count()) {
+            return out(null, 10002, '该手机号已注册，请登录');
+        }
         if (!empty(trim($req['invite_code']))){
             $parentUser = User::field('id')->where('invite_code', trim($req['invite_code']))->find();
             if (empty($parentUser)) {
@@ -177,6 +178,7 @@ class CommonController extends BaseController
         } */
             Db::commit();
         }catch(\Exception $e){
+            throw $e;
             Db::rollBack();
             return out('注册失败');
         }
