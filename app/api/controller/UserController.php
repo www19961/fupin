@@ -16,6 +16,7 @@ use app\model\Capital;
 use app\model\Certificate;
 use app\model\Payment;
 use app\model\UserDelivery;
+use app\model\WalletAddress;
 use think\facade\Db;
 use Exception;
 use Endroid\QrCode\QrCode;
@@ -30,14 +31,19 @@ class UserController extends AuthController
         $user = $this->user;
 
         //$user = User::where('id', $user['id'])->append(['equity', 'digital_yuan', 'my_bonus', 'total_bonus', 'profiting_bonus', 'exchange_equity', 'exchange_digital_yuan', 'passive_total_income', 'passive_receive_income', 'passive_wait_income', 'subsidy_total_income', 'team_user_num', 'team_performance', 'can_withdraw_balance'])->find()->toArray();
-        $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,team_bonus_balance,income_balance,digital_yuan_amount,created_at')->find()->toArray();
+        $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,topup_balance,poverty_subsidy_amount,digital_yuan_amount,created_at')->find()->toArray();
     
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
         $user['address'] = '';
+        $user['wallet_address'] = '';
         unset($user['password'], $user['pay_password']);
         $delivery=UserDelivery::where('user_id', $user['id'])->find();
         if($delivery){
             $user['address']=$delivery['address'];
+        }
+        $wallet_address = WalletAddress::where('user_id', $user['id'])->find();
+        if($wallet_address){
+            $user['wallet_address']=$wallet_address['address'];
         }
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
@@ -57,7 +63,7 @@ class UserController extends AuthController
         // }elseif($user['level'] < $zhishu_level){
         //     User::where('id', $user['id'])->update(['level' => $zhishu_level]);
         // }
-        $upUserId = $user['up_user_id'];
+/*         $upUserId = $user['up_user_id'];
         $user['up_users'] = [];
         for($i=0;$i<3;$i++){
            if($upUserId==0){
@@ -72,9 +78,9 @@ class UserController extends AuthController
                 break;
            }
            
-        } 
+        }  */
         
-        $subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
+        //$subCount = UserRelation::where('user_id',$user['id'])->where('is_active',1)->count();
 /*         $medal = Apply::where('user_id',$user['id'])->where('type',1)->find();
         $house = Apply::where('user_id',$user['id'])->where('type',2)->find();
         $car = Apply::where('user_id',$user['id'])->where('type',3)->find();
@@ -376,11 +382,11 @@ class UserController extends AuthController
     public function transferAccounts(){
         $req = $this->validate(request(), [
             'type' => 'require|in:1,2,3',//1推荐给奖励,2 转账余额（充值金额）3 可提现余额
-            'realname|对方姓名' => 'require|max:20',
-            'account|对方账号' => 'require|mobile',
+            //'realname|对方姓名' => 'require|max:20',
+            'account|对方账号' => 'require',//虚拟币钱包地址
             'money|转账金额' => 'require|number|between:100,100000',
             'pay_password|支付密码' => 'require',
-        ]);//type 1 可用余额，2 转账余额，realname 对方姓名，account 对方账号，money 转账金额，pay_password 支付密码
+        ]);//type 1 数字人民币，，realname 对方姓名，account 对方账号，money 转账金额，pay_password 支付密码
         $user = $this->user;
 
         if (empty($user['ic_number'])) {
@@ -404,7 +410,11 @@ class UserController extends AuthController
             //1可用余额（可提现金额） 2 转账余额（充值金额加他人转账的金额）
             //topup_balance充值余额 can_withdraw_balance可提现余额  balance总余额
             $user = User::where('id', $user['id'])->lock(true)->find();//转账人
-            $take = User::where('phone', $req['account'])->where('realname',$req['realname'])->lock(true)->find();//收款人
+            $wallet =WalletAddress::where('address',$req['account'])->where('user_id','>',0)->find();
+            if(!$wallet){
+                exit_out(null, 10002, '目标地址不存在');
+            }
+            $take = User::where('id', $wallet['user_id'])->lock(true)->find();//收款人
             if (!$take) {
                 exit_out(null, 10002, '用户不存在');
             }
@@ -413,14 +423,14 @@ class UserController extends AuthController
             }
             
             if($req['type'] ==1){
-                $field = 'team_bonus_balance';
-                $fieldText = '推荐奖励';
+                $field = 'digital_yuan_amount';
+                $fieldText = '数字人民币';
                 $logType=2;
-            }elseif($req['type'] ==2){
+            }/* elseif($req['type'] ==2){
                 $field = 'balance';
                 $fieldText = '充值余额';
                 $logType = 1;
-            }
+            } */
             // }else{
             //     $field = 'balance';
             //     $fieldText = '可提现余额';
@@ -582,60 +592,9 @@ class UserController extends AuthController
 
     public function team(){
         $user = $this->user;
-        $data['level1_total'] = UserRelation::where('user_id', $user['id'])->where('level', 1)->count();
-        $data['level2_total'] = UserRelation::where('user_id', $user['id'])->where('level', 2)->count();
-        $data['level3_total'] = UserRelation::where('user_id', $user['id'])->where('level', 3)->count();
-        $data['realname'] = $user['realname'];
-        $data['phone'] = $user['phone'];
-        $data['parent_name'] = '';
-        $data['parent_is_agent'] = 0;
-        $upUser = User::where('id',$user['up_user_id'])->field('phone,is_agent')->find();
-        if($upUser){
-            $data['parent_name'] = $upUser['phone'];
-            $data['parent_name'] = substr_replace($data['parent_name'],'****',3,4);
+        $data['total_num'] = UserRelation::where('user_id', $user['id'])->count();
+        $data['total_receive_num'] = UserRelation::where('user_id', $user['id'])->where('is_active', 1)->count();
 
-            $data['parent_is_agent'] = $upUser['is_agent'];
-        }
-        
-        $data['invite_bonus_sum'] = UserBalanceLog::where('user_id', $user['id'])->where('log_type',4)->whereIn('type', '8,9')->sum('change_balance');
-
-        $data['team_leve1_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus,u.is_active')->where('r.user_id',$user['id'])->where('r.level',1)->order('u.invite_bonus','desc')->limit(10)->select();
-        $data['team_leve2_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus,u.is_active')->where('r.user_id',$user['id'])->where('r.level',2)->order('u.invite_bonus','desc')->limit(10)->select();
-        $data['team_leve3_list'] = User::alias('u')->join('mp_user_relation r','u.id = r.sub_user_id')->field('u.id,u.realname,u.created_at,u.invite_bonus,u.is_active')->where('r.user_id',$user['id'])->where('r.level',3)->order('u.invite_bonus','desc')->limit(10)->select();
-        $invite_bonus = UserBalanceLog::alias('l')->join('mp_order o','l.relation_id=o.id')
-                                                ->field('l.created_at,l.type,l.remark,change_balance,single_amount,buy_num,project_name,o.user_id')
-                                                ->whereIn('l.type','8,9')
-                                                ->where('l.log_type',4)
-                                                ->where('l.user_id',$user['id'])
-                                                ->order('l.created_at','desc')
-                                                ->limit(10)
-                                                //->fetchSql(true)
-                                                ->paginate();
-                                                
-                                                
-        //echo $invite_bonus;
-        //exit;
-        foreach($invite_bonus as $key=>$item){
-        
-            $orderPrice = bcmul($item['single_amount'],$item['buy_num'],2);
-            $realname = User::where('id',$item['user_id'])->value('phone');
-            $invite_bonus[$key]['realname'] = $realname;
-            $level = UserRelation::where('user_id',$user['id'])->where('sub_user_id',$item['user_id'])->value('level');
-            $levelText = [
-                '1'=>"一级",
-                '2'=>'二级',
-                '3'=>'三级',
-            ];
-            if($item['type'] == 8){
-                $remark = $item['remark'];
-            }elseif($item['type'] == 9){
-                $remark = $item['remark'];
-            }else{
-                $remark = '奖励';
-            }
-            $invite_bonus[$key]['text'] = "推荐{$levelText[$level]}用户 $realname 投资 $orderPrice ,{$remark} {$item['change_balance']} ";
-        }                                
-        $data['invite_bonus'] = $invite_bonus;
         return out($data);
     }
 
@@ -686,7 +645,9 @@ class UserController extends AuthController
         $user = $this->user;
 
         $total_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->count();
-        //$active_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->where('is_active', 1)->count();
+        $active_num = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->where('is_active', 1)->count();
+        $realname_num = UserRelation::alias('r')->join('mp_user u','r.user_id = u.id')->where('user_id',$user['id'])->where('u.level', $req['level'])->where('u.realname','<>','')->count();
+
 
         $list = UserRelation::where('user_id', $user['id'])->where('level', $req['level'])->field('sub_user_id')->paginate();
         if($list){
@@ -700,7 +661,8 @@ class UserController extends AuthController
 
         return out([
             'total_num' => $total_num,
-            //'active_num' => $active_num,
+            'receive_num'=> $active_num,
+            'realname_num'=> $realname_num,
             'list' => $list,
         ]);
     }

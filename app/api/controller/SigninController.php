@@ -84,6 +84,35 @@ class SigninController extends AuthController
         return out();
     }
 
+    /**
+     * 激活用户每天领取14元，未激活领取1元
+     */
+    public function dayReceive(){
+        $user = $this->user;
+        $user = User::where('id', $user['id'])->find();
+        $signin_date = date('Y-m-d');
+        if($user['level'] == 0){
+            return out(null, 10001, '共富等级一级才有奖励');
+        }
+
+        Db::startTrans();
+        try {
+            if (UserSignin::where('user_id', $user['id'])->where('signin_date', $signin_date)->lock(true)->count()) {
+                return out(null, 10001, '您今天已经签到了');
+            }
+            $signin = UserSignin::create([
+                'user_id' => $user['id'],
+                'signin_date' => $signin_date,
+            ]);
+            $amount = $user['is_active'] == 1 ? 14 : 1;
+            User::changeInc($user['id'],$amount,'topup_balance',23,$signin['id'],3);
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+    }
+
     public function signinRecord()
     {
         $user = $this->user;

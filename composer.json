@@ -32,7 +32,9 @@
         "maennchen/zipstream-php": "2.1.0",
         "endroid/qr-code": "^4.6",
         "overtrue/flysystem-qiniu": "^1.0",
-        "topthink/think-filesystem": "^1.0"
+        "topthink/think-filesystem": "^1.0",
+        "bitwasp/bitcoin": "^1.0",
+        "web3p/ethereum-util": "^0.1.4"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",

@@ -12,5 +12,6 @@ return [
         'checkSubsidy'  =>  'app\common\command\CheckSubsidy',
         'sendCashReward'  =>  'app\common\command\SendCashReward',
         'autoWithdrawAudit'  =>  'app\common\command\AutoWithdrawAudit',
+        'genarateEthAdress' =>  'app\common\command\GenarateEthAdress',
     ],
 ];
