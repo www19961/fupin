@@ -1135,4 +1135,8 @@ class CommonController extends BaseController
         $data['created_at'] = date("Y-m-d",strtotime($data['created_at']));
         return out($data);
     }
+
+    public function test(){
+        return 1;
+    }
 }
