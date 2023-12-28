@@ -40,10 +40,9 @@
                             <th>ID</th>
                             <th>上级会员</th>
                             <th>手机号</th>
-                            <th>余额</th>
-                            <th>津贴</th>
-                            <th>团队奖励</th>
-                            <th>收益</th>
+                            <th>现金</th>
+                            <th>生活补助</th>
+                            <th>数字人民币</th>
                             <th>邀请码</th>
                             <th>实名</th>
                             <!-- <th>身份证</th>
@@ -62,10 +61,9 @@
                                 <td>{$v['id']}</td>
                                 <td>{$v['upUser']['phone']??''}</td>
                                 <td>{$v['phone']}</td>
-                                <td>{$v['balance']}</td>
+                                <td>{$v['topup_balance']}</td>
+                                <td>{$v['poverty_subsidy_amount']}</td>
                                 <td>{$v['digital_yuan_amount']}</td>
-                                <td>{$v['team_bonus_balance']}</td>
-                                <td>{$v['income_balance']}</td>
                                 <td>{$v['invite_code']}</td>
                                 <td>{$v['realname']}</td>
 <!--                                 <td>{$v['ic_number']}</td>
