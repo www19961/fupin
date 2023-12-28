@@ -170,7 +170,8 @@ class OrderController extends AuthController
             'digital_yuan_amount|数字人民币' => 'require|number',
             'poverty_subsidy_amount|生活补助' => 'require|number',
             'level|共富等级' => 'require|number',
-            'rich_ensure|共富保障' => 'require|number',
+            'ensure|共富保障' => 'require',
+            'rich|共富方式' => 'require|number',
         ]);
         $user = $this->user;
 
@@ -214,10 +215,13 @@ class OrderController extends AuthController
 
         $order = AssetOrder::where('user_id', $user['id'])->where('status', 2)->find();
 
-        $data = config('map.rich_ensure');
+        $data = config('map.ensure');
 
         if($order) {
-            $data[$order['rich_ensure']]['receive'] = !0;
+            $ensure = json_decode($order['ensure'], !0);
+            foreach ($ensure as $value) {
+                $data[$value]['receive'] = !0;
+            }
         }
         return out($data);
     }

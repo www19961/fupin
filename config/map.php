@@ -475,7 +475,7 @@ return array(
             'max_asset' => 'max'
         ],
     ],
-    'rich_ensure' => [
+    'ensure' => [
         1 => [
             'id' => 1,
             'name' => '住房保障',
@@ -483,22 +483,17 @@ return array(
         ],
         2 => [
             'id' => 2,
-            'name' => '红旗汽车',
+            'name' => '出行保障',
             'receive' => false
         ],
         3 => [
             'id' => 3,
-            'name' => '华为手机',
+            'name' => '养老保障',
             'receive' => false
         ],
         4 => [
             'id' => 4,
-            'name' => '先富',
-            'receive' => false
-        ],
-        5 => [
-            'id' => 5,
-            'name' => '后富',
+            'name' => '通讯保障',
             'receive' => false
         ],
     ],
