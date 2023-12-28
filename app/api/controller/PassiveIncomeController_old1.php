@@ -15,7 +15,7 @@ class PassiveIncomeController extends AuthController
     public function passiveIncomeList()
     {
         $user = $this->user;
-        $data = PassiveIncomeRecord::with('orders')->where('user_id', $user['id'])->where('status', '>', 1)->order('id', 'desc')->order('is_finish','asc')->paginate(15,false,['query'=>request()->param()])->each(function($item, $key){
+        $data = PassiveIncomeRecord::with('orders')->where('user_id', $user['id'])->where('status', '>', 1)->order('id', 'desc')->order('is_finish','asc')->paginate(10,false,['query'=>request()->param()])->each(function($item, $key){
             $uid = $item["user_id"];
             $item['is_active'] = User::where('id', $uid)->value('up_user_id');
             $item['is_finish'] = PassiveIncomeRecord::where('id',$item['id'])->value('is_finish');

@@ -450,7 +450,7 @@ class OrderController extends AuthController
         if (!empty($req['status'])) {
             $builder->where('status', $req['status']);
         }
-        $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(15,false,['query'=>request()->param()]);
+        $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(10,false,['query'=>request()->param()]);
 
         return out($data);
     }
@@ -475,7 +475,7 @@ class OrderController extends AuthController
                 $builder->where('single_gift_digital_yuan', '>', 0);
             }
         }
-        $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(15,false,['query'=>request()->param()])->each(function($item, $key){
+        $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(10,false,['query'=>request()->param()])->each(function($item, $key){
             $item['p_id'] = PassiveIncomeRecord::where('order_id',$item['id'])->order('id','desc')->value('id');
             $cre = intval((time()-strtotime($item['created_at'])) / 60 / 60 / 24);
             if($cre >= 77){
@@ -509,7 +509,7 @@ class OrderController extends AuthController
                 $builder->where('single_gift_digital_yuan', '>', 0);
             }
         }
-        $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(15,false,['query'=>request()->param()])->each(function($item, $key){
+        $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(10,false,['query'=>request()->param()])->each(function($item, $key){
             $item['p_id'] = PassiveIncomeRecord::where('order_id',$item['id'])->order('id','desc')->value('id');
             $cre = intval((time()-strtotime($item['created_at'])) / 60 / 60 / 24);
             if($cre >= 77){

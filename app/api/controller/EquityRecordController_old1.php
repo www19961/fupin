@@ -21,7 +21,7 @@ class EquityRecordController extends AuthController
         if (!empty($req['type'])) {
             $builder->where('type', $req['type']);
         }
-        $data = $builder->order('give_time', 'desc')->append(['exchange_date'])->paginate(15,false,['query'=>request()->param()])->each(function($item, $key){
+        $data = $builder->order('give_time', 'desc')->append(['exchange_date'])->paginate(10,false,['query'=>request()->param()])->each(function($item, $key){
             if($item['exchange_time'] == 0){
                 $item['is_exchange'] = 0;//显示兑换
             }else{
