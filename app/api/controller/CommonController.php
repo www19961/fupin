@@ -87,8 +87,12 @@ class CommonController extends BaseController
             // 'ic_number|身份证号' => 'require|idCard',
             //'vt|验证'=>'require',
             'qq|qq'=>'number',
-            //'captcha|验证码' => 'require|max:6',
+            'captcha|验证码' => 'require|max:4',
         ]);
+
+        if(!captcha_check($req['captcha'])){
+            return out(null, 10001, '验证码错误');       
+        }
 
 /*         $key = 'captcha-'.$req['phone'].'-1';
         $captcha = Cache::get($key);
@@ -1138,7 +1142,13 @@ class CommonController extends BaseController
         return out($data);
     }
 
+    public function captchaImg(){
+        return \think\captcha\facade\Captcha::create();
+    }
+
     public function test(){
         return out(['test'=>1]);
     }
+
+
 }
