@@ -246,6 +246,15 @@ class Order extends Model
                 'gain_bonus' => 0,
                 'next_bonus_time' => time(),
             ]);
+        } elseif ($project['project_group_id'] == 3) {
+            User::where('id', $user_id)->update(['can_open_digital' => 1]);
+            Order::where('id', $order['id'])->update([
+                'status' => 4,
+                'pay_time' => time(),
+                'end_time' => time(),    //$next_bonus_time + $order['period']*24*3600,
+                'gain_bonus' => 0,
+                'next_bonus_time' => time(),
+            ]);
         }
 
         return !0;

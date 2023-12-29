@@ -185,18 +185,22 @@ class OrderController extends AuthController
             return out(null, 10110, '恢复资产超过限制');
         }
 
-        if (config('map.asset_recovery')[$req['type']]['amount'] >  $user['topup_balance']) {
+        $amount = config('map.asset_recovery')[$req['type']]['amount'];
+
+        if ($amount >  $user['topup_balance']) {
             exit_out(null, 10090, '余额不足');
         }
 
         Db::startTrans();
         try {
-            $user = User::where('id', $user['id'])->lock(true)->find();
+            $user = User::where('id', $user['id'])->find();
             $req['user_id'] = $user['id'];
             $req['order_sn'] = 'GF'.build_order_sn($user['id']);
             $req['status'] = 1;
             $order = AssetOrder::create($req);
             //跳转支付 等待支付接口
+            User::changeInc($user['id'],-$amount,'topup_balance',25,$order['id'],1);
+            User::where('id', $user['id'])->update(['can_open_digital' => 1]);
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();

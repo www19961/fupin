@@ -76,8 +76,10 @@ class ProjectController extends AuthController
             'sort|排序号' => 'integer',
             'sum_amount|总补贴金额' => 'requireIf:project_group_id,1|float',
             'virtually_progress|虚拟进度' => 'integer',
-            'withdrawal_limit|赠送日提现额度	' => 'integer',
-            'digital_red_package|赠送数字红包	' => 'integer'
+            'withdrawal_limit|赠送日提现额度' => 'integer',
+            'digital_red_package|赠送数字红包' => 'integer',
+            'total_quota|总名额' => 'max:32',
+            'remaining_quota|剩余名额' => 'max:32'
         ]);
         $req['intro'] = request()->param('intro', '');
         $methods = explode(',', $req['support_pay_methods']);
@@ -119,8 +121,10 @@ class ProjectController extends AuthController
             'sum_amount|总补贴金额' => 'requireIf:project_group_id,1|float',
             //'bonus_multiple|奖励倍数' => 'require|>=:0',
             'virtually_progress|虚拟进度' => 'integer',
-            'withdrawal_limit|赠送日提现额度	' => 'integer',
-            'digital_red_package|赠送数字红包	' => 'integer'
+            'withdrawal_limit|赠送日提现额度' => 'integer',
+            'digital_red_package|赠送数字红包' => 'integer',
+            'total_quota|总名额' => 'max:32',
+            'remaining_quota|剩余名额' => 'max:32'
         ]);
         $req['intro'] = request()->param('intro', '');
         $methods = explode(',', $req['support_pay_methods']);
