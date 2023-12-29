@@ -447,12 +447,17 @@ class OrderController extends AuthController
     {
         $req = $this->validate(request(), [
             'status' => 'number',
+            'project_group_id' => 'number',
         ]);
         $user = $this->user;
 
         $builder = Order::where('user_id', $user['id'])->where('status', '>', 1);
+        
         if (!empty($req['status'])) {
             $builder->where('status', $req['status']);
+        }
+        if (!empty($req['project_group_id'])) {
+            $builder->where('project_group_id', $req['project_group_id']);
         }
         $data = $builder->order('id', 'desc')->append(['buy_amount', 'total_bonus', 'equity', 'digital_yuan', 'wait_receive_passive_income', 'total_passive_income', 'pay_date', 'sale_date', 'end_date', 'exchange_equity_date', 'exchange_yuan_date'])->paginate(10,false,['query'=>request()->param()]);
 
