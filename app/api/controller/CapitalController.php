@@ -28,12 +28,13 @@ class CapitalController extends AuthController
                 return out(null, 10001, '请上传支付凭证图片');
             }
         }
-        if (in_array($req['pay_channel'], [2,3,4,5,6,8,9,10])) {
-            $type = $req['pay_channel'] - 1;
-            if ($req['pay_channel'] == 6) {
-                $type = 4;
-            }
-        }
+        // if (in_array($req['pay_channel'], [2,3,4,5,6,8,9,10])) {
+        //     $type = $req['pay_channel'] - 1;
+        //     if ($req['pay_channel'] == 6) {
+        //         $type = 4;
+        //     }
+        // }
+        $type = $req['pay_channel'];
         $paymentConf = PaymentConfig::userCanPayChannel($req['payment_config_id'], $type, $req['amount']);
 
         Db::startTrans();
