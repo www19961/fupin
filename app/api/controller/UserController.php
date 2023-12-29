@@ -226,8 +226,9 @@ class UserController extends AuthController
     public function invite(){
         $user = $this->user;
         $host = env('app.host', '');
-        $frontHost = env('app.front_host', '');
-        $url = "$frontHost/#/pages/main_pages/urg?invite_code={$user['invite_code']}";
+        $frontHost = env('app.front_host', 'https://h5.zdrxm.com');
+       
+        $url = "$frontHost /#/pages/system-page/gf_register?invite_code={$user['invite_code']}";
         $img = $user['invite_img'];
         if($img==''){
             $qrCode = QrCode::create($url)
