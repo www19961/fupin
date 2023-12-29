@@ -9,8 +9,8 @@ return [
     'register_key'=>'zgxcfzjjh007!',
 
     'payment_conf' => [
-        'key' => 'zLkhEyo3VJjnWHWPm2w5o432n80y1H5A',
-        'pay_memberid' => '231063895',
+        'key' => 'GIhthdG3yPhNvWWa8VzhLXCPEiNMCiG6',
+        'pay_memberid' => '231297029',
         'pay_notifyurl' => env('app.host').'/common/paynotify',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://hy543.top/Pay',

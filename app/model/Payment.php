@@ -441,7 +441,7 @@ class Payment extends Model
         $conf = config('config.payment_conf13');
         $req = [
             'mchId' => $conf['pay_memberid'],
-            'appId'=>'fd777c32478d4d4aafd19facefe540d9',
+            'appId'=>'0a70393058954952a34af30712e92fee',
             'productId' => $pay_bankcode,
             'mchOrderNo' => $trade_sn,
             'amount' => $pay_amount*100,
