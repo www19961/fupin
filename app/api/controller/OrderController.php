@@ -57,7 +57,7 @@ class OrderController extends AuthController
             $pay_integral = 0;
 
             if ($req['pay_method'] == 1 && $pay_amount >  $user['topup_balance']) {
-                exit_out(null, 10002, '余额不足');
+                exit_out(null, 10090, '余额不足');
             }
             //没有团队奖励支付方式先屏蔽
             // if ($req['pay_method'] == 5) {
@@ -183,6 +183,10 @@ class OrderController extends AuthController
         $max_asset = config('map.asset_recovery')[$req['type']]['max_asset'] * 10000;
         if(($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) > $max_asset || ($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) < $min_asset) {
             return out(null, 10110, '恢复资产超过限制');
+        }
+
+        if (config('map.asset_recovery')[$req['type']]['amount'] >  $user['topup_balance']) {
+            exit_out(null, 10090, '余额不足');
         }
 
         Db::startTrans();
