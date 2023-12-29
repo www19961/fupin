@@ -61,7 +61,7 @@ return [
     ],
     'payment_conf6' => [
         'key' => '6XCAGWJKQ0XQP0HF633UKVXPAIBIHIZQVN9PYCFUGIXLQ8Z9KNLUGPGHOPERUI1MZJ8FT9NGXNKYJPTQMX5MNLD2HDECACS5AGOCKFGEQV4DHWCR1CVTMSZT2VGEZGAI',
-        'pay_memberid'=>'20000311',
+        'pay_memberid'=>'20000313',
         'pay_notifyurl' => env('app.host').'/common/paynotify6',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'http://hxzf.xyz:56700/api/pay/create_order',
