@@ -37,7 +37,7 @@ class UserRelation extends Model
         return $this->belongsTo(User::class, 'sub_user_id')->field('id,realname,phone');
     }
 
-    public function rankList(){
+    public static function  rankList(){
         $reward = config('map.reward');
         $relation = UserRelation::alias('r')->field(['count(r.sub_user_id) as team_num', 'r.user_id','phone'])->join('user u', 'u.id = r.sub_user_id')->where('r.is_active',1)->whereTime('r.created_at','today')->group('r.user_id')->order('team_num', 'desc')->limit(100)->select()->toArray();
         foreach ($relation as $k => &$v) {
