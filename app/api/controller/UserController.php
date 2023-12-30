@@ -421,8 +421,9 @@ class UserController extends AuthController
                 if(!isset($req['realname'])){
                     return out(null, 10001, '请输入对方姓名');
                 }
+                $take = User::where('phone',$req['account'])->where('realname',$req['realname'])->lock(true)->find();//收款人
+
             }
-            $take = User::where('phone',$req['account'])->where('realname',$req['realname'])->lock(true)->find();//收款人
 
             if (!$take) {
                 exit_out(null, 10002, '用户不存在');
@@ -436,11 +437,11 @@ class UserController extends AuthController
                 $fieldText = '数字人民币';
                 $logType=2;
             } elseif($req['type'] ==2){
-                $field = 'balance';
+                $field = 'topup_balance';
                 $fieldText = '现金余额';
                 $logType = 1;
              }else{
-                 $field = 'balance';
+                 $field = 'team_bonus_balance';
                  $fieldText = '可提现余额';
                  $logType = 1;
              }
