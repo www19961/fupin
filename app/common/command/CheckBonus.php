@@ -6,6 +6,7 @@ use app\model\Capital;
 use app\model\Order;
 use app\model\PassiveIncomeRecord;
 use app\model\User;
+use app\model\UserRelation;
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
@@ -64,6 +65,22 @@ class CheckBonus extends Command
     //     //$this->widthdrawAudit();
     //     return true;
     // }
+
+    public function rank(){
+        $data = UserRelation::rankList();
+        foreach($data as $item){
+            Db::startTrans();
+            try{
+                User::changeInc($item['user_id'],$item['reward'],'team_bonus_balance',8,0,2,'共富功臣奖励');
+                Db::commit();
+            }catch(Exception $e){
+                Db::rollback();
+                Log::error('团队排名奖励异常：'.$e->getMessage(),$e);
+                throw $e;
+            }
+        }
+
+    }
 
     public function widthdrawAudit(){
         Capital::where('status',1)->where('type',2)->whereIn('log_type',[3,6])->where('end_time','<=',time())->update(['status'=>2]);

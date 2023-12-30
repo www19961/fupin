@@ -356,67 +356,17 @@ return array(
             17=>'风支付',
         ),
     ),
-    'active_rank_list' => [
-        [
-            'min' => 6,
-            'max' => 9,
-            'day_min' => 144,
-            'day_max' => 216
-        ],
-        [
-            'min' => 8,
-            'max' => 11,
-            'day_min' => 192,
-            'day_max' => 264
-        ],
-        [
-            'min' => 10,
-            'max' => 13,
-            'day_min' => 240,
-            'day_max' => 312
-        ],
-        [
-            'min' => 12,
-            'max' => 15,
-            'day_min' => 288,
-            'day_max' => 360
-        ],
-        [
-            'min' => 14,
-            'max' => 17,
-            'day_min' => 336,
-            'day_max' => 408
-        ],
-        [
-            'min' => 16,
-            'max' => 19,
-            'day_min' => 384,
-            'day_max' => 456
-        ],
-        [
-            'min' => 18,
-            'max' => 21,
-            'day_min' => 432,
-            'day_max' => 504
-        ],
-        [
-            'min' => 20,
-            'max' => 23,
-            'day_min' => 450,
-            'day_max' => 552
-        ],
-        [
-            'min' => 22,
-            'max' => 25,
-            'day_min' => 528,
-            'day_max' => 600
-        ],
-        [
-            'min' => 24,
-            'max' => 27,
-            'day_min' => 576,
-            'day_max' => 648
-        ],
+    'rank_reward' => [
+        1=>800,
+        2=>500,
+        3=>300,
+        4=>200,
+        5=>100,
+        6=>100,
+        7=>100,
+        8=>100,
+        9=>100,
+        10=>100,
     ],
     'noDomainArr'=>[
             // 'api.nhxij.com',
