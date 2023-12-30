@@ -31,7 +31,7 @@ class UserController extends AuthController
         $user = $this->user;
 
         //$user = User::where('id', $user['id'])->append(['equity', 'digital_yuan', 'my_bonus', 'total_bonus', 'profiting_bonus', 'exchange_equity', 'exchange_digital_yuan', 'passive_total_income', 'passive_receive_income', 'passive_wait_income', 'subsidy_total_income', 'team_user_num', 'team_performance', 'can_withdraw_balance'])->find()->toArray();
-        $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,topup_balance,poverty_subsidy_amount,digital_yuan_amount,can_open_digital,created_at')->find()->toArray();
+        $user = User::where('id', $user['id'])->field('id,phone,realname,up_user_id,is_active,invite_code,ic_number,level,balance,topup_balance,poverty_subsidy_amount,digital_yuan_amount,can_open_digital,team_bonus_balance,created_at')->find()->toArray();
     
         $user['is_set_pay_password'] = !empty($user['pay_password']) ? 1 : 0;
         $user['address'] = '';
@@ -379,8 +379,127 @@ class UserController extends AuthController
 
     }
 
-    //转账
+    //数字人民币转账
     public function transferAccounts(){
+        $req = $this->validate(request(), [
+            'type' => 'require|in:1,2,3',//1数字人民币,2 现金充值余额 3 可提现余额
+            'realname|对方姓名' => 'max:20',
+            'account|对方账号' => 'require',//虚拟币钱包地址
+            'money|转账金额' => 'require|number|between:100,100000',
+            'pay_password|支付密码' => 'require',
+        ]);//type 1 数字人民币，realname 对方姓名，account 对方账号，money 转账金额，pay_password 支付密码
+        $user = $this->user;
+
+        if (empty($user['ic_number'])) {
+            return out(null, 10001, '请先完成实名认证');
+        }
+        if (empty($user['pay_password'])) {
+            return out(null, 801, '请先设置支付密码');
+        }
+        if (!empty($req['pay_password']) && $user['pay_password'] !== sha1(md5($req['pay_password']))) {
+            return out(null, 10001, '支付密码错误');
+        }
+        if (!in_array($req['type'], [1,2,3])) {
+            return out(null, 10001, '不支持该支付方式');
+        }
+        if ($user['phone'] == $req['account'] && $req['type']==2) {
+            return out(null, 10001, '不能转帐给自己');
+        }
+
+        Db::startTrans();
+        try {
+            //1可用余额（可提现金额） 2 转账余额（充值金额加他人转账的金额）
+            //topup_balance充值余额 can_withdraw_balance可提现余额  balance总余额
+            $user = User::where('id', $user['id'])->lock(true)->find();//转账人
+            if($req['type']==1){
+                $wallet =WalletAddress::where('address',$req['account'])->where('user_id','>',0)->find();
+                if(!$wallet){
+                    exit_out(null, 10002, '目标地址不存在');
+                }
+                $take = User::where('id', $wallet['user_id'])->lock(true)->find();//收款人
+            }else{
+                if(!isset($req['realname'])){
+                    return out(null, 10001, '请输入对方姓名');
+                }
+            }
+            $take = User::where('phone',$req['account'])->where('realname',$req['realname'])->lock(true)->find();//收款人
+
+            if (!$take) {
+                exit_out(null, 10002, '用户不存在');
+            }
+            if (empty($take['ic_number'])) {
+                exit_out(null, 10002, '请收款用户先完成实名认证');
+            }
+            
+            if($req['type'] ==1){
+                $field = 'digital_yuan_amount';
+                $fieldText = '数字人民币';
+                $logType=2;
+            } elseif($req['type'] ==2){
+                $field = 'balance';
+                $fieldText = '现金余额';
+                $logType = 1;
+             }else{
+                 $field = 'balance';
+                 $fieldText = '可提现余额';
+                 $logType = 1;
+             }
+
+
+            if ($req['money'] > $user[$field]) {
+                exit_out(null, 10002, '转账余额不足');
+            }
+            //转出金额  扣金额 可用金额 转账金额
+            $change_balance = 0 - $req['money'];
+            
+
+            //2 转账余额（充值金额加他人转账的金额）
+            //User::where('id', $user['id'])->inc('balance', $change_balance)->inc($field, $change_balance)->update();
+            User::where('id', $user['id'])->inc($field, $change_balance)->update();
+            //User::changeBalance($user['id'], $change_balance, 18, 0, 1,'转账余额转账给'.$take['realname']);
+            //增加资金明细
+            UserBalanceLog::create([
+                'user_id' => $user['id'],
+                'type' => 18,
+                'log_type' => $logType,
+                'relation_id' => $take['id'],
+                'before_balance' => $user[$field],
+                'change_balance' => $change_balance,
+                'after_balance' =>  $user[$field]-$req['money'],
+                'remark' => '转账'.$fieldText.'转账给'.$take['realname'],
+                'admin_user_id' => 0,
+                'status' => 2,
+                'project_name' => ''
+            ]);
+
+            //收到金额  加金额 转账金额
+            //User::where('id', $take['id'])->inc('balance', $req['money'])->inc('topup_balance', $req['money'])->update();
+            User::where('id', $take['id'])->inc('balance', $req['money'])->update();
+            //User::changeBalance($take['id'], $req['money'], 18, 0, 1,'接收转账来自'.$user['realname']);
+            UserBalanceLog::create([
+                'user_id' => $take['id'],
+                'type' => 19,
+                'log_type' => $logType,
+                'relation_id' => $user['id'],
+                'before_balance' => $take[$field],
+                'change_balance' => $req['money'],
+                'after_balance' =>  $take[$field]+$req['money'],
+                'remark' => '接收'.$fieldText.'来自'.$user['realname'],
+                'admin_user_id' => 0,
+                'status' => 2,
+                'project_name' => ''
+            ]);
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+        return out();
+    }
+
+    
+    //转账2
+    public function transferAccounts2(){
         $req = $this->validate(request(), [
             'type' => 'require|in:1,2,3',//1推荐给奖励,2 转账余额（充值金额）3 可提现余额
             //'realname|对方姓名' => 'require|max:20',

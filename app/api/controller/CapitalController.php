@@ -169,10 +169,10 @@ class CapitalController extends AuthController
         Db::startTrans();
         try {
 
-            $field = 'topup_balance';
+            $field = 'team_bonus_balance';
             $log_type =2;
             if ($user[$field] < $req['amount']) {
-                return out(null, 10001, '现金余额不足');
+                return out(null, 10001, '可提现金额不足');
             }
    
             // 判断每天最大提现次数
