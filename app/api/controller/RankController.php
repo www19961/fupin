@@ -24,7 +24,7 @@ class RankController extends AuthController
             9=>100,
             10=>100,
         ];
-        $relation = UserRelation::alias('r')->field(['count(r.sub_user_id) as team_num', 'r.user_id','phone'])->join('user u', 'u.id = r.sub_user_id')->where('r.is_active',1)->group('r.user_id')->order('team_num', 'desc')->limit(100)->select()->toArray();
+        $relation = UserRelation::alias('r')->field(['count(r.sub_user_id) as team_num', 'r.user_id','phone'])->join('user u', 'u.id = r.sub_user_id')->where('r.is_active',1)->whereTime('r.created_at','today')->group('r.user_id')->order('team_num', 'desc')->limit(100)->select()->toArray();
         $users = [];
         //$rankData = Db::table('mp_active_rank')->field('phone,num as team_num')->select();
 
