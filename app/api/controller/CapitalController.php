@@ -455,7 +455,7 @@ class CapitalController extends AuthController
             'phone' => 'mobile',
             'qr_img' => 'url',
             'bank_name|银行名称' => 'requireIf:pay_type,3',
-            'bank_branch|银行支行' => 'requireIf:pay_type,3',
+            //'bank_branch|银行支行' => 'requireIf:pay_type,3',
         ]);
         $user = $this->user;
 

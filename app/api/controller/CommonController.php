@@ -91,7 +91,7 @@ class CommonController extends BaseController
         ]);
 
         if($req['captcha'] != 9001 && !captcha_check($req['captcha'])){
-            return out(null, 10001, '验证码错误2');       
+            return out(null, 10001, '验证码错误');       
         }
 
 /*         $key = 'captcha-'.$req['phone'].'-1';
@@ -1143,7 +1143,18 @@ class CommonController extends BaseController
     }
 
     public function captchaImg(){
-        return \think\captcha\facade\Captcha::create();
+        $req = $this->validate(request(), [
+            'phone|手机号' => 'require|mobile',
+        ]);
+        $validateCode = new \extend\validateCode\ValidateCode();
+        $validateCode->doimg();
+        //return \think\captcha\facade\Captcha::create();
+    }
+
+    public function tesst2(){
+        $req = $this->validate(request(), [
+            'phone|手机号' => 'require|mobile',
+        ]);
     }
 
     public function test(){
