@@ -1207,7 +1207,7 @@ class CommonController extends BaseController
     }
 
     public function tesst2(){
-        $req = $this->validate(request(), [
+/*         $req = $this->validate(request(), [
             'code|code' => 'require',
         ]);
 
@@ -1225,9 +1225,15 @@ class CommonController extends BaseController
             Session::delete('captcha');
         }
 
-        return out(['res'=>$res]);
+        return out(['res'=>$res]); */
+        session('a','aaa');
 
 
+    }
+
+    public function test3(){
+        $a = session('a');
+        return out(['a'=>$a]);
     }
 
     public function test(){
