@@ -254,7 +254,7 @@ class OrderController extends AuthController
         $data = config('map.ensure');
 
         if($order) {
-            $ensure = json_decode($order['ensure'], !0);
+            $ensure = explode(',', $order['ensure']);
             foreach ($ensure as $value) {
                 $data[$value]['receive'] = !0;
             }
