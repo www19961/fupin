@@ -1238,8 +1238,12 @@ class CommonController extends BaseController
     }
 
     public function test3(){
-        $a = session('a');
-        return out(['a'=>$a]);
+        $req = $this->validate(request(), [
+            'code|code' => 'require',
+        ]);
+        $f =captcha_check($req['code']);
+        $a = session('captcha');
+        return out(['a'=>$a,'f'=>$f]);
     }
 
     public function test(){
