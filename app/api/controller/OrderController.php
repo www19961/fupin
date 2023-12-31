@@ -249,7 +249,7 @@ class OrderController extends AuthController
 
         $user = $this->user;
 
-        $order = AssetOrder::where('user_id', $user['id'])->where('status', 2)->get();
+        $order = AssetOrder::where('user_id', $user['id'])->where('status', 2)->select();
 
         $data = config('map.ensure');
 
