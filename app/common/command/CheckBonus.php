@@ -174,7 +174,7 @@ class CheckBonus extends Command
     public function bonus($order){
         Db::startTrans();
         try{
-            User::changeInc($order['user_id'],$order['sum_amount'],'digital_yuan_amount',6,$order['id'],6);
+            User::changeInc($order['user_id'],$order['sum_amount'],'digital_yuan_amount',6,$order['id'],3);
             User::changeInc($order['user_id'],$order['single_amount'],'digital_yuan_amount',12,$order['id'],3);
             //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
             Order::where('id',$order->id)->update(['status'=>4]);
