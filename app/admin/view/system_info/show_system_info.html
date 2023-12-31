@@ -94,23 +94,26 @@
     </div>
 </div>
 
-<link href="__ADMIN__/plugins/summernote/summernote.css" rel="stylesheet">
-<script src="__ADMIN__/plugins/summernote/summernote.min.js"></script>
+<!-- <link href="__ADMIN__/plugins/summernote/summernote.css" rel="stylesheet"> -->
+<!-- <script src="__ADMIN__/plugins/summernote/summernote.min.js"></script> -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <script src="__ADMIN__/plugins/summernote/lang/summernote-zh-CN.js"></script>
+
 
 <script>
     $(function () {
         $('.summernote').summernote({
             toolbar: [
                 ['style', ['style']],
-                ['font', ['bold', 'italic', 'underline', 'clear']],
-                ['fontsize', ['fontsize']],
+                ['font', ['bold', 'underline', 'clear']],
                 ['fontname', ['fontname']],
+                ['fontsize', ['fontsize']],
                 ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']],
                 ['table', ['table']],
                 ['insert', ['link', 'picture', 'video']],
-                ['view', ['fullscreen', 'codeview', 'help']]
+                ['view', ['fullscreen', 'codeview', 'help']],
             ],
             lang: 'zh-CN',
             minHeight: '300px',
