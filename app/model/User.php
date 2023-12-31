@@ -412,7 +412,7 @@ class User extends Model
         //if ($order['pay_method'] != 5) {
             User::where('id', $user_id)->inc('invest_amount', $amount)->update();
         //} 
-        $user = User::where('id',$user_id)->field('up_user_id,invest_amount,level')->find();
+        $user = User::where('id',$user_id)->field('id,up_user_id,invest_amount,level')->find();
         if(empty($user)){
             throw new Exception('用户不存在');
         }
@@ -425,7 +425,7 @@ class User extends Model
 
         $upUser = User::where('id',$user['up_user_id'])->field('level')->find();
         if(empty($upUser)){
-            return;
+            return false;
         }
                // 如果不是积分兑换才算直推奖励和团队奖励
                //if ($order['pay_method'] != 5 && !empty($up_user_id)) {
