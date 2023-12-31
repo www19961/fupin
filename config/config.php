@@ -123,6 +123,14 @@ return [
         'payment_url' => 'https://fzf.app/api/pay/create_order',
         'query_url' => 'https://fzf.app/api/pay/query_order',
     ],
+    'payment_conf_daxiang' => [
+        'key' => '5d30e603c30397dbda999f9d4a8188d0',
+        'pay_memberid'=>'10011',
+        'pay_notifyurl' => env('app.host').'/common/payNotify_daxiang',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'http://acrossthesea.champion999.one/api/newOrder',
+        'query_url' => 'http://acrossthesea.champion999.one/api/queryOrder',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',
