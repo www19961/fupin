@@ -1144,9 +1144,9 @@ class CommonController extends BaseController
     }
 
     public function captchaImg(){
-        $req = $this->validate(request(), [
+/*         $req = $this->validate(request(), [
             'phone|手机号' => 'require|mobile',
-        ]);
+        ]); */
         //$validateCode = new \extend\validateCode\ValidateCode();
        //$validateCode->doimg();
         return \think\captcha\facade\Captcha::create();
