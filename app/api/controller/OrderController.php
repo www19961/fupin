@@ -97,7 +97,7 @@ class OrderController extends AuthController
 
             if ($req['pay_method']==1) {
                 // 扣余额
-                User::changeInc($user['id'],-$pay_amount,'topup_balance',3,$order['id'],1);
+                User::changeInc($user['id'],-$pay_amount,'topup_balance',3,$order['id'],1,'',0,1,'GF');
                 // 累计总收益和赠送数字人民币  到期结算
                 // 订单支付完成
                 Order::orderPayComplete($order['id'], $project, $user['id']);

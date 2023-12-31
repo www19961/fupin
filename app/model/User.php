@@ -353,15 +353,18 @@ class User extends Model
         return true;
     }
 
-    public static function changeInc($user_id,$amount,$field,$type,$relation_id = 0,$log_type = 1, $remark = '',$admin_user_id=0,$status=1){
+    public static function changeInc($user_id,$amount,$field,$type,$relation_id = 0,$log_type = 1, $remark = '',$admin_user_id=0,$status=1,$sn_prefix=''){
         $user = User::where('id', $user_id)->find();
         $after_balance = $user[$field]+$amount;
         if($amount<0 && $user[$field]<abs($amount)){
             throw new Exception('余额不足');
         }
+
+        
         Db::startTrans();
         try {
             $ret = User::where('id',$user_id)->inc($field,$amount)->update();
+            $sn = build_order_sn($user_id,$sn_prefix);
             UserBalanceLog::create([
                 'user_id' => $user_id,
                 'type' => $type,
@@ -373,6 +376,7 @@ class User extends Model
                 'remark' => $remark,
                 'admin_user_id' =>$admin_user_id,
                 'status' => $status,
+                'order_sn'=>$sn,
             ]);
             Db::commit();
             return 'success';

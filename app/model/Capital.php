@@ -79,14 +79,15 @@ class Capital extends Model
         $capital = Capital::where('id', $capital_id)->find();
         // 充值增加余额
         //User::changeBalance($capital['user_id'], $capital['amount'], 1, $capital_id, 1, '', $admin_user_id);
-        User::changeInc($capital['user_id'],$capital['amount'],'topup_balance',1,$capital_id,1,'',$admin_user_id);
+        User::changeInc($capital['user_id'],$capital['amount'],'topup_balance',1,$capital_id,1,'',$admin_user_id,1,'CZ');
         // 改变充值单状态
         Capital::where('id', $capital_id)->update(['status' => 2, 'audit_time' => time()]);
         // 添加充值奖励
-        $user = User::where('id', $capital['user_id'])->find();
-        $topup_reward_ratio = LevelConfig::where('level', $user['level'])->value('topup_reward_ratio');
-        $change_balance = round($topup_reward_ratio/100*$capital['amount'], 2);
-        User::changeBalance($capital['user_id'], $change_balance, 4, $capital_id, 2, '', $admin_user_id);
+        //$user = User::where('id', $capital['user_id'])->find();
+        //$topup_reward_ratio = LevelConfig::where('level', $user['level'])->value('topup_reward_ratio');
+        //$change_balance = round($topup_reward_ratio/100*$capital['amount'], 2);
+        //User::changeBalance($capital['user_id'], $change_balance, 4, $capital_id, 2, '', $admin_user_id);
+        //User::changeInc($capital['user_id'], $change_balance,'topup_balance',4, $capital_id, 2, '', $admin_user_id);
 
         return true;
     }

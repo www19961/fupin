@@ -652,7 +652,7 @@ class UserController extends AuthController
         User::where('id', $user['id'])->update($req);
 
         //注册赠送100万数字人民币
-        User::changeInc($user['id'], 1000000,'digital_yuan_amount',24,0,3);
+        User::changeInc($user['id'], 1000000,'digital_yuan_amount',24,0,3,'注册赠送数字人民币',0,1,'SM');
 
         // 给直属上级额外奖励
         if (!empty($user['up_user_id'])) {
