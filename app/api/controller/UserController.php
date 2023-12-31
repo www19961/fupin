@@ -813,7 +813,7 @@ class UserController extends AuthController
             }
         } */
         $data = PaymentConfig::Where('status',1)->where('start_topup_limit', '<=', $toupTotal)->order('sort desc')->select();
-        $img =[1=>'wechat.jpg',2=>'alipay.jpg',3=>'unionpay.jpg',4=>'unionpay.jpg',5=>'unionpay.jpg',6=>'unionpay.jpg',7=>'unionpay.jpg',8=>'unionpay.jpg',];
+        $img =[1=>'wechat.jpg',2=>'alipay.png',3=>'unionpay.png',4=>'unionpay.png',5=>'unionpay.png',6=>'unionpay.png',7=>'unionpay.png',8=>'unionpay.png',];
         foreach($data as &$item){
             $item['img'] = env('app.img_host').'/storage/pay_img/'.$img[$item['type']];
             if($item['type']==4){
