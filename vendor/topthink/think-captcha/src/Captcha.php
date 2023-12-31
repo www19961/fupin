@@ -127,6 +127,7 @@ class Captcha
 
         $this->session->set('captcha', [
             'key' => $hash,
+            'bag'=>$bag,
         ]);
 
         \think\facade\Session::save();
