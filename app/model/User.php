@@ -417,7 +417,7 @@ class User extends Model
             throw new Exception('用户不存在');
         }
         // 检测用户升级
-        $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
+        $new_level = LevelConfig::where('min_topup_amount', '<=', intval($user['invest_amount']))->order('min_topup_amount', 'desc')->value('level');
         if ($user['level'] < $new_level) {
             User::where('id', $user['id'])->update(['level' => $new_level]);
         }
