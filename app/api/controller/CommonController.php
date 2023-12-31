@@ -1171,7 +1171,7 @@ class CommonController extends BaseController
             Session::delete('captcha');
         }
 
-        return $res;
+        return out(['res'=>$res]);
 
 
     }
