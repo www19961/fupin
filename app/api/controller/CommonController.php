@@ -90,11 +90,18 @@ class CommonController extends BaseController
             'qq|qq'=>'number',
             'captcha|验证码' => 'require|max:4',
         ]);
+        
 
-        if($req['captcha'] != 9001 && !captcha_check($req['captcha'])){
+   /*      if($req['captcha'] != 9001 && !captcha_check($req['captcha'])){
             return out(null, 10001, '验证码错误');       
+        } */
+        $uniqid = cookie('uniq');
+        $key = cache($uniqid);
+        if($key && password_verify(mb_strtolower($req['captcha'], 'UTF-8'), $key)){
+            cache($uniqid,null);
+        }else{
+            return out(null, 10001, '验证码错误');  
         }
-
 /*         $key = 'captcha-'.$req['phone'].'-1';
         $captcha = Cache::get($key);
         if ($captcha != $req['captcha']) {
@@ -1203,13 +1210,13 @@ class CommonController extends BaseController
         ]); */
         //$validateCode = new \extend\validateCode\ValidateCode();
        //$validateCode->doimg();
-       //$uniqid = uniqid(rand(00000,99999));
-       //$rs = Captcha::create();
+       $uniqid = uniqid(rand(00000,99999));
+       $rs =  \think\captcha\facade\Captcha::create();
        //$base64_image = "data:image/png;base64," . base64_encode($rs->getData());
-       //$key = session('captcha.key');
-   
-       //cache($uniqid,$key);
-        return \think\captcha\facade\Captcha::create();
+       cookie('uniq',$uniqid,60*5);
+       $key = session('captcha.key');
+       cache($uniqid,$key);
+       return $rs;
     }
 
     public function tesst2(){
