@@ -11,4 +11,5 @@ return [
     // Session初始化
     SessionInit::class,
     CrossDomain::class,
+    
 ];
