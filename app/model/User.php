@@ -412,12 +412,12 @@ class User extends Model
         //if ($order['pay_method'] != 5) {
             User::where('id', $user_id)->inc('invest_amount', $amount)->update();
         //} 
-        $user = User::where('id',$user_id)->field('up_user_id,invest_amount')->find();
+        $user = User::where('id',$user_id)->field('up_user_id,invest_amount,level')->find();
         if(empty($user)){
             throw new Exception('用户不存在');
         }
         // 检测用户升级
-        $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
+        $new_level = LevelConfig::where('min_topup_amount', '<=', intval($user['invest_amount']))->order('min_topup_amount', 'desc')->value('level');
         if ($user['level'] < $new_level) {
             User::where('id', $user['id'])->update(['level' => $new_level]);
         }
