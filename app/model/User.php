@@ -416,6 +416,13 @@ class User extends Model
         if(empty($user)){
             throw new Exception('用户不存在');
         }
+        // 检测用户升级
+        $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
+        if ($user['level'] < $new_level) {
+            User::where('id', $user['id'])->update(['level' => $new_level]);
+        }
+
+
         $upUser = User::where('id',$user['up_user_id'])->field('level')->find();
         if(empty($upUser)){
             return;
@@ -451,11 +458,7 @@ class User extends Model
             //if (in_array($order['pay_method'], [1,2,3,4,6])) {
             //if (in_array($order['pay_method'], [2, 3, 4, 6])) {
                 //$user = User::where('id', $order['user_id'])->find();
-                $new_level = LevelConfig::where('min_topup_amount', '<=', $user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
-    
-                if ($user['level'] < $new_level) {
-                    User::where('id', $user['id'])->update(['level' => $new_level]);
-                }
+
             //}
     }
 
