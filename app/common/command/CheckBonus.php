@@ -58,7 +58,7 @@ class CheckBonus extends Command
           }
       });
 
-      $data = EnsureOrder::where('reward_status',0)->where('next_reward_time', '<=', time())
+      $data = EnsureOrder::where('reward_status',0)->where('next_reward_time', '<=', $time)
       ->chunk(100, function($list) {
          foreach ($list as $item) {
              $this->bonus_ensure_reward($item);
