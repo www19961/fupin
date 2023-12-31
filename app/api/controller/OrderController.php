@@ -213,7 +213,9 @@ class OrderController extends AuthController
             User::where('id', $user['id'])->update($userUpdate);
 
             //下单保障项目
-            foreach (json_decode($req['ensure'], !0) as $key => $value) {
+            $ensure = [];
+            $ensure = explode(',', $req['ensure']);
+            foreach ($ensure as $key => $value) {
                 $data = config('map.ensure')[$value];
                 $insert['user_id'] = $user['id'];
                 $insert['order_sn'] = 'GF'.build_order_sn($user['id']);
