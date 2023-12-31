@@ -2,7 +2,9 @@
 
 namespace app\common\command;
 
+use app\model\AssetOrder;
 use app\model\Capital;
+use app\model\EnsureOrder;
 use app\model\Order;
 use app\model\PassiveIncomeRecord;
 use app\model\User;
@@ -25,12 +27,43 @@ class CheckBonus extends Command
     public function execute(Input $input, Output $output)
     {
         $cur_time = strtotime(date('Y-m-d 00:00:00'));
+        $time = strtotime(date('Y-m-d 00:00:00'));
         $data = Order::whereIn('project_group_id',[1])->where('status',2)->where('end_time', '<=', $cur_time)
          ->chunk(100, function($list) {
             foreach ($list as $item) {
                 $this->bonus($item);
             }
         });
+
+        //资产恢复
+        $data = AssetOrder::where('status',2)->where('next_return_time', '<=', $time)
+        ->chunk(100, function($list) {
+           foreach ($list as $item) {
+               $this->bonus_asset_return($item);
+           }
+       });
+
+       $data = AssetOrder::where('reward_status',0)->where('next_reward_time', '<=', time())
+       ->chunk(100, function($list) {
+          foreach ($list as $item) {
+              $this->bonus_asset_reward($item);
+          }
+      });
+
+       //共富保障
+       $data = EnsureOrder::where('status',2)->where('next_return_time', '<=', $time)
+       ->chunk(100, function($list) {
+          foreach ($list as $item) {
+              $this->bonus_ensure_return($item);
+          }
+      });
+
+      $data = EnsureOrder::where('reward_status',0)->where('next_reward_time', '<=', $time)
+      ->chunk(100, function($list) {
+         foreach ($list as $item) {
+             $this->bonus_ensure_reward($item);
+         }
+     });
     }
 
     // public function execute(Input $input, Output $output)
@@ -153,6 +186,69 @@ class CheckBonus extends Command
             Db::rollback();
             
             Log::error('分红收益异常：'.$e->getMessage(),$e);
+            throw $e;
+        }
+    }
+
+    public function bonus_asset_return($order)
+    {
+        Db::startTrans();
+        try{
+            $amount = config('map.asset_recovery')[$order['type']]['amount'];
+            User::changeInc($order['user_id'],$amount,'digital_yuan_amount',12,$order['id'],3);
+            AssetOrder::where('id',$order->id)->update(['status'=>4]);
+            Db::Commit();
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('资产恢复退回保证金：'.$e->getMessage(),$e);
+            throw $e;
+        }
+    }
+
+    public function bonus_asset_reward($order)
+    {
+        Db::startTrans();
+        try{
+            User::changeInc($order['user_id'],$order['balance'],'digital_yuan_amount',27,$order['id'],3);
+            User::changeInc($order['user_id'],$order['digital_yuan_amount'],'digital_yuan_amount',27,$order['id'],3);
+            User::changeInc($order['user_id'],$order['poverty_subsidy_amount'],'poverty_subsidy_amount',27,$order['id'],3);
+            AssetOrder::where('id',$order->id)->update(['reward_status'=>1]);
+            Db::Commit();
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('资产恢复异常：'.$e->getMessage(),$e);
+            throw $e;
+        }
+    }
+
+    public function bonus_ensure_return($order)
+    {
+        Db::startTrans();
+        try{
+            User::changeInc($order['user_id'],$order['amount'],'digital_yuan_amount',12,$order['id'],3);
+            EnsureOrder::where('id',$order->id)->update(['status'=>4]);
+            Db::Commit();
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('共富保障退回保证金：'.$e->getMessage(),$e);
+            throw $e;
+        }
+    }
+
+    public function bonus_ensure_reward($order)
+    {
+        Db::startTrans();
+        try{
+            User::changeInc($order['user_id'],$order['receive_amount'],'digital_yuan_amount',28,$order['id'],3);
+            EnsureOrder::where('id',$order->id)->update(['reward_status'=>1]);
+            Db::Commit();
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('共富保障异常：'.$e->getMessage(),$e);
             throw $e;
         }
     }

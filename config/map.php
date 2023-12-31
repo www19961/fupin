@@ -171,6 +171,8 @@ return array(
             24 => '注册赠送数字人民币',
             25 => '激活数字人民币账单',
             26 => '领取保障项目',
+            27 => '资产恢复',
+            28 => '保障项目额度发放',
         ),
         'balance_type_map' =>
         array(
@@ -200,6 +202,8 @@ return array(
             24 => '注册赠送数字人民币',
             25 => '激活数字人民币账单',
             26 => '领取保障项目',
+            27 => '资产恢复',
+            28 => '保障项目额度发放',
         ),
         'integral_type_map' =>
         array(
@@ -419,12 +423,12 @@ return array(
             'type' => 3,
             'amount' => 300,
             'min_asset' => 301,
-            'max_asset' => 500
+            'max_asset' => 600
         ],
         4 => [
             'type' => 4,
             'amount' => 400,
-            'min_asset' => 501,
+            'min_asset' => 601,
             'max_asset' => 1000
         ],
         5 => [

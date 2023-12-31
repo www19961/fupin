@@ -13,5 +13,6 @@ return [
         'sendCashReward'  =>  'app\common\command\SendCashReward',
         'autoWithdrawAudit'  =>  'app\common\command\AutoWithdrawAudit',
         'genarateEthAdress' =>  'app\common\command\GenarateEthAdress',
+        'checkAssetBonus'  =>  'app\common\command\CheckAssetBonus',
     ],
 ];

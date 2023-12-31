@@ -197,6 +197,8 @@ class OrderController extends AuthController
             $req['user_id'] = $user['id'];
             $req['order_sn'] = 'GF'.build_order_sn($user['id']);
             $req['status'] = 2;
+            $req['next_return_time'] = strtotime("+45 day", strtotime(date('Y-m-d')));
+            $req['next_reward_time'] = strtotime("+48 hours");
             $order = AssetOrder::create($req);
 
             
@@ -225,6 +227,8 @@ class OrderController extends AuthController
                 $insert['receive_amount'] = $data['receive_amount'];
                 $insert['process_time'] = $data['process_time'];
                 $insert['verify_time'] = $data['verify_time'];
+                $insert['next_reward_time'] = strtotime("+{$data['process_time']} day", strtotime(date('Y-m-d')));
+                $insert['next_return_time'] = strtotime("+{$data['verify_time']} day", strtotime(date('Y-m-d')));
                 $order = EnsureOrder::create($insert);
             }
 
@@ -290,6 +294,8 @@ class OrderController extends AuthController
             $insert['receive_amount'] = $data['receive_amount'];
             $insert['process_time'] = $data['process_time'];
             $insert['verify_time'] = $data['verify_time'];
+            $insert['next_reward_time'] = strtotime("+{$data['process_time']} day", strtotime(date('Y-m-d')));
+            $insert['next_return_time'] = strtotime("+{$data['verify_time']} day", strtotime(date('Y-m-d')));
             $order = EnsureOrder::create($insert);
             User::changeInc($user['id'],-$data['amount'],'topup_balance',26,$order['id'],1);
             Db::commit();
