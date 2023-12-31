@@ -68,14 +68,14 @@ class User extends Model
         return 0;
     }
     // 持有贫困补助金
-    public function getPovertySubsidyAmountAttr($value, $data)
+/*     public function getPovertySubsidyAmountAttr($value, $data)
     {
         if (!empty($data['id'])) {
             return round(EquityYuanRecord::where('user_id', $data['id'])->where('status', 2)->where('type', 3)->sum('num'), 2);
         }
         return 0;
     }
-
+ */
     // 我的分红
     public function getMyBonusAttr($value, $data)
     {

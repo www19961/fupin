@@ -942,16 +942,29 @@ class UserController extends AuthController
     public function saveUserInfo(){
         $user = $this->user;
         $req = $this->validate(request(), [
-            'qq|QQ' => 'string',
-            'delivery|地址' => 'string',
-            'avatar|头像' => 'string',
+            'qq|QQ' => 'min:5',
+            'address|地址' => 'min:4',
         ]);
-        if(!isset($req['qq']) && !isset($req['delivery']) && !isset($req['avatar'])){
-            return out('请填写对应字段');
+        if((!isset($req['qq']) || trim($req['qq'])=='') && (!isset($req['address']) || trim($req['address'])=='')){
+            return out(null,10010,'请填写对应字段');
         }
-        if($req['delivery']!=''){
-            UserDelivery::updateAddress($user,['delivery'=>$req['delivery']]);
+        if(isset($req['address']) && $req['address']!=''){
+            UserDelivery::updateAddress($user,['address'=>$req['address']]);
         }
 
+        if(isset($req['qq']) && $req['qq']!=''){
+            User::where('id',$user['id'])->update(['qq'=>$req['qq']]);
+        }
+        return out();
+
+    }
+
+    public function avatar(){
+        $user = $this->user;
+        $req = $this->validate(request(), [
+            'avatar|头像' => 'require',
+        ]);
+        User::where('id',$user['id'])->update(['avatar'=>$req['avatar']]);
+        return out();
     }
 }

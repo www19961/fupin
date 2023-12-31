@@ -245,7 +245,7 @@ if (!function_exists('upload_file')) {
                     [
                         'file' => [
                             // 限制文件大小(单位b)，这里限制为4M
-                            'fileSize' => 5 * 1024 * 1024,
+                            'fileSize' => 2 * 1024 * 1024,
                             // 限制文件后缀，多个后缀以英文逗号分割
                             'fileExt'  => 'png,jpg',
                         ]
@@ -260,22 +260,9 @@ if (!function_exists('upload_file')) {
                 exit_out(null, 11003, $e->getMessage());
                 return '';
             }
-
-
-            $savename = Filesystem::putFile('', $file);
-
-            if ($is_return_url){
-                $img_url = request()->domain().'/storage/'.$savename;
-                if (!empty(env('app.img_host', ''))) {
-                    $img_url = env('app.img_host').'/storage/'.$savename;
-                }
-            }
-            else {
-                //$img_url = public_path().'storage/'.$savename;
-                $img_url = '/storage/'.$savename;
-            }
-
-            return $img_url;
+            $savename = Filesystem::disk('qiniu')->putFile('', $file);
+            $baseUrl = 'http://'.config('filesystem.disks.qiniu.domain').'/';    
+            return $baseUrl.str_replace("\\", "/", $savename);
         }
         else {
             if ($is_must){

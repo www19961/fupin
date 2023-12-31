@@ -191,17 +191,17 @@ class CommonController extends BaseController
         return out(['token' => $token]);
     }
 
-/*     public function uploadFile()
+    public function uploadFile()
     {
         $url = upload_file('file');
 
         return out(['url' => $url]);
-    } */
+    }
 
-    public function uploadFile2(){
+/*     public function uploadFile2(){
         $url = upload_file2('file');
         return out(['url'=>$url]);   
-    }
+    } */
 
     public function systemInfo()
     {
@@ -1207,7 +1207,7 @@ class CommonController extends BaseController
     }
 
     public function tesst2(){
-/*         $req = $this->validate(request(), [
+        $req = $this->validate(request(), [
             'code|code' => 'require',
         ]);
 
@@ -1225,7 +1225,7 @@ class CommonController extends BaseController
             Session::delete('captcha');
         }
 
-        return out(['res'=>$res]); */
+        return out(['res'=>$res]);
         session('a','aaa');
 
 
