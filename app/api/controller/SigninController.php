@@ -98,7 +98,7 @@ class SigninController extends AuthController
         Db::startTrans();
         try {
             if (UserSignin::where('user_id', $user['id'])->where('signin_date', $signin_date)->lock(true)->count()) {
-                return out(null, 10001, '您今天已经签到了');
+                return out(null, 10001, '您今天已经领取了');
             }
             $signin = UserSignin::create([
                 'user_id' => $user['id'],
