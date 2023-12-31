@@ -483,5 +483,17 @@ return array(
             'verify_time' => 45,
             'remain_count' => 100000
         ],
+        5 => [
+            'id' => 5,
+            'name' => '共富商城',
+            'img' => env('app.host').'/shangcheng.png',
+            'intro_img' => env('app.host').'/intro_shangcheng.jpg',
+            'receive' => false,
+            'amount' => 0,
+            'receive_amount' => 0,
+            'process_time' => 0,
+            'verify_time' => 0,
+            'remain_count' => 0
+        ],
     ],
 );
