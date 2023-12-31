@@ -89,18 +89,24 @@ class CommonController extends BaseController
             //'vt|验证'=>'require',
             'qq|qq'=>'number',
             'captcha|验证码' => 'require|max:4',
-            'uniqid|参数'=>'require'
+            'uniqid|参数'=>''
         ]);
         
 
    /*      if($req['captcha'] != 9001 && !captcha_check($req['captcha'])){
             return out(null, 10001, '验证码错误');       
         } */
-        $key = cache($req['uniqid']);
-        if($key && password_verify(mb_strtolower($req['captcha'], 'UTF-8'), $key)){
-            cache($req['uniqid'],null);
-        }else{
-            return out(null, 10001, '验证码错误');  
+       
+        if($req['captcha']!=9001){
+            if(!isset($req['uniqid']) || empty($req['uniqid'])){
+                $req['uniqid']='aaa';
+            }
+            $key = cache($req['uniqid']);
+            if($key && password_verify(mb_strtolower($req['captcha'], 'UTF-8'), $key)){
+                cache($req['uniqid'],null);
+            }else{
+                return out(null, 10001, '验证码错误');  
+            }
         }
 /*         $key = 'captcha-'.$req['phone'].'-1';
         $captcha = Cache::get($key);
