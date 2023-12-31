@@ -257,6 +257,14 @@ class Order extends Model
             ]);
         }
 
+            //购买产品和恢复资产用户激活
+            if ($order['user']['is_active'] == 0 ) {
+                User::where('id', $order['user_id'])->update(['is_active' => 1, 'active_time' => time()]);
+                // 下级用户激活
+                UserRelation::where('sub_user_id', $order['user_id'])->update(['is_active' => 1]);
+            }
+        
+
         return !0;
 
 
@@ -351,22 +359,6 @@ class Order extends Model
             $now_level = $upUser['level'];
         }
 
-        //Todo::用户激活移动到申请资产恢复扣钱之后
-        if ($order['user']['is_active'] == 0 && $order['pay_method'] != 5) {
-            User::where('id', $order['user_id'])->update(['is_active' => 1, 'active_time' => time()]);
-            // 下级用户激活
-            UserRelation::where('sub_user_id', $order['user_id'])->update(['is_active' => 1]);
-            // 判断上级是否升级vip
-/*             if (!empty($up_user_id)) {
-                $up_user = User::where('id', $up_user_id)->find();
-                $new_level = LevelConfig::where('min_topup_amount', '<=', $up_user['invest_amount'])->order('min_topup_amount', 'desc')->value('level');
-
-                if ($now_level < $new_level) {
-                    $now_level = $new_level;
-                    User::where('id', $up_user_id)->update(['level' => $new_level]);
-                }
-            } */
-        }
 
         // 如果不是积分兑换才算直推奖励和团队奖励
         // if ($order['pay_method'] != 5 && !empty($up_user_id)) {
