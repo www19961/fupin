@@ -129,6 +129,8 @@ class Captcha
             'key' => $hash,
         ]);
 
+        \think\facade\Session::save();
+
         return [
             'value' => $bag,
             'key'   => $hash,

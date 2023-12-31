@@ -1203,6 +1203,12 @@ class CommonController extends BaseController
         ]); */
         //$validateCode = new \extend\validateCode\ValidateCode();
        //$validateCode->doimg();
+       //$uniqid = uniqid(rand(00000,99999));
+       //$rs = Captcha::create();
+       //$base64_image = "data:image/png;base64," . base64_encode($rs->getData());
+       //$key = session('captcha.key');
+   
+       //cache($uniqid,$key);
         return \think\captcha\facade\Captcha::create();
     }
 
