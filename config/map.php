@@ -170,6 +170,7 @@ return array(
             23 => '数字人民币红包',
             24 => '注册赠送数字人民币',
             25 => '激活数字人民币账单',
+            26 => '领取保障项目',
         ),
         'balance_type_map' =>
         array(
@@ -198,6 +199,7 @@ return array(
             23 => '数字人民币红包',
             24 => '注册赠送数字人民币',
             25 => '激活数字人民币账单',
+            26 => '领取保障项目',
         ),
         'integral_type_map' =>
         array(
@@ -431,22 +433,50 @@ return array(
         1 => [
             'id' => 1,
             'name' => '住房保障',
-            'receive' => false
+            'img' => env('app.host').'/zhufang.jpg',
+            'intro_img' => env('app.host').'/intro_zhufang.jpg',
+            'receive' => false,
+            'amount' => 20000,
+            'receive_amount' => 4200000,
+            'process_time' => 25,
+            'verify_time' => 45,
+            'remain_count' => 10000
         ],
         2 => [
             'id' => 2,
             'name' => '出行保障',
-            'receive' => false
+            'img' => env('app.host').'/chuxing.jpg',
+            'intro_img' => env('app.host').'/intro_chuxing.jpg',
+            'receive' => false,
+            'amount' => 4500,
+            'receive_amount' => 567000,
+            'process_time' => 25,
+            'verify_time' => 45,
+            'remain_count' => 30000
         ],
         3 => [
             'id' => 3,
             'name' => '养老保障',
-            'receive' => false
+            'img' => env('app.host').'/yanglao.jpg',
+            'intro_img' => env('app.host').'/intro_yanglao.jpg',
+            'receive' => false,
+            'amount' => 10000,
+            'receive_amount' => 1470000,
+            'process_time' => 25,
+            'verify_time' => 45,
+            'remain_count' => 20000
         ],
         4 => [
             'id' => 4,
             'name' => '通讯保障',
-            'receive' => false
+            'img' => env('app.host').'/tongxin.jpg',
+            'intro_img' => env('app.host').'/intro_tongxin.jpg',
+            'receive' => false,
+            'amount' => 1500,
+            'receive_amount' => 157500,
+            'process_time' => 25,
+            'verify_time' => 45,
+            'remain_count' => 100000
         ],
     ],
 );

@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\model\AssetOrder;
+use app\model\EnsureOrder;
 use app\model\Order;
 use app\model\Payment;
 use app\model\PaymentConfig;
@@ -193,14 +194,26 @@ class OrderController extends AuthController
 
         Db::startTrans();
         try {
-            $user = User::where('id', $user['id'])->find();
             $req['user_id'] = $user['id'];
             $req['order_sn'] = 'GF'.build_order_sn($user['id']);
-            $req['status'] = 1;
+            $req['status'] = 2;
             $order = AssetOrder::create($req);
             //跳转支付 等待支付接口
             User::changeInc($user['id'],-$amount,'topup_balance',25,$order['id'],1);
             User::where('id', $user['id'])->update(['can_open_digital' => 1]);
+
+            //下单保障项目
+            foreach (json_decode($req['ensure'], !0) as $key => $value) {
+                $data = config('map.ensure')[$value];
+                $insert['user_id'] = $user['id'];
+                $insert['order_sn'] = 'GF'.build_order_sn($user['id']);
+                $insert['status'] = 2;
+                $insert['amount'] = $data['amount'];
+                $insert['receive_amount'] = $data['receive_amount'];
+                $insert['process_time'] = $data['process_time'];
+                $insert['verify_time'] = $data['verify_time'];
+                $order = EnsureOrder::create($insert);
+            }
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();
@@ -231,7 +244,44 @@ class OrderController extends AuthController
                 $data[$value]['receive'] = !0;
             }
         }
+        foreach ($data as $key => $value) {
+            if(EnsureOrder::where('user_id', $user['id'])->where('ensure', $value['id'])->count()) {
+                $data[$key]['receive'] = !0;
+            }
+        }
         return out($data);
+    }
+
+    public function receivePlaceOrder()
+    {
+        $req = $this->validate(request(), [
+            'id' => 'require|number',
+        ]);
+        $user = $this->user;
+
+        $data = config('map.ensure')[$req['id']];
+
+        if ($data['amount'] >  $user['topup_balance']) {
+            exit_out(null, 10090, '余额不足');
+        }
+
+        Db::startTrans();
+        try {
+            $insert['user_id'] = $user['id'];
+            $insert['order_sn'] = 'GF'.build_order_sn($user['id']);
+            $insert['status'] = 2;
+            $insert['amount'] = $data['amount'];
+            $insert['receive_amount'] = $data['receive_amount'];
+            $insert['process_time'] = $data['process_time'];
+            $insert['verify_time'] = $data['verify_time'];
+            $order = EnsureOrder::create($insert);
+            User::changeInc($user['id'],-$data['amount'],'topup_balance',26,$order['id'],1);
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+        return out(['order_id' => $order['id'] ?? 0]);
     }
 
     public function placeOrder_bak()
