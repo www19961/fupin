@@ -25,6 +25,7 @@ use Exception;
 use think\facade\Db;
 use think\facade\Cache;
 use think\facade\Log;
+use think\facade\Session;
 
 class CommonController extends BaseController
 {
@@ -1146,15 +1147,33 @@ class CommonController extends BaseController
         $req = $this->validate(request(), [
             'phone|手机号' => 'require|mobile',
         ]);
-        $validateCode = new \extend\validateCode\ValidateCode();
-        $validateCode->doimg();
-        //return \think\captcha\facade\Captcha::create();
+        //$validateCode = new \extend\validateCode\ValidateCode();
+       //$validateCode->doimg();
+        return \think\captcha\facade\Captcha::create();
     }
 
     public function tesst2(){
         $req = $this->validate(request(), [
-            'phone|手机号' => 'require|mobile',
+            'code|code' => 'require',
         ]);
+
+        if (Session::has('captcha')) {
+            return false;
+        }
+
+        $key = Session::get('captcha.key');
+
+        $code = mb_strtolower($req['code'], 'UTF-8');
+
+        $res = password_verify($code, $key);
+
+        if ($res) {
+            Session::delete('captcha');
+        }
+
+        return $res;
+
+
     }
 
     public function test(){
