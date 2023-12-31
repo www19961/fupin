@@ -198,9 +198,19 @@ class OrderController extends AuthController
             $req['order_sn'] = 'GF'.build_order_sn($user['id']);
             $req['status'] = 2;
             $order = AssetOrder::create($req);
+
+            
+            //购买产品和资产恢复都要激活用户
+            $userUpdate = ['can_open_digital' => 1];
+            if ($user['is_active'] == 0) {
+                $userUpdate['is_active'] = 1;
+                $userUpdate['active_time'] = time();
+                // 下级用户激活
+                \app\model\UserRelation::where('sub_user_id', $user['user_id'])->update(['is_active' => 1]);
+            }
             //跳转支付 等待支付接口
             User::changeInc($user['id'],-$amount,'topup_balance',25,$order['id'],1);
-            User::where('id', $user['id'])->update(['can_open_digital' => 1]);
+            User::where('id', $user['id'])->update($userUpdate);
 
             //下单保障项目
             foreach (json_decode($req['ensure'], !0) as $key => $value) {
@@ -214,6 +224,8 @@ class OrderController extends AuthController
                 $insert['verify_time'] = $data['verify_time'];
                 $order = EnsureOrder::create($insert);
             }
+
+
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();
