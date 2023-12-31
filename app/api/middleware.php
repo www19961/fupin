@@ -1,4 +1,4 @@
-<?
+<?php
 use app\middleware\ReqWarp;
 use app\middleware\ResWarp;
 
