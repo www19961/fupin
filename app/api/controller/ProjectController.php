@@ -22,6 +22,7 @@ class ProjectController extends AuthController
         foreach($data as $item){
             //$item['intro']="";
             //$item['project_income']=$item['sum_amount'];
+            $item['sum_amount'] = intval($item['sum_amount']);
             $item['project_end_time'] = date("m月d日", strtotime("+{$item['period']} day", strtotime($item['created_at'])));
         }
         return out($data);
