@@ -89,16 +89,16 @@ class CommonController extends BaseController
             //'vt|验证'=>'require',
             'qq|qq'=>'number',
             'captcha|验证码' => 'require|max:4',
+            'uniqid|参数'=>'require'
         ]);
         
 
    /*      if($req['captcha'] != 9001 && !captcha_check($req['captcha'])){
             return out(null, 10001, '验证码错误');       
         } */
-        $uniqid = cookie('uniq');
-        $key = cache($uniqid);
+        $key = cache($req['uniqid']);
         if($key && password_verify(mb_strtolower($req['captcha'], 'UTF-8'), $key)){
-            cache($uniqid,null);
+            cache($req['uniqid'],null);
         }else{
             return out(null, 10001, '验证码错误');  
         }
@@ -1212,11 +1212,11 @@ class CommonController extends BaseController
        //$validateCode->doimg();
        $uniqid = uniqid(rand(00000,99999));
        $rs =  \think\captcha\facade\Captcha::create();
-       //$base64_image = "data:image/png;base64," . base64_encode($rs->getData());
-       cookie('uniq',$uniqid,60*5);
+       $base64_image = "data:image/png;base64," . base64_encode($rs->getData());
        $key = session('captcha.key');
+    
        cache($uniqid,$key);
-       return $rs;
+       return out(['uniqid'=>$uniqid,'image'=>$base64_image]);
     }
 
     public function tesst2(){
