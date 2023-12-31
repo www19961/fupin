@@ -412,7 +412,7 @@ class User extends Model
         //if ($order['pay_method'] != 5) {
             User::where('id', $user_id)->inc('invest_amount', $amount)->update();
         //} 
-        $user = User::where('id',$user_id)->field('up_user_id,invest_amount')->find();
+        $user = User::where('id',$user_id)->field('up_user_id,invest_amount,level')->find();
         if(empty($user)){
             throw new Exception('用户不存在');
         }
