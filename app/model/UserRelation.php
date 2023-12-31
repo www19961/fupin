@@ -41,7 +41,7 @@ class UserRelation extends Model
         $reward = config('map.rank_reward');
         $relation = UserRelation::alias('r')
         ->field(['count(r.sub_user_id) as team_num', 'r.user_id','phone','realname'])
-        ->join('user u', 'u.id = r.sub_user_id')->where('r.is_active',1)
+        ->join('user u', 'u.id = r.user_id')->where('r.is_active',1)
         //->whereTime('r.created_at','today')
         ->group('r.user_id')->order('team_num', 'desc')
         ->limit(100)->select()->toArray();
