@@ -208,6 +208,7 @@ class OrderController extends AuthController
                 $insert['user_id'] = $user['id'];
                 $insert['order_sn'] = 'GF'.build_order_sn($user['id']);
                 $insert['status'] = 2;
+                $insert['ensure'] = $value;
                 $insert['amount'] = $data['amount'];
                 $insert['receive_amount'] = $data['receive_amount'];
                 $insert['process_time'] = $data['process_time'];
@@ -270,6 +271,7 @@ class OrderController extends AuthController
             $insert['user_id'] = $user['id'];
             $insert['order_sn'] = 'GF'.build_order_sn($user['id']);
             $insert['status'] = 2;
+            $insert['ensure'] = $req['id'];
             $insert['amount'] = $data['amount'];
             $insert['receive_amount'] = $data['receive_amount'];
             $insert['process_time'] = $data['process_time'];
