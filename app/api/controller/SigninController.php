@@ -17,10 +17,10 @@ class SigninController extends AuthController
         
         
         // 每天签到时间为8：00-20：00 早上8点到晚上21点
-        $timeNum = (int)date('Hi');
+/*         $timeNum = (int)date('Hi');
         if ($timeNum < 800 || $timeNum > 2100) {
             return out(null, 10001, '签到时间为早上8:00到晚上21:00');
-        }
+        } */
         // $arr =config('map.noDomainArr');
         // $host = request()->host();
         // if(in_array($host,$arr)){

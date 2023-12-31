@@ -938,4 +938,20 @@ class UserController extends AuthController
         $certificate['format_time']=Certificate::getFormatTime($certificate['created_at']);
         return out($certificate);
     }
+
+    public function saveUserInfo(){
+        $user = $this->user;
+        $req = $this->validate(request(), [
+            'qq|QQ' => 'string',
+            'delivery|地址' => 'string',
+            'avatar|头像' => 'string',
+        ]);
+        if(!isset($req['qq']) && !isset($req['delivery']) && !isset($req['avatar'])){
+            return out('请填写对应字段');
+        }
+        if($req['delivery']!=''){
+            UserDelivery::updateAddress($user,['delivery'=>$req['delivery']]);
+        }
+
+    }
 }
