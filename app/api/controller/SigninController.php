@@ -2,7 +2,9 @@
 
 namespace app\api\controller;
 
+use app\model\AssetOrder;
 use app\model\User;
+use app\model\UserReceive;
 use app\model\UserSignin;
 use Exception;
 use think\facade\Db;
@@ -95,16 +97,23 @@ class SigninController extends AuthController
             return out(null, 10001, '共富等级一级才有奖励');
         }
 
+        $assetOrder = AssetOrder::where('user_id',$user['id'])->where('status',2)->find();
+        $is_rich = $assetOrder ? 1 : 0;
+        if($is_rich == 0){
+            if($user['invest_amount']>=1500){
+                $is_rich = 1;
+            }
+        }
         Db::startTrans();
         try {
-            if (UserSignin::where('user_id', $user['id'])->where('signin_date', $signin_date)->lock(true)->count()) {
+            if (UserReceive::where('user_id', $user['id'])->where('signin_date', $signin_date)->lock(true)->count()) {
                 return out(null, 10001, '您今天已经领取了');
             }
-            $signin = UserSignin::create([
+            $signin = UserReceive::create([
                 'user_id' => $user['id'],
                 'signin_date' => $signin_date,
             ]);
-            $amount = $user['is_active'] == 1 ? 14 : 1;
+            $amount = $is_rich == 1 ? 14 : 1;
             User::changeInc($user['id'],$amount,'digital_yuan_amount',23,$signin['id'],3,'',0,1,'TD');
             Db::commit();
         } catch (Exception $e) {
