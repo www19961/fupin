@@ -6,11 +6,11 @@ use think\Model;
 
 class UserBalanceLog extends Model
 {
-    public function getTypeTextAttr($value, $data)
-    {
-        $map = config('map.user_balance_log')['type_map'];
-        return isset($map[$data['type']])?$map[$data['type']]:0;
-    }
+    // public function getTypeTextAttr($value, $data)
+    // {
+    //     $map = config('map.user_balance_log')['type_map'];
+    //     return isset($map[$data['type']])?$map[$data['type']]:0;
+    // }
 
     public function getLogTypeTextAttr($value, $data)
     {

@@ -855,11 +855,16 @@ class UserController extends AuthController
         $log_type = $req['log_type'];
         $list = UserBalanceLog::where('user_id', $user['id'])->where('log_type', $log_type)->order('created_at', 'desc')->paginate(10)->each(function ($item, $key) use ($map) {
             $typeText = $map[$item['type']];
-            $item['type_text'] = $typeText;
-            if ($item['type'] == 3) {
-                $projectName = Order::where('id', $item['relation_id'])->value('project_name');
-                $item['type_text'] = $typeText . $projectName;
+            if($item['remark']) {
+                $item['type_text'] = $item['remark'];
+            } else {
+                $item['type_text'] = $typeText;
             }
+            
+            // if ($item['type'] == 3) {
+            //     $projectName = Order::where('id', $item['relation_id'])->value('project_name');
+            //     $item['type_text'] = $typeText . $projectName;
+            // }
 
             return $item;
         });
