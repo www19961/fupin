@@ -892,6 +892,7 @@ class UserController extends AuthController
                 'after_balance' => $v['after_balance'],
                 'before_balance' => $v['before_balance'],
                 'change_balance' => $v['change_balance'],
+                'order_sn'=>$v['order_sn'],
                 'type' => $v['type'],
                 'status' => $v['status'],
                 'type_text' => $v['type_text'],
