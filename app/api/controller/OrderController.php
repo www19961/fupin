@@ -98,7 +98,7 @@ class OrderController extends AuthController
 
             if ($req['pay_method']==1) {
                 // 扣余额
-                User::changeInc($user['id'],-$pay_amount,'topup_balance',3,$order['id'],1,'',0,1,'GF');
+                User::changeInc($user['id'],-$pay_amount,'topup_balance',3,$order['id'],1,$project['project_name'],0,1,'GF');
                 // 累计总收益和赠送数字人民币  到期结算
                 // 订单支付完成
                 Order::orderPayComplete($order['id'], $project, $user['id']);
@@ -211,7 +211,7 @@ class OrderController extends AuthController
                 \app\model\UserRelation::where('sub_user_id', $user['user_id'])->update(['is_active' => 1]);
             }
             //跳转支付 等待支付接口
-            User::changeInc($user['id'],-$amount,'topup_balance',25,$order['id'],1);
+            User::changeInc($user['id'],-$amount,'topup_balance',25,$order['id'],1, '资产交接');
             User::where('id', $user['id'])->update($userUpdate);
 
             //下单保障项目

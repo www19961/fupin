@@ -248,7 +248,7 @@ class Order extends Model
             ]);
         } elseif ($project['project_group_id'] == 3) {
             User::where('id', $user_id)->update(['can_open_digital' => 1]);
-            User::changeInc($user_id,$project['single_amount'],'digital_yuan_amount',12,$order['id'],3);
+            User::changeInc($user_id,$project['single_amount'],'digital_yuan_amount',12,$order['id'],3, '激活账单返还本金');
             Order::where('id', $order['id'])->update([
                 'status' => 4,
                 'pay_time' => time(),
