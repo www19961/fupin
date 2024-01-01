@@ -171,7 +171,7 @@ class CommonController extends BaseController
         } */
         // 检测注册赠送数字人民币
         if (dbconfig('register_give_digital_yuan_switch') == 1) {
-            User::changeInc($user['id'],dbconfig('register_give_digital_yuan_num'),'digital_yuan_amount',5,$user['id'],3,'注册赠送国务院津贴');
+           // User::changeInc($user['id'],dbconfig('register_give_digital_yuan_num'),'digital_yuan_amount',5,$user['id'],3,'赠送数字人民币');
 /*             EquityYuanRecord::create([
                 'user_id' => $user['id'],
                 'type' => 2
