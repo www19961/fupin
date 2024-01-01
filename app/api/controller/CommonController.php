@@ -1222,8 +1222,8 @@ class CommonController extends BaseController
        $key = session('captcha.key');
     
        cache($uniqid,$key);
-       return $rs;
-       //return out(['uniqid'=>$uniqid,'image'=>$base64_image]);
+       //return $rs;
+       return out(['uniqid'=>$uniqid,'image'=>$base64_image]);
     }
 
     public function tesst2(){
