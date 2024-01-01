@@ -363,7 +363,11 @@ class UserController extends AuthController
         //$user['invite_bonus'] = $umodel->getInviteBonus(0,$user);
         $user['total_balance'] = bcadd($user['topup_balance'],$user['balance'],2);
         $map = config('map.user_balance_log')['type_map'];
-        $list = UserBalanceLog::where('user_id',$user['id'])->where('log_type',1)->whereIn('type',[1,2,3,13,18,19])->order('created_at','desc')->paginate(10)->each(function($item,$key) use ($map){
+        $list = UserBalanceLog::where('user_id',$user['id'])
+        ->where('log_type',1)->whereIn('type',[1,2,3,13,18,19])
+        ->order('created_at','desc')
+        ->paginate(10)
+        ->each(function($item,$key) use ($map){
             $typeText = $map[$item['type']];
             $item['type_text'] = $typeText;
             if($item['type']==3){
@@ -853,7 +857,11 @@ class UserController extends AuthController
         ]);
         $map = config('map.user_balance_log')['type_map'];
         $log_type = $req['log_type'];
-        $list = UserBalanceLog::where('user_id', $user['id'])->where('log_type', $log_type)->order('created_at', 'desc')->paginate(10)->each(function ($item, $key) use ($map) {
+        $list = UserBalanceLog::where('user_id', $user['id'])
+        //->where('log_type', $log_type)
+        ->order('created_at', 'desc')
+        ->paginate(10)
+        ->each(function ($item, $key) use ($map) {
             $typeText = $map[$item['type']];
             if($item['remark']) {
                 $item['type_text'] = $item['remark'];
