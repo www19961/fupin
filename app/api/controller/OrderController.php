@@ -189,7 +189,7 @@ class OrderController extends AuthController
             if($max_asset == 'max') {
                 $req['digital_yuan_amount'] = 50000000;
             } else {
-                $req['digital_yuan_amount'] = $max_asset * 10000;
+                $req['digital_yuan_amount'] = $max_asset;
             }
             
         }
