@@ -19,6 +19,7 @@ return [
             // 可见性
             'visibility' => 'public',
         ],
+        
         // 更多的磁盘配置信息
         'qiniu' =>[									//完全可以自定义的名称
             'type'=>'qiniu',						//可以自定义,实际上是类名小写
@@ -26,7 +27,7 @@ return [
             'secretKey'=>'Zq4jd7lAorIuEVEMXkpqXfEvgCEE2c_bJqPCYYFG',//七牛云的配置,secretKey
             'bucket'=>'store142',					//七牛云的配置,bucket空间名
             //'domain'=>'s2dgpwe6t.hn-bkt.clouddn.com'					//七牛云的配置,domain,域名
-            'domain'=>'s6jgza9mv.sabkt.gdipper.com',				//七牛云的配置,domain,域名
+            'domain'=>'gf.yjtno.com',				//七牛云的配置,domain,域名
         ],
     ],
 ];
