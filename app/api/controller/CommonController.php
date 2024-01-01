@@ -89,7 +89,7 @@ class CommonController extends BaseController
             //'vt|验证'=>'require',
             'qq|qq'=>'number',
             'captcha|验证码' => 'require|max:4',
-            'uniqid|参数'=>''
+            'uniqid|参数'=>'require'
         ]);
         
 
