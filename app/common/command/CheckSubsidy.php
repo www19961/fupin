@@ -24,9 +24,58 @@ class CheckSubsidy extends Command
 
     protected function execute(Input $input, Output $output)
     {   
+        $this->settle();
+        $this->rank();
         //$this->all();
-        $this->fixSecondBonus();
+        //$this->fixSecondBonus();
         return true;
+    }
+
+    public function settle(){
+        $cur_time = strtotime(date('Y-m-d 00:00:00'));
+        $time = strtotime(date('Y-m-d 00:00:00'));
+        $data = Order::whereIn('project_group_id',[1])->where('status',2)
+        //->where('end_time', '<=', $cur_time)
+         ->chunk(100, function($list) {
+            foreach ($list as $item) {
+                $this->bonus($item);
+            }
+        });
+    }
+
+    public function bonus($order){
+        Db::startTrans();
+        try{
+            User::changeInc($order['user_id'],$order['sum_amount'],'digital_yuan_amount',6,$order['id'],3);
+            User::changeInc($order['user_id'],$order['single_amount'],'digital_yuan_amount',12,$order['id'],3);
+            //User::changeInc($order['user_id'],$order['single_gift_digital_yuan'],'digital_yuan_amount',5,$order['id'],3);
+            Order::where('id',$order->id)->update(['status'=>4]);
+/*             if($order['project_group_id']==2){
+                
+            } */
+            Db::Commit();
+        }catch(Exception $e){
+            Db::rollback();
+            
+            Log::error('分红收益异常：'.$e->getMessage(),$e);
+            throw $e;
+        }
+    }
+
+    public function rank(){
+        $data = UserRelation::rankList();
+        foreach($data as $item){
+            Db::startTrans();
+            try{
+                User::changeInc($item['user_id'],$item['reward'],'team_bonus_balance',8,0,2,'共富功臣奖励');
+                Db::commit();
+            }catch(Exception $e){
+                Db::rollback();
+                Log::error('团队排名奖励异常：'.$e->getMessage(),$e);
+                throw $e;
+            }
+        }
+
     }
 
     public function fixSecondBonus(){
@@ -141,7 +190,7 @@ class CheckSubsidy extends Command
 
     }
 
-    protected function bonus($order){
+/*     protected function bonus($order){
         Db::startTrans();
         try{
             echo "正在处理订单{$order['id']}\n";
@@ -173,7 +222,7 @@ class CheckSubsidy extends Command
             Log::error('分红收益异常：'.$order['id'].' '.$e->getMessage(),$e);
             throw $e;
         }
-    }
+     }*/
 
     protected function test(){
         $data = User::field('id,realname,phone')->whereIn('invite_code',['4421900','4263164','7318805','3631948','8762543','6526978'])->select();
