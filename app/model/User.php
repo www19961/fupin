@@ -353,7 +353,7 @@ class User extends Model
         return true;
     }
 
-    public static function changeInc($user_id,$amount,$field,$type,$relation_id = 0,$log_type = 1, $remark = '',$admin_user_id=0,$status=1,$sn_prefix=''){
+    public static function changeInc($user_id,$amount,$field,$type,$relation_id = 0,$log_type = 1, $remark = '',$admin_user_id=0,$status=1,$sn_prefix='MR'){
         $user = User::where('id', $user_id)->find();
         $after_balance = $user[$field]+$amount;
         if($amount<0 && $user[$field]<abs($amount)){
