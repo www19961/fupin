@@ -103,7 +103,7 @@ class SigninController extends AuthController
             $is_rich = $assetOrder['rich'] ==1 ? 1 : 0;
         }
 
-        if($is_rich == 0){
+        if($is_rich == 0 && !$assetOrder){
             if($user['invest_amount']>=1500){
                 $is_rich = 1;
             }
