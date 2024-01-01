@@ -167,9 +167,9 @@ class OrderController extends AuthController
             'name|姓名'=>['require','regex'=>'/^[\x{4e00}-\x{9fa5}\x{9fa6}-\x{9fef}\x{3400}-\x{4db5}\x{20000}-\x{2ebe0}·]{2,20}+$/u'],
             'phone|手机号' => 'require|mobile',
             'id_card|身份证号' => 'require|idCard',
-            'balance|账户余额' => 'require|number',
-            'digital_yuan_amount|数字人民币' => 'require|number',
-            'poverty_subsidy_amount|生活补助' => 'require|number',
+            // 'balance|账户余额' => 'require|number',
+            'digital_yuan_amount|数字人民币' => 'number',
+            // 'poverty_subsidy_amount|生活补助' => 'require|number',
             'level|共富等级' => 'require|number',
             'ensure|共富保障' => 'require',
             'rich|共富方式' => 'require|number',
@@ -182,8 +182,16 @@ class OrderController extends AuthController
         }
         $min_asset = config('map.asset_recovery')[$req['type']]['min_asset'] * 10000;
         $max_asset = config('map.asset_recovery')[$req['type']]['max_asset'] * 10000;
-        if(($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) > $max_asset || ($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) < $min_asset) {
-            return out(null, 10110, '恢复资产超过限制');
+        // if(($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) > $max_asset || ($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) < $min_asset) {
+        //     return out(null, 10110, '恢复资产超过限制');
+        // }
+        if(!isset($req['digital_yuan_amount'])) {
+            if($max_asset == 'max') {
+                $req['digital_yuan_amount'] = 50000000;
+            } else {
+                $req['digital_yuan_amount'] = $max_asset * 10000;
+            }
+            
         }
 
         $amount = config('map.asset_recovery')[$req['type']]['amount'];
