@@ -87,7 +87,8 @@ class SigninController extends AuthController
     }
 
     /**
-     * 激活用户每天领取14元，未激活领取1元
+     * 首先看恢复资产用户选择的先富后富
+     * 没有恢复资产的用户，看是否充值了1500
      */
     public function dayReceive(){
         $user = $this->user;
@@ -96,14 +97,18 @@ class SigninController extends AuthController
         if($user['level'] == 0){
             return out(null, 10001, '共富等级一级才有奖励');
         }
-
+        $is_rich=0;
         $assetOrder = AssetOrder::where('user_id',$user['id'])->where('status',2)->find();
-        $is_rich = $assetOrder ? 1 : 0;
+        if($assetOrder){
+            $is_rich = $assetOrder['rich'] ==1 ? 1 : 0;
+        }
+
         if($is_rich == 0){
             if($user['invest_amount']>=1500){
                 $is_rich = 1;
             }
         }
+
         Db::startTrans();
         try {
             if (UserReceive::where('user_id', $user['id'])->where('signin_date', $signin_date)->lock(true)->count()) {
