@@ -58,7 +58,7 @@ class HomeController extends AuthController
 
     public function uploadSummernoteImg()
     {
-        $img_url = upload_file('img_url',true,false);
+        $img_url = upload_file2('img_url',true,false);
 
         return out(['img_url' => env('app.img_host').$img_url, 'filename' => md5(time()).'.jpg']);
     }

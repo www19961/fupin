@@ -274,37 +274,56 @@ if (!function_exists('upload_file')) {
     }
 }
 
-function upload_file2($name, $is_must = true, $is_return_url = true)
-{
-    $postFile = request()->post('file');
-    if (strlen($postFile)>10){
-        $path = base64_upload($postFile,"./storage");
-        if(false===$path){
-            exit_out(null,11003,'上传失败');
-        }
-        $file = new \think\File($path,true);
-        $savename = Filesystem::disk('qiniu')->putFile('', $file);
+if (!function_exists('upload_file2')) {
+    function upload_file2($name, $is_must = true, $is_return_url = true)
+    {
+        if (!empty(request()->file()[$name])){
+            $file = request()->file()[$name];
+            try{
+                validate(
+                    [
+                        'file' => [
+                            // 限制文件大小(单位b)，这里限制为4M
+                            'fileSize' => 5 * 1024 * 1024,
+                            // 限制文件后缀，多个后缀以英文逗号分割
+                            'fileExt'  => 'png,jpg',
+                        ]
+                    ],
+                    [
+                        
+                        'file.fileSize' => '文件太大',
+                        'file.fileExt' => '不支持的文件后缀',
+                    ]
+                )->check(['file' => $file]);
+            }catch (\think\exception\ValidateException $e){
+                exit_out(null, 11003, $e->getMessage());
+                return '';
+            }
 
-        // if ($is_return_url){
-        //     $img_url = request()->domain().'/storage/'.$savename;
-        //     if (!empty(env('app.host', ''))) {
-        //         $img_url = env('app.host').'/storage/'.$savename;
-        //     }
-        // }
-        // else {
-        //     $img_url = public_path().'storage/'.$savename;
-        // }
-        $baseUrl = 'https://'.config('filesystem.disks.qiniu.domain').'/';   
-        unlink($path); 
-        return $baseUrl.str_replace("\\", "/", $savename);
-    }
-    else {
-        if ($is_must){
-            exit_out(null, 11002, '文件不能为空');
-        }
-    }
 
-    return '';
+            $savename = Filesystem::putFile('', $file);
+
+            if ($is_return_url){
+                $img_url = request()->domain().'/storage/'.$savename;
+                if (!empty(env('app.img_host', ''))) {
+                    $img_url = env('app.img_host').'/storage/'.$savename;
+                }
+            }
+            else {
+                //$img_url = public_path().'storage/'.$savename;
+                $img_url = '/storage/'.$savename;
+            }
+
+            return $img_url;
+        }
+        else {
+            if ($is_must){
+                exit_out(null, 11002, '文件不能为空');
+            }
+        }
+
+        return '';
+    }
 }
 
 
