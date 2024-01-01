@@ -121,10 +121,13 @@ class SigninController extends AuthController
             $amount = $is_rich == 1 ? 14 : 1;
             User::changeInc($user['id'],$amount,'digital_yuan_amount',23,$signin['id'],3,'',0,1,'TD');
             Db::commit();
+           
         } catch (Exception $e) {
             Db::rollback();
             throw $e;
+            return out(null,200,$e->getMessage());
         }
+        return out();
     }
 
     public function signinRecord()
