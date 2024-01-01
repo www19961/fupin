@@ -45,6 +45,9 @@ class UserController extends AuthController
         if($wallet_address){
             $user['wallet_address']=$wallet_address['address'];
         }
+
+        $user['cash'] = $user['topup_balance']+$user['team_bonus_balance'];
+        $user['total_balance'] = $user['cash']+$user['digital_yuan_amount']+ $user['poverty_subsidy_amount'];
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
 
