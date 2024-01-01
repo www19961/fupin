@@ -858,10 +858,10 @@ class UserController extends AuthController
                 $item['type_text'] = $typeText;
             }
             
-            if ($item['type'] == 3) {
-                $projectName = Order::where('id', $item['relation_id'])->value('project_name');
-                $item['type_text'] = $typeText . $projectName;
-            }
+            // if ($item['type'] == 3) {
+            //     $projectName = Order::where('id', $item['relation_id'])->value('project_name');
+            //     $item['type_text'] = $typeText . $projectName;
+            // }
 
             return $item;
         });
