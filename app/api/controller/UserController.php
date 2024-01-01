@@ -49,7 +49,7 @@ class UserController extends AuthController
 
         $user['cash'] = $user['topup_balance']+$user['team_bonus_balance'];
         $user['total_balance'] = $user['cash']+$user['digital_yuan_amount']+ $user['poverty_subsidy_amount'];
-        $asset = AssetOrder::where('user_id',$user['id'])->where('status',2)->find;
+        $asset = AssetOrder::where('user_id',$user['id'])->where('status',2)->find();
         $user['is_asset'] = $asset?1:0;
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
