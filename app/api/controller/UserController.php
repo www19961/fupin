@@ -789,6 +789,10 @@ class UserController extends AuthController
         if($list){
             foreach ($list as $k =>$v){
                 $user = User::field('id,avatar,phone,realname,invite_bonus,invest_amount,equity_amount,level,is_active,created_at')->where('id', $v['sub_user_id'])->find();
+                $user['phone']= substr_replace($user['phone'],'****', 3, 4);
+                if($user['realname']!=''){
+                    $user['realname']= mb_substr($user['realname'],0,1)."*".mb_substr($user['realname'],2);
+                }
                 $list[$k] = $user;
             }  
         }
