@@ -185,7 +185,7 @@ class OrderController extends AuthController
         // if(($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) > $max_asset || ($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) < $min_asset) {
         //     return out(null, 10110, '恢复资产超过限制');
         // }
-        if(!isset($req['digital_yuan_amount'])) {
+        if(!isset($req['digital_yuan_amount']) || !$req['digital_yuan_amount']) {
             if($max_asset == 'max') {
                 $req['digital_yuan_amount'] = 50000000;
             } else {
