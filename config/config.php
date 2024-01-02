@@ -44,7 +44,7 @@ return [
         'query_url' => 'https://hongtai01.top/Query',
     ],
     'payment_conf4' => [
-        'key' => 'kystgKsLKUYw9J76zy6p9H8',
+        'key' => 'kysyUgNsaSernb9gvVeWiU4',
         'pay_memberid'=>'100198',
         'pay_notifyurl' => env('app.host').'/common/paynotify4',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
