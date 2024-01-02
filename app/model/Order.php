@@ -237,8 +237,8 @@ class Order extends Model
                 //'digital_yuan_status' => 2
             ]);
         } elseif ($project['project_group_id'] == 2) {
-            User::changeInc($user_id,$project['withdrawal_limit'],'withdrawal_limit',22,$order['id'],5);
-            User::changeInc($user_id,$project['digital_red_package'],'digital_yuan_amount',23,$order['id'],3);
+            User::changeInc($user_id,$project['withdrawal_limit'],'withdrawal_limit',22,$order['id'],5,'',0,1,'ZS');
+            User::changeInc($user_id,$project['digital_red_package'],'digital_yuan_amount',23,$order['id'],3,'',0,1,'ZS');
             Order::where('id', $order['id'])->update([
                 'status' => 4,
                 'pay_time' => time(),
@@ -248,7 +248,7 @@ class Order extends Model
             ]);
         } elseif ($project['project_group_id'] == 3) {
             User::where('id', $user_id)->update(['can_open_digital' => 1]);
-            User::changeInc($user_id,$project['single_amount'],'digital_yuan_amount',12,$order['id'],3, '激活账单返还本金');
+            User::changeInc($user_id,$project['single_amount'],'digital_yuan_amount',12,$order['id'],3, '激活账单返还本金','',1,'JH');
             Order::where('id', $order['id'])->update([
                 'status' => 4,
                 'pay_time' => time(),

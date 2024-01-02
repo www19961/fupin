@@ -213,7 +213,7 @@ class UserController extends AuthController
         }
         //User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
         $text = isset($req['remark']) || $req['remark']==''?'管理员充值'.$text:$req['remark'];
-        User::changeInc($req['user_id'],$req['money'],$filed,$balance_type,0,$log_type,$text,$adminUser['id']);
+        User::changeInc($req['user_id'],$req['money'],$filed,$balance_type,0,$log_type,$text,$adminUser['id'],1,'RJ');
 
         return out();
     }

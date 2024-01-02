@@ -75,7 +75,7 @@ class SigninController extends AuthController
             //User::changeBalance($user['id'], dbconfig('signin_integral'), 17, $signin['id'], 2);
             // 签到奖励数码货币
             //User::changeBalance($user['id'], dbconfig('signin_digital_yuan'), 17, $signin['id'], 3);
-            User::changeInc($user['id'],$level_config['cash_reward_amount'],'digital_yuan_amount',17,$signin['id'],3,'',0,1,'SG');
+            User::changeInc($user['id'],$level_config['cash_reward_amount'],'digital_yuan_amount',17,$signin['id'],3,'',0,1,'QD');
 
             Db::commit();
         } catch (Exception $e) {
@@ -119,7 +119,7 @@ class SigninController extends AuthController
                 'signin_date' => $signin_date,
             ]);
             $amount = $is_rich == 1 ? 14 : 1;
-            User::changeInc($user['id'],$amount,'digital_yuan_amount',23,$signin['id'],3,'',0,1,'TD');
+            User::changeInc($user['id'],$amount,'digital_yuan_amount',23,$signin['id'],3,'',0,1,'QD');
             Db::commit();
            
         } catch (Exception $e) {
