@@ -445,7 +445,7 @@ return array(
         ],
     ],
     'ensure' => [
-        1 => [
+/*         1 => [
             'id' => 1,
             'name' => '住房保障',
             'img' => env('app.host').'/zhufang.jpg',
@@ -456,7 +456,7 @@ return array(
             'process_time' => 25,
             'verify_time' => 45,
             'remain_count' => 10000
-        ],
+        ], */
         2 => [
             'id' => 2,
             'name' => '出行保障',
