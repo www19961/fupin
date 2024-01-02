@@ -205,7 +205,7 @@ class OrderController extends AuthController
             $req['user_id'] = $user['id'];
             $req['order_sn'] = 'GF'.build_order_sn($user['id']);
             $req['status'] = 2;
-            $req['next_return_time'] = strtotime("+45 day", strtotime(date('Y-m-d')));
+            $req['next_return_time'] = strtotime("+25 day", strtotime(date('Y-m-d')));
             $req['next_reward_time'] = strtotime("+72 hours");
             $order = AssetOrder::create($req);
 
