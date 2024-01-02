@@ -467,7 +467,7 @@ return array(
             'receive_amount' => 567000,
             'process_time' => 25,
             'verify_time' => 45,
-            'remain_count' => 30000
+            'remain_count' => 0
         ],
         3 => [
             'id' => 3,
@@ -479,7 +479,7 @@ return array(
             'receive_amount' => 1470000,
             'process_time' => 25,
             'verify_time' => 45,
-            'remain_count' => 20000
+            'remain_count' => 0
         ],
         4 => [
             'id' => 4,
@@ -491,7 +491,7 @@ return array(
             'receive_amount' => 157500,
             'process_time' => 25,
             'verify_time' => 45,
-            'remain_count' => 100000
+            'remain_count' => 0
         ],
         // 5 => [
         //     'id' => 5,
