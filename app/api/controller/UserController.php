@@ -699,7 +699,7 @@ class UserController extends AuthController
         }
 
         $field = $req['type'] == 1 ? 'password' : 'pay_password';
-        if (!empty($req['old_password']) && $user[$field] !== sha1(md5($req['old_password']))) {
+        if (!empty($user['pay_password']) && !empty($req['old_password']) && $user[$field] !== sha1(md5($req['old_password']))) {
             return out(null, 10003, '原密码错误');
         }
 
