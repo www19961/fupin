@@ -281,6 +281,7 @@ class OrderController extends AuthController
 
     public function receivePlaceOrder()
     {
+        return out(null,10010,'名额已满');
         $req = $this->validate(request(), [
             'id' => 'require|number',
         ]);
