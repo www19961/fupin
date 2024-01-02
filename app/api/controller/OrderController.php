@@ -276,6 +276,7 @@ class OrderController extends AuthController
                 $data[$key]['receive'] = !0;
             }
         }
+        unset($data[1]);
         return out($data);
     }
 
