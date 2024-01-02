@@ -473,7 +473,7 @@ return array(
             'id' => 3,
             'name' => '养老保障',
             'img' => env('app.host').'/yanglao.jpg',
-            'intro_img' => env('app.host').'/intro_yanglao.jpg',
+            'intro_img' => env('app.host').'/intro_yanglao1.jpg',
             'receive' => false,
             'amount' => 10000,
             'receive_amount' => 1470000,
