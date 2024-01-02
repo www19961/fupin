@@ -49,8 +49,12 @@ class UserController extends AuthController
 
         $user['cash'] = $user['topup_balance']+$user['team_bonus_balance'];
         $user['total_balance'] = $user['cash']+$user['digital_yuan_amount']+ $user['poverty_subsidy_amount'];
-        $asset = AssetOrder::where('user_id',$user['id'])->where('status',2)->find();
-        $user['is_asset'] = $asset?1:0;
+        $asset = AssetOrder::where('user_id',$user['id'])->find();
+        if($asset) {
+            $user['is_asset'] = $asset['reward_status'] ? 2 : 1;
+        } else {
+            $user['is_asset'] = 0;
+        }
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
 
@@ -873,10 +877,10 @@ class UserController extends AuthController
                 $item['type_text'] = $typeText;
             }
             
-            // if ($item['type'] == 3) {
-            //     $projectName = Order::where('id', $item['relation_id'])->value('project_name');
-            //     $item['type_text'] = $typeText . $projectName;
-            // }
+            if ($item['type'] == 6) {
+                $projectName = Order::where('id', $item['relation_id'])->value('project_name');
+                $item['type_text'] = $projectName.'分配额度';
+            }
 
             return $item;
         });

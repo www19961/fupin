@@ -421,25 +421,25 @@ return array(
         ],
         3 => [
             'type' => 3,
-            'amount' => 300,
+            'amount' => 500,
             'min_asset' => 301,
             'max_asset' => 600
         ],
         4 => [
             'type' => 4,
-            'amount' => 400,
+            'amount' => 1000,
             'min_asset' => 601,
             'max_asset' => 1000
         ],
         5 => [
             'type' => 5,
-            'amount' => 500,
+            'amount' => 2000,
             'min_asset' => 1001,
             'max_asset' => 3000
         ],
         6 => [
             'type' => 6,
-            'amount' => 1000,
+            'amount' => 3000,
             'min_asset' => 3001,
             'max_asset' => 'max'
         ],

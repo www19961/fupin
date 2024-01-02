@@ -40,9 +40,13 @@ class CheckAssetBonus extends Command
     {
         Db::startTrans();
         try{
-            User::changeInc($order['user_id'],$order['balance'],'digital_yuan_amount',27,$order['id'],3,'',0,1,'JJ');
+            //User::changeInc($order['user_id'],$order['balance'],'digital_yuan_amount',27,$order['id'],3);
             User::changeInc($order['user_id'],$order['digital_yuan_amount'],'digital_yuan_amount',27,$order['id'],3,'',0,1,'JJ');
-            User::changeInc($order['user_id'],$order['poverty_subsidy_amount'],'poverty_subsidy_amount',27,$order['id'],3,'',0,1,'JJ');
+            $user = User::where('id', $order['user_id'])->find();
+            if($user['level'] < $order['level']) {
+                User::where('id', $order['user_id'])->update(['level' => $order['level']]);
+            }
+            //User::changeInc($order['user_id'],$order['poverty_subsidy_amount'],'poverty_subsidy_amount',27,$order['id'],3);
             AssetOrder::where('id',$order->id)->update(['reward_status'=>1]);
             Db::Commit();
         }catch(Exception $e){

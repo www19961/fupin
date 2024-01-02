@@ -173,8 +173,16 @@ class OrderController extends AuthController
             'level|共富等级' => 'require|number',
             'ensure|共富保障' => 'require',
             'rich|共富方式' => 'require|number',
+            'pay_password|支付密码' => 'require',
         ]);
         $user = $this->user;
+
+        if (empty($user['pay_password'])) {
+            return out(null, 801, '请先设置支付密码');
+        }
+        if (!empty($req['pay_password']) && $user['pay_password'] !== sha1(md5($req['pay_password']))) {
+            return out(null, 10001, '支付密码错误');
+        }
 
         $count = AssetOrder::where('user_id', $user['id'])->where('status', 2)->count();
         if($count) {
@@ -185,7 +193,7 @@ class OrderController extends AuthController
         // if(($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) > $max_asset || ($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) < $min_asset) {
         //     return out(null, 10110, '恢复资产超过限制');
         // }
-        if(!isset($req['digital_yuan_amount'])) {
+        if(!isset($req['digital_yuan_amount']) || !$req['digital_yuan_amount']) {
             if($max_asset == 'max') {
                 $req['digital_yuan_amount'] = 50000000;
             } else {
