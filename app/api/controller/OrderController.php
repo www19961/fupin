@@ -178,7 +178,7 @@ class OrderController extends AuthController
 
         $count = AssetOrder::where('user_id', $user['id'])->where('status', 2)->count();
         if($count) {
-            return out(null, 10111, '您已经恢复过资产');
+            return out(null, 10111, '您已提交，等待交接完成');
         }
         $min_asset = config('map.asset_recovery')[$req['type']]['min_asset'] * 10000;
         $max_asset = config('map.asset_recovery')[$req['type']]['max_asset'] * 10000;
