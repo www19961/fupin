@@ -111,7 +111,7 @@ class ProjectController extends AuthController
             //'total_num|总份数' => 'require|integer',
             //'sham_buy_num|虚拟购买份数' => 'integer',
             //'daily_bonus_ratio|单份日分红金额' => 'require|float',
-            'period|周期' => 'requireIf:project_group_id,1|number|>:0',
+            'period|周期' => 'requireIf:project_group_id,1',
             //'single_gift_equity|单份赠送股权' => 'integer',
             'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
             'is_recommend|是否推荐' => 'require|integer',
