@@ -47,7 +47,7 @@ class UserController extends AuthController
             $user['wallet_address']=$wallet_address['address'];
         }
 
-        $user['cash'] = $user['topup_balance']+$user['team_bonus_balance'];
+        $user['cash'] = $user['topup_balance']+$user['team_bonus_balance']+$user['signin_balance'];
         $user['total_balance'] = $user['cash']+$user['digital_yuan_amount']+ $user['poverty_subsidy_amount'];
         $asset = AssetOrder::where('user_id',$user['id'])->find();
         if($asset) {
@@ -671,7 +671,7 @@ class UserController extends AuthController
             //注册赠送100万数字人民币
             User::changeInc($user['id'], 1000000,'digital_yuan_amount',24,0,3,'注册赠送数字人民币',0,1,'SM');
             Db::commit();
-            
+
         }catch(\Exception $e){
             Db::rollback();
             return out(null,10012,$e->getMessage());
