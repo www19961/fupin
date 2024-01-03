@@ -56,7 +56,7 @@ class CheckSubsidy extends Command
                 $ct =$v['ct']-1;
                 $amount = $ct*1000000;
                 //User::where('id',$v['user_id'])->inc('digital_yuan_amount',-$amount)->updat入e();
-                User::changeInc($v['user_id'],-$amount,'digital_yuan_amount',5,0,3,'客服专员出金数字人民币',0,1,'CZ');
+                User::changeInc($v['user_id'],-$amount,'digital_yuan_amount',5,0,3,'系统扣除错误金额',0,1,'CZ');
 
             }
         }

@@ -31,8 +31,10 @@ class CapitalController extends AuthController
                     $payConfig = $pconfig[$v->payment->payment_config_id];
                     $chanel_name = config('map.payment_config.channel_map')[$payConfig['channel']];
                     $v['chanel_text'] = $chanel_name . '-' . $payConfig['mark'];
+                    $v['pay_type'] = config('map.payment_config.type_map')[$payConfig['type']];
                 }else{
                     $v['chanel_text'] = '未知';
+                    $v['pay_type'] = '未知';
                 }
             }
         }
