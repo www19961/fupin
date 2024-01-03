@@ -32,9 +32,6 @@ class ProjectController extends AuthController
             $daysDiff = floor(($timestampEnd - $timestampStart) / (60 * 60 * 24) + 1);
             
             $item['virtually_progress'] = round($daysDiff / $item['virtually_progress'], 2) * 100;
-            if($item['virtually_progress'] < 10) {
-                $item['virtually_progress'] = 10;
-            }
 
         }
         return out($data);
