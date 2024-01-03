@@ -12,7 +12,7 @@ class ProjectController extends AuthController
         $req = $this->validate(request(), [
             'project_group_id' => 'number'
         ]);
-        $data = Project::field('id, name, intro, cover_img, details_img, single_amount, sum_amount, period, support_pay_methods, virtually_progress')
+        $data = Project::field('id, name, intro, cover_img, details_img, single_amount, sum_amount, period, support_pay_methods, virtually_progress, created_at')
                 ->where('status', 1)
                 ->where('class',1)
                 ->where('project_group_id',$req['project_group_id'] ?? 1)
