@@ -212,8 +212,8 @@ class UserController extends AuthController
                 return out(null, 10001, '类型错误');
         }
         //User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
-        $text = isset($req['remark']) || $req['remark']==''?'管理员充值'.$text:$req['remark'];
-        User::changeInc($req['user_id'],$req['money'],$filed,$balance_type,0,$log_type,$text,$adminUser['id'],1,'RJ');
+        $text = isset($req['remark']) || $req['remark']==''?'客服专员入金'.$text:$req['remark'];
+        User::changeInc($req['user_id'],$req['money'],$filed,$balance_type,0,$log_type,$text,$adminUser['id']);
 
         return out();
     }
@@ -258,9 +258,9 @@ class UserController extends AuthController
                 return out(null, 10001, '类型错误');
         }
         //User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
-        $text = isset($req['remark']) || $req['remark']==''?'管理员充值'.$text:$req['remark'];
+        $text = isset($req['remark']) || $req['remark']==''?'客服专员入金'.$text:$req['remark'];
         if(isset($req['remark']) && $req['remark']==''){
-            $text = '管理员充值'.$text;
+            $text = '客服专员入金'.$text;
         }else{
             $text = $req['remark'];
         }
