@@ -30,7 +30,8 @@ class ProjectController extends AuthController
             $timestampEnd = strtotime($endDate);
             // 计算两个日期之间相隔的天数
             $daysDiff = floor(($timestampEnd - $timestampStart) / (60 * 60 * 24) + 1);
-            $item['virtually_progress'] = round($daysDiff / ($item['period'] ? $item['period'] : 45), 2) * 100;
+            
+            $item['virtually_progress'] = round($daysDiff / $item['virtually_progress'], 2) * 100;
             if($item['virtually_progress'] < 10) {
                 $item['virtually_progress'] = 10;
             }
