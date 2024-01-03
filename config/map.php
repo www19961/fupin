@@ -384,6 +384,7 @@ return array(
         8=>100,
         9=>100,
         10=>100,
+        11=>20,
     ],
     'noDomainArr'=>[
             // 'api.nhxij.com',
