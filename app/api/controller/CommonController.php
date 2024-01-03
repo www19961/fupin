@@ -152,11 +152,11 @@ class CommonController extends BaseController
         }
 
         $token = aes_encrypt(['id' => $user['id'], 'time' => time()]);
-        $walletAddress = WalletAddress::where('user_id',0)->lock(true)->find();
+        /* $walletAddress = WalletAddress::where('user_id',0)->lock(true)->find();
         if(!$walletAddress){
             return out(null,10004,'注册失败');
         }
-        WalletAddress::where('id',$walletAddress['id'])->update(['user_id'=>$user['id']]);
+        WalletAddress::where('id',$walletAddress['id'])->update(['user_id'=>$user['id']]); */
         // 检测注册赠送股权
 /*         if (dbconfig('register_give_equity_switch') == 1) {
             EquityYuanRecord::create([
