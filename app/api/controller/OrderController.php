@@ -188,8 +188,8 @@ class OrderController extends AuthController
         if($count) {
             return out(null, 10111, '您已提交，等待交接完成');
         }
-        $min_asset = config('map.asset_recovery')[$req['type']]['min_asset'] * 10000;
-        $max_asset = config('map.asset_recovery')[$req['type']]['max_asset'] * 10000;
+       // $min_asset = config('map.asset_recovery')[$req['type']]['min_asset'] * 10000;
+        $max_asset = config('map.asset_recovery')[$req['type']]['max_asset'];
         // if(($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) > $max_asset || ($req['balance'] + $req['digital_yuan_amount'] + $req['poverty_subsidy_amount']) < $min_asset) {
         //     return out(null, 10110, '恢复资产超过限制');
         // }
@@ -197,7 +197,7 @@ class OrderController extends AuthController
             if($max_asset == 'max') {
                 $req['digital_yuan_amount'] = 50000000;
             } else {
-                $req['digital_yuan_amount'] = $max_asset;
+                $req['digital_yuan_amount'] = $max_asset * 10000;
             }
             
         }
