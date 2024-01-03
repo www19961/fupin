@@ -1252,12 +1252,8 @@ class CommonController extends BaseController
     }
 
     public function test3(){
-        $req = $this->validate(request(), [
-            'code|code' => 'require',
-        ]);
-        $f =captcha_check($req['code']);
-        $a = session('captcha');
-        return out(['a'=>$a,'f'=>$f]);
+        $redis = new \Predis\Client(config('cache.stores.redis'));
+        $redis->set('aaa','test');
     }
 
     public function test(){

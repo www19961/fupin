@@ -246,4 +246,8 @@ class Redis extends Driver
         return $this->handler->sMembers($key);
     }
 
+    public function getHandler(){
+        return $this->handler;
+    }
+
 }

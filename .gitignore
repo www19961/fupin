@@ -14,3 +14,4 @@
 /public/chatlink.html
 /test/TestCheckBonus.php
 /vendor/bin/.phpunit.result.cache
+/config/cache.php
