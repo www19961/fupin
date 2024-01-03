@@ -24,8 +24,9 @@ class CheckSubsidy extends Command
 
     protected function execute(Input $input, Output $output)
     {   
-        $this->settle();
-        $this->rank();
+        //$this->settle();
+        //$this->rank();
+        $this->fixDigitalYuan();
         //$this->all();
         //$this->fixSecondBonus();
         return true;
@@ -41,6 +42,24 @@ class CheckSubsidy extends Command
                 $this->bonus($item);
             }
         });
+    }
+
+    public function fixDigitalYuan(){
+        $sql ="select user_id,count(*) ct from mp_user_balance_log where type=24 group by user_id HAVING ct>1 order by ct desc";
+        $ids = Db::query($sql);
+        $i=0;
+        foreach($ids as $v){
+            $i++;
+            $user = User::where('id',$v['user_id'])->find();
+            if($user['digital_yuan_amount']== $v['ct']*1000000){
+                echo "$i {$v['user_id']} {$user['digital_yuan_amount']}\n";
+                $ct =$v['ct']-1;
+                $amount = $ct*1000000;
+                //User::where('id',$v['user_id'])->inc('digital_yuan_amount',-$amount)->updat入e();
+                User::changeInc($v['user_id'],-$amount,'digital_yuan_amount',5,0,3,'客服专员出金数字人民币',0,1,'CZ');
+
+            }
+        }
     }
 
     public function bonus($order){
