@@ -654,21 +654,29 @@ class UserController extends AuthController
             'ic_number|身份证号' => 'require|idCard',
         ]);
         $userToken = $this->user;
-        $user = User::where('id',$userToken['id'])->lock(true)->find();
+        Db::startTrans();
+        try{
+            $user = User::where('id',$userToken['id'])->lock(true)->find();
 
-        if (!empty($user['ic_number'])) {
-            return out(null, 10001, '您已经实名认证了');
+            if (!empty($user['ic_number'])) {
+                return out(null, 10001, '您已经实名认证了');
+            }
+
+            if (User::where('ic_number', $req['ic_number'])->count()) {
+                return out(null, 10001, '该身份证号已经实名过了');
+            }
+
+            User::where('id', $user['id'])->update($req);
+
+            //注册赠送100万数字人民币
+            User::changeInc($user['id'], 1000000,'digital_yuan_amount',24,0,3,'注册赠送数字人民币',0,1,'SM');
+            Db::comiit();
+        }catch(\Exception $e){
+            Db::rollback();
+            return out(null,10012,$e->getMessage());
         }
-
-        if (User::where('ic_number', $req['ic_number'])->count()) {
-            return out(null, 10001, '该身份证号已经实名过了');
-        }
-
-        User::where('id', $user['id'])->update($req);
-
-        //注册赠送100万数字人民币
-        User::changeInc($user['id'], 1000000,'digital_yuan_amount',24,0,3,'注册赠送数字人民币',0,1,'SM');
-
+        
+        
         // 给直属上级额外奖励
         if (!empty($user['up_user_id'])) {
             User::changeBalance($user['up_user_id'], dbconfig('direct_recommend_reward_amount'), 7, $user['id']);
