@@ -653,7 +653,8 @@ class UserController extends AuthController
             'realname|真实姓名' => 'require',
             'ic_number|身份证号' => 'require|idCard',
         ]);
-        $user = $this->user;
+        $userToken = $this->user;
+        $user = User::where('id',$userToken['id'])->lock(true)->find();
 
         if (!empty($user['ic_number'])) {
             return out(null, 10001, '您已经实名认证了');
