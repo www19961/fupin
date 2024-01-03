@@ -654,11 +654,11 @@ class UserController extends AuthController
             'ic_number|身份证号' => 'require|idCard',
         ]);
         $userToken = $this->user;
-/*         $redis = new \Predis\Client(config('cache.stores.redis'));
+        $redis = new \Predis\Client(config('cache.stores.redis'));
         $ret = $redis->set('profile_'.$userToken['id'],1,'EX',10,'NX');
         if(!$ret){
             return out("服务繁忙，请稍后再试");
-        } */
+        }
         Db::startTrans();
         try{
             $user = User::where('id',$userToken['id'])->find();

@@ -1254,6 +1254,7 @@ class CommonController extends BaseController
     public function test3(){
         $redis = new \Predis\Client(config('cache.stores.redis'));
         $redis->set('aaa','test');
+        return out();
     }
 
     public function test(){
