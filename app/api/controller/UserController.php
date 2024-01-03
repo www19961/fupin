@@ -670,7 +670,8 @@ class UserController extends AuthController
 
             //注册赠送100万数字人民币
             User::changeInc($user['id'], 1000000,'digital_yuan_amount',24,0,3,'注册赠送数字人民币',0,1,'SM');
-            Db::comiit();
+            Db::commit();
+            
         }catch(\Exception $e){
             Db::rollback();
             return out(null,10012,$e->getMessage());
