@@ -663,7 +663,7 @@ class UserController extends AuthController
         try{
             $user = User::where('id',$userToken['id'])->find();
             
-            if (!empty($user['ic_number'])) {
+            if ($user['ic_number']!='') {
                 return out(null, 10001, '您已经实名认证了');
             }
 
