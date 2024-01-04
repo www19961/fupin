@@ -12,7 +12,7 @@ class ProjectController extends AuthController
         $req = $this->validate(request(), [
             'project_group_id' => 'number'
         ]);
-        $data = Project::field('id, name, intro, cover_img, details_img, single_amount, sum_amount, period, support_pay_methods, virtually_progress')
+        $data = Project::field('id, name, intro, cover_img, details_img, single_amount, sum_amount, period, support_pay_methods, virtually_progress, created_at')
                 ->where('status', 1)
                 ->where('class',1)
                 ->where('project_group_id',$req['project_group_id'] ?? 1)
@@ -24,6 +24,15 @@ class ProjectController extends AuthController
             //$item['project_income']=$item['sum_amount'];
             $item['sum_amount'] = intval($item['sum_amount']);
             $item['project_end_time'] = date("m月d日", strtotime("+{$item['period']} day", strtotime($item['created_at'])));
+
+            $endDate = date('Y-m-d');
+            $timestampStart = strtotime($item['created_at']);
+            $timestampEnd = strtotime($endDate);
+            // 计算两个日期之间相隔的天数
+            $daysDiff = floor(($timestampEnd - $timestampStart) / (60 * 60 * 24) + 1);
+            
+            $item['virtually_progress'] = round($daysDiff / ($item['virtually_progress'] ? $item['virtually_progress'] : 45), 2) * 100;
+
         }
         return out($data);
     }
