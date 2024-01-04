@@ -25,8 +25,8 @@ class CheckSubsidy extends Command
     protected function execute(Input $input, Output $output)
     {   
         //$this->settle();
-        //$this->rank();
-        $this->fixDigitalYuan();
+        $this->rank();
+        //$this->fixDigitalYuan();
         //$this->all();
         //$this->fixSecondBonus();
         return true;
@@ -82,7 +82,7 @@ class CheckSubsidy extends Command
     }
 
     public function rank(){
-        $data = UserRelation::rankList();
+        $data = UserRelation::rankList('yesterday');
         foreach($data as $item){
             Db::startTrans();
             try{
@@ -96,6 +96,7 @@ class CheckSubsidy extends Command
         }
 
     }
+
 
     public function fixSecondBonus(){
         $yesterday = date("Y-m-d",strtotime("-1 day"));

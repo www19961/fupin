@@ -118,7 +118,7 @@ class CapitalController extends AuthController
             return out(null, 10001, '请联系客服下载最新app');
         }
         $req = $this->validate(request(), [
-            'amount|提现金额' => 'require|number',
+            'amount|提现金额' => 'require|float',
             'pay_channel|收款渠道' => 'require|number',
             'pay_password|支付密码' => 'require',
             'bank_id|银行卡'=>'require|number',

@@ -64,6 +64,8 @@ class CheckBonus extends Command
              $this->bonus_ensure_reward($item);
          }
      });
+
+     $this->rank();
     }
 
     // public function execute(Input $input, Output $output)
@@ -100,7 +102,7 @@ class CheckBonus extends Command
     // }
 
     public function rank(){
-        $data = UserRelation::rankList();
+        $data = UserRelation::rankList('yesterday');
         foreach($data as $item){
             Db::startTrans();
             try{
