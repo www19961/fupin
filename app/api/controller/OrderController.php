@@ -26,6 +26,7 @@ class OrderController extends AuthController
             'pay_password|支付密码' => 'requireIf:pay_method,1|requireIf:pay_method,5',
             'pay_voucher_img_url|支付凭证' => 'requireIf:pay_method,6|url',
         ]);
+
         $user = $this->user;
 
         if (empty($user['pay_password'])) {
@@ -42,6 +43,12 @@ class OrderController extends AuthController
 
         if (!in_array($req['pay_method'], $project['support_pay_methods'])) {
             return out(null, 10001, '不支持该支付方式');
+        }
+
+        $redis = new \Predis\Client(config('cache.stores.redis'));
+        $ret = $redis->set('order_'.$user['id'],1,'EX',5,'NX');
+        if(!$ret){
+            return out("服务繁忙，请稍后再试");
         }
 
         Db::startTrans();
