@@ -460,7 +460,7 @@ class User extends Model
             //User::where('id', $user_id)->inc('invest_amount', $amount)->update();
 /*             $orderSum = Order::where('user_id',$user_id)->where('status','>=',2)->sum('single_amount');
             $assetOrderSum = UserBalanceLog::where('user_id',$user_id)->where('type',25)->sum('change_balance');
- */         $user = User::where('id',$user_id)->filed('invest_amount')->find();
+ */         $user = User::where('id',$user_id)->field('invest_amount')->find();
 
             $new_level = LevelConfig::where('min_topup_amount', '<=', intval($user['invest_amount']))->order('min_topup_amount', 'desc')->value('level');
             $user = User::where('id',$user_id)->field('level')->find();
