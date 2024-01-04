@@ -264,8 +264,9 @@ class Order extends Model
                 // 下级用户激活
                 UserRelation::where('sub_user_id', $order['user_id'])->update(['is_active' => 1]);
             }
-        
 
+            User::where('id',$user_id)->inc('invest_amount',$order['single_amount'])->update();
+            User::upLevel($user_id);
         return !0;
 
 
@@ -273,22 +274,8 @@ class Order extends Model
         //$dividend_cycle = explode(' ',$order['dividend_cycle']);
         $next_bonus_time = strtotime(date('Y-m-d 00:00:00', strtotime('+1 day')));
         //$end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.($dividend_cycle[0] * $order['period']).' '.$dividend_cycle[1])));
-        $end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['period'].' day')));
+        //$end_time = strtotime(date('Y-m-d 00:00:00', strtotime('+'.$order['period'].' day')));
 
-
-        $certificate = Certificate::where('user_id',$order['user_id'])->where('project_group_id',$order['project_group_id'])->find();
-        if(!$certificate){
-            $realname = User::where('id',$order['user_id'])->value('realname');
-            $group = config('map.project')['group'];
-            Certificate::create([
-                'user_id' => $order['user_id'],
-                'project_group_id' => $order['project_group_id'],
-                'name'=>$group[$order['project_group_id']],
-                'realname'=>$realname,
-                'no'=>Certificate::getNo($order['user_id'],$order['project_group_id']),
-                'created_at' => date('Y-m-d H:i:s'),
-            ]);
-        }
 
         // 股权和数字人民
         // if ($order['single_gift_equity'] > 0) {
@@ -354,11 +341,11 @@ class Order extends Model
             User::where('id', $order['user_id'])->inc('invest_amount', $order['buy_amount'])->update();
         } */
         // 判断激活
-        $up_user_id = User::where('id', $order['user_id'])->value('up_user_id');
+/*         $up_user_id = User::where('id', $order['user_id'])->value('up_user_id');
         if (!empty($up_user_id)) {
             $upUser = User::where('id', $up_user_id)->find();
             $now_level = $upUser['level'];
-        }
+        } */
 
 
         // 如果不是积分兑换才算直推奖励和团队奖励

@@ -226,12 +226,12 @@ class OrderController extends AuthController
 
             
             //购买产品和资产恢复都要激活用户
-            $userUpdate = ['can_open_digital' => 1];
+            $userUpdate = ['can_open_digital' => 1,'invest_amount'=>Db::raw('invest_amount+'.$amount)];
             if ($user['is_active'] == 0) {
                 $userUpdate['is_active'] = 1;
                 $userUpdate['active_time'] = time();
                 // 下级用户激活
-                \app\model\UserRelation::where('sub_user_id', $user['user_id'])->update(['is_active' => 1]);
+                \app\model\UserRelation::where('sub_user_id', $user['id'])->update(['is_active' => 1]);
             }
             //跳转支付 等待支付接口
             User::changeInc($user['id'],-$amount,'topup_balance',25,$order['id'],1, '资产交接',0,1,'JJ');
@@ -255,7 +255,7 @@ class OrderController extends AuthController
                 $order = EnsureOrder::create($insert);
             }
 
-
+            User::upLevel($user['id']);
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();

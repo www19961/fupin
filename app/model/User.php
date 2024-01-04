@@ -410,18 +410,11 @@ class User extends Model
     public function teamBonus($user_id,$amount,$paymentId){
         //总充值金额
         //if ($order['pay_method'] != 5) {
-            User::where('id', $user_id)->inc('invest_amount', $amount)->update();
         //} 
         $user = User::where('id',$user_id)->field('id,up_user_id,invest_amount,level')->find();
         if(empty($user)){
             throw new Exception('用户不存在');
         }
-        // 检测用户升级
-        $new_level = LevelConfig::where('min_topup_amount', '<=', intval($user['invest_amount']))->order('min_topup_amount', 'desc')->value('level');
-        if ($user['level'] < $new_level) {
-            User::where('id', $user['id'])->update(['level' => $new_level]);
-        }
-
 
         $upUser = User::where('id',$user['up_user_id'])->field('level')->find();
         if(empty($upUser)){
@@ -460,6 +453,20 @@ class User extends Model
                 //$user = User::where('id', $order['user_id'])->find();
 
             //}
+    }
+
+    public static function upLevel($user_id){
+                // 检测用户升级
+            //User::where('id', $user_id)->inc('invest_amount', $amount)->update();
+/*             $orderSum = Order::where('user_id',$user_id)->where('status','>=',2)->sum('single_amount');
+            $assetOrderSum = UserBalanceLog::where('user_id',$user_id)->where('type',25)->sum('change_balance');
+ */         $user = User::where('id',$user_id)->filed('invest_amount')->find();
+
+            $new_level = LevelConfig::where('min_topup_amount', '<=', intval($user['invest_amount']))->order('min_topup_amount', 'desc')->value('level');
+            $user = User::where('id',$user_id)->field('level')->find();
+            if ($user['level'] < $new_level) {
+                User::where('id', $user['id'])->update(['level' => $new_level]);
+            }
     }
 
     public static function isThreeStage($userId){

@@ -279,7 +279,7 @@ class UserController extends AuthController
         return out($data);
     }
     
-    public function hongbao(){
+/*     public function hongbao(){
         $user = $this->user;
         $zg = UserRelation::where('user_id',$user['id'])->where('level',1)->where('is_active',1)->select();
         $data = [];
@@ -359,7 +359,7 @@ class UserController extends AuthController
         }
         return out($data);
 
-    }
+    } */
 
     public function wallet(){
         $user = $this->user;
@@ -684,9 +684,9 @@ class UserController extends AuthController
         
         
         // 给直属上级额外奖励
-        if (!empty($user['up_user_id'])) {
+/*         if (!empty($user['up_user_id'])) {
             User::changeBalance($user['up_user_id'], dbconfig('direct_recommend_reward_amount'), 7, $user['id']);
-        }
+        } */
 
         // // 把注册赠送的股权给用户
         // EquityYuanRecord::where('user_id', $user['id'])->where('type', 1)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);

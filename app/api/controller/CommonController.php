@@ -31,7 +31,7 @@ class CommonController extends BaseController
 {
    
    
-        public function shanchuba(){
+/*         public function shanchuba(){
         $filename = 'shanchu.csv';
         $sql = 'select user_id from mp_order where project_id=10 and status=2   group by user_id having count(*)>1';
         $member= Db::query($sql);
@@ -49,7 +49,7 @@ class CommonController extends BaseController
         }else{
             echo "ok";die;
         }
-    }
+    } */
     
      public function getversion(){
         
@@ -170,7 +170,7 @@ class CommonController extends BaseController
             ]);
         } */
         // 检测注册赠送数字人民币
-        if (dbconfig('register_give_digital_yuan_switch') == 1) {
+        //if (dbconfig('register_give_digital_yuan_switch') == 1) {
            // User::changeInc($user['id'],dbconfig('register_give_digital_yuan_num'),'digital_yuan_amount',5,$user['id'],3,'赠送数字人民币');
 /*             EquityYuanRecord::create([
                 'user_id' => $user['id'],
@@ -181,7 +181,7 @@ class CommonController extends BaseController
                 'give_time' => time(),
                 'num' => round(dbconfig('register_give_digital_yuan_num')),
             ]); */
-        }
+        //}
         // 检测注册赠送贫困补助金
 /*         if (dbconfig('register_give_poverty_subsidy_amount_switch') == 1) {
             EquityYuanRecord::create([
