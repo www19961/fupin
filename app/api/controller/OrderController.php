@@ -45,11 +45,11 @@ class OrderController extends AuthController
             return out(null, 10001, '不支持该支付方式');
         }
 
-        $redis = new \Predis\Client(config('cache.stores.redis'));
+/*         $redis = new \Predis\Client(config('cache.stores.redis'));
         $ret = $redis->set('order_'.$user['id'],1,'EX',5,'NX');
         if(!$ret){
             return out("服务繁忙，请稍后再试");
-        }
+        } */
 
         Db::startTrans();
         try {
