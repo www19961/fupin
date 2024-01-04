@@ -106,7 +106,7 @@ class CheckBonus extends Command
         foreach($data as $item){
             Db::startTrans();
             try{
-                User::changeInc($item['user_id'],$item['reward'],'team_bonus_balance',8,0,2,'共富功臣奖励');
+                User::changeInc($item['user_id'],$item['reward'],'team_bonus_balance',29,0,2,'共富功臣奖励');
                 Db::commit();
             }catch(Exception $e){
                 Db::rollback();

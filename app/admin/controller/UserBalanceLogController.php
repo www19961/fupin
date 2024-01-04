@@ -13,6 +13,10 @@ class UserBalanceLogController extends AuthController
 
         //$req['log_type'] = 1;
         $data = $this->logList($req);
+        $typeMap = config('map.user_balance_log.balance_type_map');
+        foreach($data as &$item){
+            $item['type_text'] = $typeMap[$item['type']];
+        }
 
         $this->assign('req', $req);
         $this->assign('data', $data);
