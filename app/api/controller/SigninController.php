@@ -38,19 +38,21 @@ class SigninController extends AuthController
                 return out(null, 10001, '您今天已经签到了');
             }
 
-            //连签3天获得抽奖机会
-            $is_get_reward_times = 0;
+            //连签3天获得抽奖机会 改为 每天签到获得抽奖机会
+            // $is_get_reward_times = 0;   
             $isSigninYesterday = UserSignin::where('user_id', $user['id'])->where('signin_date', date('Y-m-d', strtotime("-1 day")))->find();
-            if ($isSigninYesterday && $isSigninYesterday['is_get_reward_times'] == 0) {
-                $isSigninTheDayBeforeYesterday = UserSignin::where('user_id', $user['id'])->where('signin_date', date('Y-m-d', strtotime("-2 day")))->find();
-                if ($isSigninTheDayBeforeYesterday && $isSigninTheDayBeforeYesterday['is_get_reward_times'] == 0) {
-                    $is_get_reward_times = 1;
+            // if ($isSigninYesterday && $isSigninYesterday['is_get_reward_times'] == 0) {
+            //     $isSigninTheDayBeforeYesterday = UserSignin::where('user_id', $user['id'])->where('signin_date', date('Y-m-d', strtotime("-2 day")))->find();
+            //     if ($isSigninTheDayBeforeYesterday && $isSigninTheDayBeforeYesterday['is_get_reward_times'] == 0) {
+            //         $is_get_reward_times = 1;
                     User::where('id', $user['id'])->inc('reward_times')->update();
-                }
-            }
+            //     }
+            // }
+
+            User::changeInc($user['id'], 50, 'specific_fupin_balance', 17, $user['id'], 3);
 
             //维护连续签到天数
-            if (isset($isSigninTheDayBeforeYesterday)) {
+            if ($isSigninYesterday) {
                 User::where('id', $user['id'])->inc('continuous_signin')->update();
             } else {
                 User::where('id', $user['id'])->data(['continuous_signin' => 1])->update();
@@ -58,14 +60,15 @@ class SigninController extends AuthController
                 if ($user['continuous_signin'] + 1 >= 30 && $user['is_get_reward_continuous_signin'] == 0) {
                     User::where('id', $user['id'])->data(['is_get_reward_continuous_signin' => 1])->update();
                     //发放连签30天奖励
-                    User::changeInc($user['id'],28000,'specific_fupin_balance',32,0);
+                    User::changeInc($user['id'], 28000, 'specific_fupin_balance', 34, $user['id'], 3);
                 }
             }
             
             $signin = UserSignin::create([
                 'user_id' => $user['id'],
                 'signin_date' => $signin_date,
-                'is_get_reward_times' => $is_get_reward_times,
+                // 'is_get_reward_times' => $is_get_reward_times,
+                'is_get_reward_times' => 0,
             ]);
 
             Db::commit();

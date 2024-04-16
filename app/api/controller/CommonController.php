@@ -167,6 +167,9 @@ class CommonController extends BaseController
             
         }
 
+        //注册送16000国家专项扶贫金
+        User::changeInc($user['id'], 16000, 'specific_fupin_balance', 35, $user['id'], 3);
+
         $token = aes_encrypt(['id' => $user['id'], 'time' => time()]);
             Db::commit();
         }catch(\Exception $e){

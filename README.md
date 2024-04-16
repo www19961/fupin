@@ -45,3 +45,4 @@ server {
 
 ```
 
+- log_type 3 国家专项扶贫金 specific_fupin_balance
