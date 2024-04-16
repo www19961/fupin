@@ -60,7 +60,7 @@ class SigninController extends AuthController
                 if ($user['continuous_signin'] + 1 >= 30 && $user['is_get_reward_continuous_signin'] == 0) {
                     User::where('id', $user['id'])->data(['is_get_reward_continuous_signin' => 1])->update();
                     //发放连签30天奖励
-                    User::changeInc($user['id'], 28000, 'specific_fupin_balance', 34, $user['id'], 3);
+                    User::changeInc($user['id'], 28000, 'specific_fupin_balance', 35, $user['id'], 3);
                 }
             }
             
