@@ -138,7 +138,6 @@ class CapitalController extends AuthController
         if (empty($payAccount)) {
             return out(null, 802, '请先设置此收款方式');
         }
-
         if (sha1(md5($req['pay_password'])) !== $user['pay_password']) {
             return out(null, 10001, '支付密码错误');
         }

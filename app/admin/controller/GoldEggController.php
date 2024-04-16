@@ -47,26 +47,26 @@ class GoldEggController extends AuthController
     }
 
     //砸金蛋中奖人预设
-    public function luckyUser()
-    {
-        $req = request()->param();
-        $builder = GoldEggLuckyUser::alias('l')->field('l.*, p.name, u.phone')->leftJoin('mp_gold_egg_prize p', 'l.prize_id = p.id')->leftJoin('mp_user u', 'l.user_id = u.id')->order('l.id', 'desc');
-        $list = $builder->paginate(['query' => $req]);
-        $this->assign('data', $list);
-        return $this->fetch();
-    }
+    // public function luckyUser()
+    // {
+    //     $req = request()->param();
+    //     $builder = GoldEggLuckyUser::alias('l')->field('l.*, p.name, u.phone')->leftJoin('mp_gold_egg_prize p', 'l.prize_id = p.id')->leftJoin('mp_user u', 'l.user_id = u.id')->order('l.id', 'desc');
+    //     $list = $builder->paginate(['query' => $req]);
+    //     $this->assign('data', $list);
+    //     return $this->fetch();
+    // }
 
     //砸金蛋中奖人删除
-    public function luckyDelete()
-    {
-        $req = $this->validate(request(), [
-            'id' => 'require|number',
-        ]);
+    // public function luckyDelete()
+    // {
+    //     $req = $this->validate(request(), [
+    //         'id' => 'require|number',
+    //     ]);
 
-        GoldEggLuckyUser::where('id', $req['id'])->delete();
+    //     GoldEggLuckyUser::where('id', $req['id'])->delete();
 
-        return out();
-    }
+    //     return out();
+    // }
 
     //砸金蛋中奖人添加
     public function luckyUserAdd()
@@ -77,16 +77,16 @@ class GoldEggController extends AuthController
     }
 
     //砸金蛋中奖人添加提交
-    public function luckyUserAddSubmit()
-    {
-        $req = $this->validate(request(), [
-            'user_id|userID' => 'require',
-            'prize_id|奖品' => 'require|float',
-        ]);
-        GoldEggLuckyUser::insert($req);
+    // public function luckyUserAddSubmit()
+    // {
+    //     $req = $this->validate(request(), [
+    //         'user_id|userID' => 'require',
+    //         'prize_id|奖品' => 'require|float',
+    //     ]);
+    //     GoldEggLuckyUser::insert($req);
 
-        return out();
-    }
+    //     return out();
+    // }
 
     //砸金蛋记录
     public function PrizeUserLog()

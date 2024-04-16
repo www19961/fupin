@@ -476,7 +476,7 @@ class Order extends Model
         try{
             $order = Order::where('id',$order_id)->find();
             $project = Project::where('id',$order['project_id'])->find();
-            self::orderPayComplete($order['id'], $project, $order['user_id']);
+            //self::orderPayComplete($order['id'], $project, $order['user_id']);
         }catch(Exception $e){
             \think\facade\Log::error('warpOrderComplete:'.$e->getMessage().$e->getLine().$e->getFile());
             throw $e;

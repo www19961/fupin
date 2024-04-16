@@ -168,7 +168,6 @@ class CommonController extends BaseController
         }
 
         $token = aes_encrypt(['id' => $user['id'], 'time' => time()]);
-
             Db::commit();
         }catch(\Exception $e){
             throw $e;
