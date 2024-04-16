@@ -31,6 +31,8 @@ class OrderReward extends Command
 
                     User::changeInc($order['user_id'],$order['reward'],'specific_balance',31,0);
                     Order::where('id', $order['id'])->update(['status' => 2]);
+                    //国家扶贫金
+                    User::changeInc($order['user_id'], $order['fupin_reward'], 'specific_fupin_balance', 36, $order['id'], 3);
 
                     Db::commit();
                 } catch (Exception $e) {

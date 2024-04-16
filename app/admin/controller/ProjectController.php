@@ -76,6 +76,7 @@ class ProjectController extends AuthController
             // 'daily_bonus_ratio|单份日分红金额' => 'float',
             // 'dividend_cycle|分红周期' => 'max:32',
             'days|周期' => 'require',
+            'fupin_reward|周期' => 'require',
             //'single_gift_equity|单份赠送股权' => 'integer',
             // 'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
             // 'is_recommend|是否推荐' => 'require|integer',
@@ -83,6 +84,7 @@ class ProjectController extends AuthController
             // 'support_pay_methods|支付方式' => 'require|max:100',
             'sort|排序号' => 'integer',
             'reward|总收益金额' => 'require',
+            'rate|进度' => 'require',
             // 'virtually_progress|虚拟进度' => 'integer',
             // 'total_quota|总名额' => 'max:32',
             // 'remaining_quota|剩余名额' => 'max:32',
@@ -114,6 +116,7 @@ class ProjectController extends AuthController
             $arr[$k]['price'] = $req['price'][$k];
             $arr[$k]['reward'] = $req['reward'][$k];
             $arr[$k]['days'] = $req['days'][$k];
+            $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
             $arr[$k]['project_id'] = $insId;
         }
         ProjectItem::insertAll($arr);
@@ -127,6 +130,7 @@ class ProjectController extends AuthController
             'id' => 'require|number',
             'name|项目名称' => 'require|max:100',
             'price|金额' => 'require',
+            'fupin_reward|周期' => 'require',
             // 'min_amount|最小购买金额' => 'float',
             // 'max_amount|最大购买金额' => 'float',
             //'single_integral|单份积分' => 'integer',
@@ -142,6 +146,7 @@ class ProjectController extends AuthController
             // 'support_pay_methods|支持的支付方式' => 'require|max:100',
             'sort|排序号' => 'integer',
             'reward|总收益金额' => 'require',
+            'rate|进度' => 'require',
             //'bonus_multiple|奖励倍数' => 'require|>=:0',
             // 'virtually_progress|虚拟进度' => 'integer',
             // 'total_quota|总名额' => 'max:32',
@@ -178,6 +183,7 @@ class ProjectController extends AuthController
             $arr[$k]['reward'] = $req['reward'][$k];
             $arr[$k]['days'] = $req['days'][$k];
             $arr[$k]['project_id'] = $req['id'];
+            $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
         }
         ProjectItem::where('project_id', $req['id'])->delete();
         ProjectItem::insertAll($arr);

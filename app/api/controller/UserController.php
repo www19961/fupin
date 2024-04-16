@@ -393,8 +393,38 @@ class UserController extends AuthController
         $data['wallet']=$u;
         $data['list'] = $list;
         return out($data);
+    }
 
 
+    public function wallet_specific_fupin(){
+        $user = $this->user;
+        $umodel = new User();
+        //$user['invite_bonus'] = $umodel->getInviteBonus(0,$user);
+        //$user['total_balance'] = bcadd($user['topup_balance'],$user['balance'],2);
+        $map = config('map.user_balance_log')['type_map'];
+        $list = UserBalanceLog::where('user_id',$user['id'])
+        ->where('log_type',3)
+        //->whereIn('type',[1,2,3,13,18,19,30,31,32,4,5,6,7,8])
+        ->order('created_at','desc')
+        ->paginate(10)
+        ->each(function($item,$key) use ($map){
+            $typeText = $map[$item['type']];
+            $item['type_text'] = $typeText;
+            if($item['type']==3){
+                $projectName = Order::where('id',$item['relation_id'])->value('project_name');
+                $item['type_text']=$typeText.$projectName;
+            }
+            
+            return $item;
+        });
+        // $u=[
+        //     'topup_balance'=>$user['topup_balance'],
+        //     'total_balance'=>$user['total_balance'],
+        //     'balance'=>$user['balance'],
+        // ];
+        // $data['wallet']=$u;
+        $data['list'] = $list;
+        return out($data);
     }
 
     //数字人民币转账

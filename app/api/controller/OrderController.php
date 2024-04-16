@@ -50,6 +50,11 @@ class OrderController extends AuthController
             if (!$project || $project['status'] == 0) {
                 return out(null, 10001, '项目不存在');
             }
+
+            if ($project['rate'] == 100) {
+                return out(null, 10001, '当日份额已经售罄');
+            }
+
             $projectItemIds = ProjectItem::where('project_id', $projectItem['project_id'])->column('id');
             $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->whereIn('project_id', $projectItemIds)->find();
             if ($isBuyThisTypeProduct) {
