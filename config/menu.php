@@ -26,11 +26,11 @@ return array(
                     //         'icon' => 'fa-circle-o',
                     //         'url' => 'admin/GoldEgg/luckyUser',
                     //     ),
-                    // '中奖记录' =>
-                    //     array(
-                    //         'icon' => 'fa-circle-o',
-                    //         'url' => 'admin/GoldEgg/GoldEggPrizeUserLog',
-                    //     ),
+                    '中奖记录' =>
+                        array(
+                            'icon' => 'fa-circle-o',
+                            'url' => 'admin/GoldEgg/PrizeUserLog',
+                        ),
                     // '许愿树设置' =>
                     //     array(
                     //         'icon' => 'fa-circle-o',

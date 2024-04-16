@@ -88,7 +88,7 @@ class GoldEggController extends AuthController
     //     return out();
     // }
 
-    //砸金蛋记录
+    //中奖记录
     public function PrizeUserLog()
     {
         $req = request()->param();
@@ -106,7 +106,7 @@ class GoldEggController extends AuthController
             $builder->where('u.phone', $req['phone']);
         }
         
-        $builder = $builder->leftJoin('mp_gold_egg_prize p', 'l.prize_id = p.id')->leftJoin('mp_user u', 'l.user_id = u.id')->order('l.id', 'desc');
+        $builder = $builder->leftJoin('mp_prize p', 'l.prize_id = p.id')->leftJoin('mp_user u', 'l.user_id = u.id')->order('l.id', 'desc');
         $list = $builder->paginate(['query' => $req]);
         $prize = Prize::select();
         $this->assign('prize', $prize);
