@@ -4,6 +4,6 @@ use app\middleware\ResWarp;
 
 return [
 
-    // ReqWarp::class,
-    // ResWarp::class,
+    ReqWarp::class,
+    ResWarp::class,
 ];
