@@ -456,7 +456,21 @@ class UserController extends AuthController
         $req = request()->param();
         $authentication = Authentication::find($req['id']);
         User::where('id', $authentication['user_id'])->data(['realname' => $authentication['realname']])->update();
-        Authentication::where('user_id', $authentication['user_id'])->data(['status' => 1])->update();
+        Authentication::where('user_id', $authentication['user_id'])->data(['status' => 1,'checked_at' => date('Y-m-d H:i:s')])->update();
+        return out();
+    }
+
+    public function batchPass()
+    {
+        $req = request()->param();
+        foreach ($req['ids'] as $key => $value) {
+            $authentication = Authentication::find($value);
+            if ($authentication['status'] != 0) {
+                continue;
+            }
+            User::where('id', $authentication['user_id'])->data(['realname' => $authentication['realname']])->update();
+            Authentication::where('user_id', $authentication['user_id'])->data(['status' => 1, 'checked_at' => date('Y-m-d H:i:s')])->update();    
+        }
         return out();
     }
 

@@ -56,6 +56,7 @@
 <!--                             <th>倍数</th>
  <!--                           <th>虚拟进度</th> -->
                              <th>排序号</th>
+                             <th>进度</th>
                             <th>创建时间</th>
                             <th>操作</th>
                         </tr>
@@ -112,6 +113,7 @@
                                     </div>
                                 </td> -->
                                 <td>{$v['sort']}</td>
+                                <td>{$v['rate']}%</td>
                                 <td>{$v['created_at']}</td>
                                 <td>
                                     <a {:auth_show_judge('Project/editProject')} class="btn btn-flat btn-info btn-xs"

@@ -30,6 +30,7 @@
             </option>
         </select>
         <input class="btn btn-flat btn-primary m_10" type="submit" value="搜索">
+        <input class="btn btn-flat btn-primary m_10 batchPass" type="button" value="批量通过">
     </form>
 </div>
 
@@ -41,6 +42,9 @@
                     <table class="table table-bordered table-hover table-striped">
                         <tbody>
                         <tr>
+                            <th>
+                                <input type="checkbox" id="checkedAll">
+                            </th>
                             <th>ID</th>
                             <th>姓名</th>
                             <th>性别</th>
@@ -55,6 +59,7 @@
                         </tr>
                         <?php foreach ($data as $k => $v) { ?>
                             <tr>
+                                <td><input type="checkbox" id="checkedAll" class="user-id"></td>
                                 <td>{$v['id']}</td>
                                 <td>{$v['realname']}</td>
                                 <td>{$v['gender']}</td>
@@ -83,6 +88,28 @@
 </div>
 
 <script>
+    $(function() {
+        $('.batchPass').on('click', function() {
+            var ids = [];
+            var checkedCheckboxes = $('.user-id:checked');
+            checkedCheckboxes.each(function() {
+                ids.push($(this).parent().next().text())
+            })
+            console.log(ids)
+            $.post('<?php echo url("admin/User/batchPass") ?>', {ids: ids}, function (res) {
+                if (res.code == '200') {
+                    window.location.reload();
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 3000});
+                }
+            });
+        })
+        $('#checkedAll').on('click', function() {
+            var status = $(this).prop('checked')
+            $('.user-id').attr('checked', status)
+        })
+    })
+
     function pass(id)
     {
         $.post('<?php echo url("admin/User/pass") ?>', {id: id}, function (res) {
