@@ -489,7 +489,7 @@ class UserController extends AuthController
                 $fieldText = '现金余额';
                 $logType = 1;
              }else{
-                 $field = 'team_bonus_balance';
+                 $field = 'balance';
                  $fieldText = '可提现余额';
                  $logType = 1;
              }
