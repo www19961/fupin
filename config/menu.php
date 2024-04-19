@@ -149,11 +149,11 @@ return array(
             'icon' => 'fa-gears',
             'url' =>
                 array(
-                    // '支付渠道配置' =>
-                    //     array(
-                    //         'icon' => 'fa-circle-o',
-                    //         'url' => 'admin/PaymentConfig/paymentConfigList',
-                    //     ),
+                    '支付渠道配置' =>
+                        array(
+                            'icon' => 'fa-circle-o',
+                            'url' => 'admin/PaymentConfig/paymentConfigList',
+                        ),
                     // '股权K线图' =>
                     //     array(
                     //         'icon' => 'fa-circle-o',
