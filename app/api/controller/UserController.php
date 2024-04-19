@@ -437,8 +437,8 @@ class UserController extends AuthController
             'pay_password|支付密码' => 'require',
         ]);//type 1 数字人民币，realname 对方姓名，account 对方账号，money 转账金额，pay_password 支付密码
         $user = $this->user;
-
-        if (empty($user['ic_number'])) {
+        
+        if (empty(Authentication::where('user_id', $user['id'])->where('status', 1)->find())) {
             return out(null, 10001, '请先完成实名认证');
         }
         if (empty($user['pay_password'])) {
@@ -476,7 +476,7 @@ class UserController extends AuthController
             if (!$take) {
                 exit_out(null, 10002, '用户不存在');
             }
-            if (empty($take['ic_number'])) {
+            if (empty(Authentication::where('user_id', $take['id'])->where('status', 1)->find())) {
                 exit_out(null, 10002, '请收款用户先完成实名认证');
             }
             
