@@ -1287,9 +1287,10 @@ class UserController extends AuthController
         $req = request()->post();
         $data = $this->validate($req, [
             'layer|层级' => 'require|number',
+            'pageLimit|条数' => 'number',
         ]);
 
-        $list = UserRelation::field('r.*, u.realname')->alias('r')->leftJoin('mp_user u', 'u.id = r.sub_user_id')->where('r.user_id', $user['id'])->where('r.level', $data['layer'])->paginate(5);
+        $list = UserRelation::field('r.*, u.realname')->alias('r')->leftJoin('mp_user u', 'u.id = r.sub_user_id')->where('r.user_id', $user['id'])->where('r.level', $data['layer'])->paginate($data['pageLimit']);
         return out($list);
     }
 
