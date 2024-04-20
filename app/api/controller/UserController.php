@@ -1284,7 +1284,7 @@ class UserController extends AuthController
     public function layerInfoSonList()
     {
         $user = $this->user;
-        $req = request()->post();
+        $req = request()->param();
         $data = $this->validate($req, [
             'layer|层级' => 'require|number',
             'pageLimit|条数' => 'number',
