@@ -1261,11 +1261,11 @@ class UserController extends AuthController
             $father = User::find($user['up_user_id'])['realname'];
         }
         //一级人数
-        $son1Ids = UserRelation::where('user_id', $user['id'])->where('level', 1)->count();
+        $son1Ids = UserRelation::alias('r')->leftJoin('mp_authentication a', 'a.user_id = r.sub_user_id')->where('r.user_id', $user['id'])->where('r.level', 1)->where('a.status', 1)->count();
         //二级人数
-        $son2Ids = UserRelation::where('user_id', $user['id'])->where('level', 2)->count();
+        $son2Ids = UserRelation::alias('r')->leftJoin('mp_authentication a', 'a.user_id = r.sub_user_id')->where('r.user_id', $user['id'])->where('r.level', 2)->where('a.status', 1)->count();
         //三级人数
-        $son3Ids = UserRelation::where('user_id', $user['id'])->where('level', 3)->count();
+        $son3Ids = UserRelation::alias('r')->leftJoin('mp_authentication a', 'a.user_id = r.sub_user_id')->where('r.user_id', $user['id'])->where('r.level', 3)->where('a.status', 1)->count();
         //推广奖励
         $promoteReward = UserBalanceLog::where('user_id', $user['id'])->where('type', 8)->sum('change_balance');
 
