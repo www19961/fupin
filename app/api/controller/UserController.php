@@ -1160,7 +1160,7 @@ class UserController extends AuthController
             'phone|手机号' => 'require|mobile',
             'card_front|身份证正面照片' => 'require',
             'card_back|身份证背面照片' => 'require',
-            'card_hand|手持身份证照片' => 'require',
+            // 'card_hand|手持身份证照片' => 'require',
         ]);
 
         $isAuthentication = Authentication::where('user_id', $user->id)->where('status', 'in', [0 ,1])->find();
@@ -1179,7 +1179,7 @@ class UserController extends AuthController
             'phone' => $req['phone'],
             'card_front' => $req['card_front'],
             'card_back' => $req['card_back'],
-            'card_hand' => $req['card_hand'],
+            // 'card_hand' => $req['card_hand'],
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
