@@ -76,7 +76,7 @@ class ProjectController extends AuthController
             // 'daily_bonus_ratio|单份日分红金额' => 'float',
             // 'dividend_cycle|分红周期' => 'max:32',
             'days|周期' => 'require',
-            'fupin_reward|周期' => 'require',
+            'fupin_reward|国家扶贫金' => 'require',
             //'single_gift_equity|单份赠送股权' => 'integer',
             // 'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
             // 'is_recommend|是否推荐' => 'require|integer',
