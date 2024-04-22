@@ -239,7 +239,7 @@ class UserController extends AuthController
     public function invite(){
         $user = $this->user;
         $host = env('app.host', '');
-        $frontHost = env('app.front_host', 'https://h5.vyxsgcz.com');
+        $frontHost = env('common.callback_url', '');
        
         $url = "$frontHost/#/pages/system-page/gf_register?invite_code={$user['invite_code']}";
         $img = $user['invite_img'];
