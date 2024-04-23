@@ -49,6 +49,7 @@
                             <th>姓名</th>
                             <th>性别</th>
                             <th>手机号</th>
+                            <th>身份证号</th>
                             <th>身份证正面</th>
                             <th>身份证反面</th>
                             <th>状态</th>
@@ -63,6 +64,7 @@
                                 <td>{$v['realname']}</td>
                                 <td>{$v['gender']}</td>
                                 <td>{$v['phone']??''}</td>
+                                <td>{$v['id_card']??''}</td>
                                 <td><a href="{$v['card_front']}" target="_blank"><img src="{$v['card_front']}" alt="" width="50" height="50"></a></td>
                                 <td><a href="{$v['card_back']}" target="_blank"><img src="{$v['card_back']}" alt="" width="50" height="50"></a></td>
                                 <td><?php if($v['status'] == 0){echo '待审核';}elseif($v['status']==1){echo '审核通过';}elseif($v['status'] == 2){echo '已拒绝';}?></td>
