@@ -1156,7 +1156,7 @@ class UserController extends AuthController
         Cache::set($clickRepeatName, 1, 5);
         $req= $this->validate(request(), [
             'realname|真实姓名' => 'require',
-            'id_card|身份证号' => 'require',
+            // 'id_card|身份证号' => 'require',
             'gender|性别' => 'require|number',
             'phone|手机号' => 'require|mobile',
             'card_front|身份证正面照片' => 'require',
@@ -1176,7 +1176,7 @@ class UserController extends AuthController
         Authentication::insert([
             'user_id' => $user->id,
             'realname' => $req['realname'],
-            'id_card' => $req['id_card'],
+            // 'id_card' => $req['id_card'],
             'gender' => $req['gender'],
             'phone' => $req['phone'],
             'card_front' => $req['card_front'],
