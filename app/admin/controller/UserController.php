@@ -480,7 +480,7 @@ class UserController extends AuthController
     public function reject()
     {
         $req = request()->param();
-        Authentication::where('user_id', $req['id'])->data(['status' => 2])->update();
+        Authentication::where('id', $req['id'])->data(['status' => 2])->update();
         return out();
     }
 
