@@ -46,7 +46,10 @@ class UserController extends AuthController
             }
         }
 
-        $data = $builder->paginate(['query' => $req]);
+        $data = $builder->paginate(['query' => $req])->each(function($item) {
+            $item['real_sub_user_num1'] = User::where('up_user_id', $item['id'])->where('realname', '<>', '')->count();
+            return $item;
+        });
 
         $this->assign('req', $req);
         $this->assign('data', $data);
