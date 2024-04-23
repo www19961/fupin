@@ -3,12 +3,12 @@
 namespace app\admin\controller;
 
 use app\model\Capital;
-use app\model\EquityYuanRecord;
 use app\model\User;
 use app\model\Message;
 use app\model\Authentication;
 use app\model\UserRelation;
 use think\facade\Db;
+use Exception;
 
 class UserController extends AuthController
 {
@@ -60,6 +60,10 @@ class UserController extends AuthController
         $data = [];
         if (!empty($req['id'])) {
             $data = User::where('id', $req['id'])->find();
+            $auth = Authentication::where('user_id', $req['id'])->where('status', 1)->find();
+            if ($auth) {
+                $data['ic_number'] = $auth['id_card'];
+            }
         }
         $this->assign('data', $data);
 
@@ -113,29 +117,49 @@ class UserController extends AuthController
         else {
             $req['pay_password'] = sha1(md5($req['pay_password']));
         }
-        if (empty($req['realname']) && !empty($req['ic_number'])) {
-            return out(null, 10001, '实名和身份证号必须同时为空或同时不为空');
-        }
-        if (!empty($req['realname']) && empty($req['ic_number'])) {
-            return out(null, 10001, '实名和身份证号必须同时为空或同时不为空');
-        }
+        // if (empty($req['realname']) && !empty($req['ic_number'])) {
+        //     return out(null, 10001, '实名和身份证号必须同时为空或同时不为空');
+        // }
+        // if (!empty($req['realname']) && empty($req['ic_number'])) {
+        //     return out(null, 10001, '实名和身份证号必须同时为空或同时不为空');
+        // }
 
         // 判断给直属上级额外奖励
-        if (!empty($req['realname']) && !empty($req['ic_number'])) {
-            if (User::where('ic_number', $req['ic_number'])->where('id', '<>', $req['id'])->count()) {
-                return out(null, 10001, '该身份证号已经实名过了');
-            }
+        // if (!empty($req['realname']) && !empty($req['ic_number'])) {
+        //     if (User::where('ic_number', $req['ic_number'])->where('id', '<>', $req['id'])->count()) {
+        //         return out(null, 10001, '该身份证号已经实名过了');
+        //     }
             
-            $user = User::where('id', $req['id'])->find();
-            if (!empty($user['up_user_id']) && empty($user['ic_number'])) {
-                User::changeBalance($user['up_user_id'], dbconfig('direct_recommend_reward_amount'), 7, $user['id']);
+        //     $user = User::where('id', $req['id'])->find();
+        //     if (!empty($user['up_user_id']) && empty($user['ic_number'])) {
+        //         User::changeBalance($user['up_user_id'], dbconfig('direct_recommend_reward_amount'), 7, $user['id']);
+        //     }
+        // }
+
+        Db::startTrans();
+        try {
+            User::where('id', $req['id'])->update($req);    
+            $auth = Authentication::where('user_id', $req['id'])->find();
+            if ($auth) {
+                $updateArr = [];
+                if (!empty($req['realname'])) {
+                    $updateArr['realname'] = $req['realname'];
+                }
+                if (!empty($req['ic_number'])) {
+                    $updateArr['id_card'] = $req['ic_number'];
+                }
+                if (count($updateArr) > 0) {
+                    Authentication::where('user_id', $req['id'])->data($updateArr)->update();
+                }
             }
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
         }
 
-        User::where('id', $req['id'])->update($req);
-
         // 把注册赠送的股权给用户
-        EquityYuanRecord::where('user_id', $req['id'])->where('type', 1)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
+        //EquityYuanRecord::where('user_id', $req['id'])->where('type', 1)->where('status', 1)->where('relation_type', 2)->update(['status' => 2, 'give_time' => time()]);
 
         return out();
     }
