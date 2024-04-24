@@ -263,7 +263,6 @@ class CapitalController extends AuthController
 
     public function batchAuditCapital()
     {
-        die;
         $req = $this->validate(request(), [
             'ids' => 'require|array',
             'status' => 'require|in:2,3,4',

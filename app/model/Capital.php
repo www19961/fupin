@@ -153,32 +153,32 @@ class Capital extends Model
         }
         else {
             // 如果是银联提现，就调用接口自动转账
-            if ($capital['pay_channel'] == 4 && dbconfig('automatic_withdrawal_switch') == 1) {
-                $client = new Client();
-                $payoutsReq = [
-                    'platform_id' => 'PF0200',
-                    'service_id' => 'SVC0004',
-                    'payout_cl_id' => $withdraw_sn ?? '',
-                    'amount' => round((0 - $capital['amount'])*100),
-                    'notify_url' => env('app.host').'/common/withdrawNotify',
-                    'name' => $capital['realname'],
-                    'number' => $capital['account'],
-                    'request_time' => time(),
-                ];
-                $payoutsReq['sign'] = withdraw_builder_sign($payoutsReq);
-                $rsp = $client->post('https://hbj168.club/gateway/api/v2/payouts', [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'content-type' => 'application/json;charset=utf-8',
-                    ],
-                    'json' => $payoutsReq,
-                ]);
-                $json = $rsp->getBody()->getContents();
-                $ret = json_decode($json, true);
-                if (!isset($ret['error_code']) || $ret['error_code'] != '0000') {
-                    exit_out(null, 10001, $ret['error_msg']??'请求第三方错误', $json);
-                }
-            }
+            // if ($capital['pay_channel'] == 4 && dbconfig('automatic_withdrawal_switch') == 1) {
+            //     $client = new Client();
+            //     $payoutsReq = [
+            //         'platform_id' => 'PF0200',
+            //         'service_id' => 'SVC0004',
+            //         'payout_cl_id' => $withdraw_sn ?? '',
+            //         'amount' => round((0 - $capital['amount'])*100),
+            //         'notify_url' => env('app.host').'/common/withdrawNotify',
+            //         'name' => $capital['realname'],
+            //         'number' => $capital['account'],
+            //         'request_time' => time(),
+            //     ];
+            //     $payoutsReq['sign'] = withdraw_builder_sign($payoutsReq);
+            //     $rsp = $client->post('https://hbj168.club/gateway/api/v2/payouts', [
+            //         'headers' => [
+            //             'Accept' => 'application/json',
+            //             'content-type' => 'application/json;charset=utf-8',
+            //         ],
+            //         'json' => $payoutsReq,
+            //     ]);
+            //     $json = $rsp->getBody()->getContents();
+            //     $ret = json_decode($json, true);
+            //     if (!isset($ret['error_code']) || $ret['error_code'] != '0000') {
+            //         exit_out(null, 10001, $ret['error_msg']??'请求第三方错误', $json);
+            //     }
+            // }
         }
 
         return $withdraw_sn ?? '';
