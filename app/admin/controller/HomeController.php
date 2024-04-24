@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\model\Capital;
 use app\model\Order;
 use app\model\User;
+use app\model\UserSignin;
 
 class HomeController extends AuthController
 {
@@ -48,6 +49,11 @@ class HomeController extends AuthController
 
         $arr['title'] = '提现总次数';
         $arr['value'] = Capital::where('status', 2)->where('type', 2)->where('log_type',0)->count();
+        $arr['url'] = '';
+        $data[] = $arr;
+
+        $arr['title'] = '当日签到人数';
+        $arr['value'] = UserSignin::where('signin_date', date('Y-m-d'))->count();
         $arr['url'] = '';
         $data[] = $arr;
 
