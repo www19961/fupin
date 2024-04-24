@@ -143,7 +143,7 @@ class Capital extends Model
                 if ($status == 3) {
                     $change = 0 - $capital['amount'];
                     //User::changeBalance($capital['user_id'], $change, 13, $id, 1, $audit_remark ?? '', $admin_user_id);
-                    User::changeInc($capital['user_id'], $change,'team_bonus_balance', 13, $id, 2, $audit_remark ?? '', $admin_user_id,1,'TX');
+                    User::changeInc($capital['user_id'], $change,'balance', 13, $id, 2, $audit_remark ?? '', $admin_user_id,1,'TX');
                 }
                 else {
                     // 审核通过把资金日志的提现记录变为已完成

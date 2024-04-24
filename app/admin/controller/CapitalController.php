@@ -173,7 +173,6 @@ class CapitalController extends AuthController
 
     public function auditWithdraw()
     {
-        die;
         $req = $this->validate(request(), [
             'id' => 'require|number',
             'status' => 'require|in:2,3,4',
