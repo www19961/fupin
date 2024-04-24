@@ -9,12 +9,12 @@ return [
     'register_key'=>'zgxcfzjjh007!',
 
     'payment_conf' => [
-        'key' => 'GIhthdG3yPhNvWWa8VzhLXCPEiNMCiG6',
-        'pay_memberid' => '231297029',
+        'key' => 'swUJKVlBq6iqYWwiYWTQjiT8pPgt28qF',
+        'pay_memberid' => '240449438',
         'pay_notifyurl' => env('app.host').'/common/paynotify',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
-        'payment_url' => 'https://hy543.top/Pay',
-        'query_url' => 'https://hy543.top/Query',
+        'payment_url' => 'https://hy211.top/Pay',
+        'query_url' => 'https://hy211.top/Query',
     ],
 
     'payment_conf2' => [
