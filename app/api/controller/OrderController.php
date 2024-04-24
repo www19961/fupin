@@ -56,9 +56,13 @@ class OrderController extends AuthController
             }
 
             $projectItemIds = ProjectItem::where('project_id', $projectItem['project_id'])->column('id');
-            $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->whereIn('project_id', $projectItemIds)->find();
+            // $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->whereIn('project_id', $projectItemIds)->find();
+            // if ($isBuyThisTypeProduct) {
+            //     return out(null, 10001, '每个项目只能购买一份');
+            // }
+            $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->find();
             if ($isBuyThisTypeProduct) {
-                return out(null, 10001, '每个项目只能购买一份');
+                return out(null, 10001, '只能购买一次');
             }
         }
 
