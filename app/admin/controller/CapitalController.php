@@ -224,7 +224,7 @@ class CapitalController extends AuthController
 
             Capital::where('id', $capital['id'])->update(['is_admin_confirm' => 1]);
             $userModel = new User();
-            $userModel->teamBonus($capital['user_id'], $capital['amount'], $capital['id']);
+            //$userModel->teamBonus($capital['user_id'], $capital['amount'], $capital['id']);
 
             Capital::topupPayComplete($capital['id'], $adminUser['id']);
 
