@@ -16,5 +16,6 @@ return [
         'checkAssetBonus'  =>  'app\common\command\CheckAssetBonus',
         'orderReward' => 'app\common\command\OrderReward',
         'makeKline' => 'app\common\command\MakeKline',
+        'BalanceFix' => 'app\common\command\BalanceFix',
     ],
 ];
