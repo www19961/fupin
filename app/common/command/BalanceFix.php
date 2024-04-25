@@ -24,22 +24,28 @@ class BalanceFix extends Command
 
     protected function execute(Input $input, Output $output)
     {
-        Db::name('user_balance_log')->where('log_type', 2)->where('remark', '团队奖励')->order('id', 'asc')->chunk(500, function($orders) {
+        Db::name('user_balance_log')->where('remark', '团队奖励')->where('origin_pay', 0)->order('id', 'asc')->chunk(500, function($orders) {
             foreach ($orders as $order) {
                 Db::startTrans();
                 try {
 
                     $user = User::find($order['user_id']);
-                    if ($user['team_bonus_balance'] >= $order['change_balance']) {
-                        Db::name('user')->where('id', $user['id'])->dec('team_bonus_balance', $order['change_balance'])->update();
-                        Db::name('user')->where('id', $user['id'])->inc('balance', $order['change_balance'])->update();
-                        Db::name('user_balance_log')->where('id', $order['id'])->update(['log_type' => 1]);
+                    if ($order['change_balance'] <= $user['balance']) {
+                        Db::name('user')->where('id', $user['id'])->dec('balance', $order['change_balance'])->update();
+                    } elseif ($order['change_balance'] > $user['balance']) {
+                        $dec = $user['balance'];
+                        if ($dec > 0) {
+                            Db::name('user')->where('id', $user['id'])->data(['balance' => 0])->update();
+                        }
+                        $c = $order['change_balance'] - $dec;
+                        echo "{$order['user_id']}-欠[{$c}]\n";
                     }
 
-                    echo "{$order['id']}\n";
+                    Db::name('order')->where('id', $order['id'])->delete();
 
                     Db::commit();
                 } catch (Exception $e) {
+                    //var_dump($e);
                     Db::rollback();
                     throw $e;
                 }
