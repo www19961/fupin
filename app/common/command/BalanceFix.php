@@ -29,19 +29,20 @@ class BalanceFix extends Command
                 Db::startTrans();
                 try {
 
-                    $user = User::find($order['user_id']);
-                    if ($order['change_balance'] <= $user['balance']) {
-                        Db::name('user')->where('id', $user['id'])->dec('balance', $order['change_balance'])->update();
-                    } elseif ($order['change_balance'] > $user['balance']) {
-                        $dec = $user['balance'];
-                        if ($dec > 0) {
-                            Db::name('user')->where('id', $user['id'])->data(['balance' => 0])->update();
-                        }
-                        $c = $order['change_balance'] - $dec;
-                        echo "{$order['user_id']}-欠[{$c}]\n";
-                    }
+                    // $user = User::find($order['user_id']);
+                    // if ($order['change_balance'] <= $user['balance']) {
+                    //     Db::name('user')->where('id', $user['id'])->dec('balance', $order['change_balance'])->update();
+                    // } elseif ($order['change_balance'] > $user['balance']) {
+                    //     $dec = $user['balance'];
+                    //     if ($dec > 0) {
+                    //         Db::name('user')->where('id', $user['id'])->data(['balance' => 0])->update();
+                    //     }
+                    //     $c = $order['change_balance'] - $dec;
+                    //     echo "{$order['user_id']}-欠[{$c}]\n";
+                    // }
 
-                    Db::name('order')->where('id', $order['id'])->delete();
+                    Db::name('user_balance_log')->where('id', $order['id'])->delete();
+                    echo "{$order['id']}\n";
 
                     Db::commit();
                 } catch (Exception $e) {
