@@ -264,6 +264,13 @@ class UserController extends AuthController
                 $filed = 'topup_balance';
                 $log_type = 1;
                 $balance_type = 15;
+                $text = '可用余额';
+                break;
+            case 2:
+                $filed = 'balance';
+                $log_type = 1;
+                $balance_type = 15;
+                $text = '可提现余额';
                 break;
             // case 2:
             //     $filed = 'poverty_subsidy_amount';
