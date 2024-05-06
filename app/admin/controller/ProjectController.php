@@ -57,6 +57,8 @@ class ProjectController extends AuthController
         }
         $groups = config('map.project.group');
         $this->assign('groups',$groups);
+        $types = config('map.project.type');
+        $this->assign('types',$types);
         $this->assign('give',$give);
         $this->assign('data', $data);
 
@@ -68,6 +70,7 @@ class ProjectController extends AuthController
         $req = $this->validate(request(), [
             'name|项目名称' => 'require|max:100',
             'price|金额' => 'require',
+            'type|分类' => 'require',
             // 'min_amount|最小购买金额' => 'float',
             // 'max_amount|最大购买金额' => 'float',
             //'single_integral|单份积分' => 'integer',
@@ -129,6 +132,7 @@ class ProjectController extends AuthController
         $req = $this->validate(request(), [
             'id' => 'require|number',
             'name|项目名称' => 'require|max:100',
+            'type|分类' => 'require|max:100',
             'price|金额' => 'require',
             'fupin_reward|周期' => 'require',
             // 'min_amount|最小购买金额' => 'float',

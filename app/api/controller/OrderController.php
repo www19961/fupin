@@ -61,9 +61,9 @@ class OrderController extends AuthController
             //     return out(null, 10001, '每个项目只能购买一份');
             // }
             $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->find();
-            if ($isBuyThisTypeProduct) {
-                return out(null, 10001, '只能购买一次');
-            }
+            // if ($isBuyThisTypeProduct) {
+            //     return out(null, 10001, '只能购买一次');
+            // }
         }
 
         Db::startTrans();
@@ -87,6 +87,7 @@ class OrderController extends AuthController
             $order['buy_amount'] = $pay_amount;
             $order['start_time'] = time();
             $order['project_name'] = $project['name'];
+            $order['type'] = $project['type'];
             $order['days'] = $projectItem['days'];
             $order['reward'] = $projectItem['reward'];
             $order['end_time'] = time() + 86400 * $projectItem['days'];
