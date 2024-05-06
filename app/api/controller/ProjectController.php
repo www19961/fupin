@@ -10,7 +10,6 @@ class ProjectController extends AuthController
 {
     public function projectsList()
     {
-        $builder = Project::where('status', 1);
         if (isset(request()['type']) && request()['type'] > 0) {
             $fa = config('map.project.type');
             $data = [];
@@ -18,14 +17,14 @@ class ProjectController extends AuthController
                 $typeArr = [];
                 $typeArr['type'] = $key;
                 $typeArr['typeName'] = $value;
-                $typeArr['children'] = $builder->where('type', $key)->order('sort', 'asc')->select()->each(function($item) {
+                $typeArr['children'] = Project::where('status', 1)->where('type', $key)->order('sort', 'asc')->select()->each(function($item) {
                     $item['list'] = ProjectItem::where('project_id', $item['id'])->order('price', 'asc')->select()->toArray();
                     return $item;
                 });
                 array_push($data, $typeArr);
             }
         } else {
-            $data = $builder->order('sort', 'asc')->select()->each(function($item) {
+            $data = Project::where('status', 1)->order('sort', 'asc')->select()->each(function($item) {
                 $item['list'] = ProjectItem::where('project_id', $item['id'])->order('price', 'asc')->select()->toArray();
                 return $item;
             });
