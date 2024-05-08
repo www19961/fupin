@@ -61,9 +61,9 @@ class OrderController extends AuthController
             //     return out(null, 10001, '每个项目只能购买一份');
             // }
             $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->find();
-            // if ($isBuyThisTypeProduct) {
-            //     return out(null, 10001, '只能购买一次');
-            // }
+            if ($isBuyThisTypeProduct) {
+                return out(null, 10001, '只能购买一次');
+            }
         }
 
         Db::startTrans();
