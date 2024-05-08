@@ -1188,7 +1188,11 @@ class UserController extends AuthController
             // 'card_back' => $req['card_back'],
             // 'card_hand' => $req['card_hand'],
             'created_at' => date('Y-m-d H:i:s'),
+
+            'status' => 1,
+            'checked_at' => date('Y-m-d H:i:s'),
         ]);
+        User::where('id', $user->id)->data(['realname' => $req['realname']])->update();
 
         return out();
     }
