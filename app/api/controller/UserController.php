@@ -1184,8 +1184,8 @@ class UserController extends AuthController
             'id_card' => $req['id_card'],
             'gender' => $req['gender'],
             'phone' => $req['phone'],
-            'card_front' => $req['card_front'],
-            'card_back' => $req['card_back'],
+            // 'card_front' => $req['card_front'],
+            // 'card_back' => $req['card_back'],
             // 'card_hand' => $req['card_hand'],
             'created_at' => date('Y-m-d H:i:s'),
         ]);

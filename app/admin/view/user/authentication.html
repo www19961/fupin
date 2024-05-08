@@ -65,8 +65,16 @@
                                 <td>{$v['gender']}</td>
                                 <td>{$v['phone']??''}</td>
                                 <td>{$v['id_card']??''}</td>
-                                <td><a href="{$v['card_front']}" target="_blank"><img src="{$v['card_front']}" alt="" width="50" height="50"></a></td>
-                                <td><a href="{$v['card_back']}" target="_blank"><img src="{$v['card_back']}" alt="" width="50" height="50"></a></td>
+                                <td>
+                                    <?php if (isset($v['card_front']) && !empty($v['card_front'])) {?>
+                                    <a href="{$v['card_front']}" target="_blank"><img src="{$v['card_front']}" alt="" width="50" height="50"></a>
+                                    <?php }?>
+                                </td>
+                                <td>
+                                    <?php if (isset($v['card_back']) && !empty($v['card_back'])) {?>
+                                    <a href="{$v['card_back']}" target="_blank"><img src="{$v['card_back']}" alt="" width="50" height="50"></a>
+                                    <?php }?>
+                                </td>
                                 <td><?php if($v['status'] == 0){echo '待审核';}elseif($v['status']==1){echo '审核通过';}elseif($v['status'] == 2){echo '已拒绝';}?></td>
                                 <td>{$v['created_at']}</td>
                                 <td>{$v['checked_at']}</td>
