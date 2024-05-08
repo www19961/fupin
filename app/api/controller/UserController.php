@@ -1159,8 +1159,8 @@ class UserController extends AuthController
             'id_card|身份证号' => 'require',
             'gender|性别' => 'require|number',
             'phone|手机号' => 'require|mobile',
-            'card_front|身份证正面照片' => 'require',
-            'card_back|身份证背面照片' => 'require',
+            // 'card_front|身份证正面照片' => 'require',
+            // 'card_back|身份证背面照片' => 'require',
             // 'card_hand|手持身份证照片' => 'require',
         ]);
 
@@ -1171,6 +1171,11 @@ class UserController extends AuthController
             } elseif ($isAuthentication['status'] == 1) {
                 return out(null, 10001, '已通过实名');
             }
+        }
+
+        $isExists = Authentication::where('id_card', $req['id_card'])->find();
+        if ($isExists) {
+            return out(null, 10001, '该身份证已实名');
         }
 
         Authentication::insert([
