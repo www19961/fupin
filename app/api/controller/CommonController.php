@@ -1241,5 +1241,9 @@ class CommonController extends BaseController
         return out(['test'=>1]);
     }
 
-
+    public function qrcode()
+    {
+        $data = Setting::where('key', 'qrcode')->find();
+        return out(['qrcode'=> $data['value'] ?? '']);
+    }
 }

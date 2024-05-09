@@ -342,6 +342,61 @@ if (!function_exists('upload_file2')) {
     }
 }
 
+//上传文件
+if (!function_exists('upload_file3')) {
+    function upload_file3($name, $is_must = true, $is_return_url = true)
+    {
+        if (!empty(request()->file()[$name])){
+            $file = request()->file()[$name];
+            try{
+                validate(
+                    [
+                        'file' => [
+                            // 限制文件大小(单位b)，这里限制为4M
+                            'fileSize' => 10 * 1024 * 1024,
+                            // 限制文件后缀，多个后缀以英文逗号分割
+                            'fileExt'  => 'png,jpg',
+                        ]
+                    ],
+                    [
+                        
+                        'file.fileSize' => '文件太大',
+                        'file.fileExt' => '不支持的文件后缀',
+                    ]
+                )->check(['file' => $file]);
+            }catch (\think\exception\ValidateException $e){
+                exit_out(null, 11003, $e->getMessage());
+                return '';
+            }
+            // $savename = Filesystem::disk('qiniu')->putFile('', $file);
+            // $baseUrl = 'http://'.config('filesystem.disks.qiniu.domain').'/';    
+            // return $baseUrl.str_replace("\\", "/", $savename);
+            $savename = Filesystem::putFile('', $file);
+            $img_url = request()->domain().'/storage/'.$savename;
+            if (!empty(env('app.host', ''))) {
+                $img_url = env('app.host').'/storage/'.$savename;
+            }
+            // if ($is_return_url){
+            //     $img_url = request()->domain().'/storage/'.$savename;
+            //     if (!empty(env('app.host', ''))) {
+            //         $img_url = env('app.host').'/storage/'.$savename;
+            //     }
+            // }
+            // else {
+            //     $img_url = public_path().'storage/'.$savename;
+            // }
+
+            return '/storage/'.$savename;
+        }
+        else {
+            if ($is_must){
+                exit_out(null, 11002, '文件不能为空');
+            }
+        }
+
+        return '';
+    }
+}
 
 function base64_upload($imgbase64,$savepath) {
     $base64_image = str_replace(' ', '+', $imgbase64);

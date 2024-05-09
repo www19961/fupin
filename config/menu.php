@@ -184,6 +184,11 @@ return array(
                             'icon' => 'fa-circle-o',
                             'url' => 'admin/Setting/settingList',
                         ),
+                    '落地页二维码' =>
+                        array(
+                            'icon' => 'fa-circle-o',
+                            'url' => 'admin/Setting/qrcode',
+                        ),
                 ),
         ),
 

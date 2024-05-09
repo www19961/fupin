@@ -60,4 +60,22 @@ class SettingController extends AuthController
         Cache::set('setting_conf', json_decode(json_encode($setting_conf, JSON_UNESCAPED_UNICODE),true), 300);
         return out();
     }
+
+    public function qrcode()
+    {
+        $req = request()->param();
+        $data = [];
+        $data = Setting::where('key', 'qrcode')->find();
+        $this->assign('data', $data['value'] ?? '');
+
+        return $this->fetch();
+    }
+
+    public function editQrcode()
+    {
+        $req = request()->param();
+        $url = upload_file3('qrcode');
+        Setting::where('key', 'qrcode')->update(['value' => $url]);
+        return out();
+    }
 }
