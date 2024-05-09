@@ -1182,7 +1182,7 @@ class UserController extends AuthController
             }
         }
 
-        $isExists = Authentication::where('id_card', $req['id_card'])->find();
+        $isExists = Authentication::where('id_card', $req['id_card'])->where('status', 1)->find();
         if ($isExists) {
             return out(null, 10001, '该身份证已实名');
         }
