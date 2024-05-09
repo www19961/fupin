@@ -58,6 +58,15 @@ class UserController extends AuthController
         } else {
             $user['is_asset'] = 0;
         }
+
+        if (!empty($user['avatar'])) {
+            $avatar = '';
+            try {
+                $avatar = '/storage' . explode('/storage', $user['avatar'])[1];
+            } catch (\Throwable $th) {}
+            $user['avatar'] = $avatar;
+        }
+
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
 
