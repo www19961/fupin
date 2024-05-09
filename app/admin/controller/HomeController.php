@@ -57,7 +57,7 @@ class HomeController extends AuthController
         $arr['url'] = '';
         $data[] = $arr;
 
-        $this->assign('data', $data);
+        $this->assign('data', []);
 
         return $this->fetch();
     }
