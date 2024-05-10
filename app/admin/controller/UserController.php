@@ -237,7 +237,19 @@ class UserController extends AuthController
 
         return $this->fetch();
     }
+    public function showDecBalance()
+    {
+        $req = request()->get();
+        $this->validate($req, [
+            'user_id' => 'require|number',
+            'type' => 'require|in:39',
+        ]);
 
+        $this->assign('req', $req);
+
+        return $this->fetch();
+    }
+    
     public function batchShowBalance()
     {
         $req = request()->get();
@@ -300,6 +312,62 @@ class UserController extends AuthController
         return out();
     }
 
+    public function decBalance()
+    {
+        $req = request()->post();
+        $this->validate($req, [
+            'user_id' => 'require|number',
+            'money' => 'require|float',
+            'type'=>'require|number',
+            'remark' => 'max:50',
+        ]);
+        $adminUser = $this->adminUser;
+        $filed = 'topup_balance';
+        $log_type = 0;
+        $balance_type = 1;
+        $text = '现金';
+        switch($req['type']){
+            case 1:
+                $filed = 'topup_balance';
+                $log_type = 1;
+                $balance_type = 39;
+                $text = '可用余额';
+                break;
+            case 2:
+                $filed = 'balance';
+                $log_type = 1;
+                $balance_type = 39;
+                $text = '可提现余额';
+                break;
+            // case 2:
+            //     $filed = 'poverty_subsidy_amount';
+            //     $log_type = 2;
+            //     $balance_type = 8;
+            //     $text = '生活补助';
+            //     break;
+            // case 3:
+            //     $filed = 'digital_yuan_amount';
+            //     $log_type = 3;
+            //     $balance_type = 5;
+            //     $text = '数字人民币';
+            //     break;
+/*             case 4:
+                $filed = 'digital_yuan_amount';
+                $log_type = 3;
+                $balance_type = 5;
+                $text = '国务院津贴';
+                break; */
+            default:
+                return out(null, 10001, '类型错误');
+        }
+        //User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
+        $money = 0 - $req['money'];
+        $text = isset($req['remark']) || $req['remark']==''?'客服专员扣款'.$text:$req['remark'];
+        User::changeInc($req['user_id'],$money,$filed,$balance_type,0,$log_type,$text,$adminUser['id']);
+
+        return out();
+    }
+
     public function batchBalance()
     {
         $req = request()->post();
@@ -336,16 +404,22 @@ class UserController extends AuthController
                 $balance_type = 5;
                 $text = '数字人民币';
                 break;
+            case 4:
+                $filed = 'specific_fupin_balance';
+                $log_type = 3;
+                $balance_type = 38;
+                $text = '专项扶贫金';
+                break;
             default:
                 return out(null, 10001, '类型错误');
         }
         //User::changeBalance($req['user_id'], $req['money'], 15, 0, 1, $req['remark']??'', $adminUser['id']);
         $text = isset($req['remark']) || $req['remark']==''?'客服专员入金'.$text:$req['remark'];
-        if(isset($req['remark']) && $req['remark']==''){
-            $text = '客服专员入金'.$text;
-        }else{
-            $text = $req['remark'];
-        }
+        // if(isset($req['remark']) && $req['remark']==''){
+        //     $text = '客服专员入金'.$text;
+        // }else{
+        //     $text = $req['remark'];
+        // }
         foreach($phoneList as $key=>$phone){
             $phoneList[$key] = trim($phone);
         }

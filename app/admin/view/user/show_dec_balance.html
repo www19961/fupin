@@ -12,16 +12,7 @@
             <div class="box box-body">
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">用户手机号</label>
-                        <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
-                            <textarea  name="users" class="form-control" placeholder="请填写用户手机号，一行一个"
-                                   value=""></textarea>
-                        </div>
-                        <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
-                    </div>
-                </div>
-                <div class="row dd_input_group">
-                    <div class="form-group">
+                        <input name="user_id" type="hidden" value="{$req['user_id']}">
                         <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">金额</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <input type="number" name="money" class="form-control" placeholder="请输入金额"
@@ -32,13 +23,13 @@
                 </div>
                 <div class="row dd_input_group">
                     <div class="form-group">
-                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">类别</label>
+                        <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">金额</label>
                         <div class="col-xs-7 col-sm-6 col-md-4 col-lg-4">
                             <select name="type">
-                                <option value="1">现金</option>
-                                <option value="2">生活补助</option>
-                                <option value="3">数字人民币</option>
-                                <option value="4">专项扶贫金</option>
+                                <option value="1">可用余额</option>
+                                <option value="2">可提现余额</option>
+                                <!-- <option value="2">生活补助</option>
+                                <option value="3">数字人民币</option> -->
                             </select>
                         </div>
                         <div class="col-xs-1 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
@@ -74,12 +65,14 @@
         $('a[href="' + url + '"]').parents('.menu-li').addClass('active');
         var headerText = $('a[href="' + url + '"]').children('span').text();
 
-   
+        var typeText = "{:config('map.user_balance_log.type_map')[$req['type']]}";
+        var headerTitle = headerText + '-' +typeText;
+        $('#content-header-title').text(headerTitle);
     });
 
     function sub()
     {
-        var subUrl = "<?php echo url('admin/User/batchBalance'); ?>";
+        var subUrl = "<?php $map = [15 => url('admin/User/addBalance'), 16 => url('admin/User/deductBalance'), 39 => url('admin/User/decBalance')]; echo $map[$req['type']]; ?>";
         $.post(subUrl, $('#commentForm').serialize(), function (res) {
             if (res.code == '200') {
                 window.location.href = document.referrer;

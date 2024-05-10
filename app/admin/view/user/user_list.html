@@ -109,6 +109,7 @@
                                     <a {:auth_show_judge('PayAccount/payAccountList')} class="btn btn-flat btn-xs" href="{:url('admin/PayAccount/payAccountList', ['user_id' => $v['id']])}">查看收款配置</a>
                                     <a {:auth_show_judge('User/editPhone')} class="btn btn-flat btn-xs" href="{:url('admin/User/editPhone', ['user_id' => $v['id']])}">修改手机号</a>
                                     <a {:auth_show_judge('User/editBank')} class="btn btn-flat btn-xs" href="{:url('admin/User/editBank', ['user_id' => $v['id']])}">修改银行卡</a>
+                                    <a {:auth_show_judge('User/DecBalance')} class="btn btn-flat btn-xs" href="{:url('admin/User/showDecBalance', ['user_id' => $v['id'], 'type' => 39])}">手动扣款</a>
                                     <!-- <a {:auth_show_judge('User/message')} class="btn btn-flat btn-xs" href="{:url('admin/User/message', ['user_id' => $v['id']])}">发送站内信</a> -->
                                 </td>
                             </tr>
