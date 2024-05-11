@@ -55,6 +55,13 @@ class OrderController extends AuthController
                 return out(null, 10001, '当日份额已经售罄');
             }
 
+            if ($project['is_gift']) {
+                $isBought = Order::where('user_id', $user['id'])->where('is_gift', 1)->find();
+                if ($isBought) {
+                    return out(null, 10001, '赠送基金仅能购买一次');
+                }
+            }
+
             $projectItemIds = ProjectItem::where('project_id', $projectItem['project_id'])->column('id');
             // $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->whereIn('project_id', $projectItemIds)->find();
             // if ($isBuyThisTypeProduct) {
@@ -92,23 +99,26 @@ class OrderController extends AuthController
             $order['reward'] = $projectItem['reward'];
             $order['end_time'] = time() + 86400 * $projectItem['days'];
             $order['fupin_reward'] = $projectItem['fupin_reward'];
+            $order['is_gift'] = $project['is_gift'];
 
             $orderRes = Order::create($order);
 
-            // 扣余额
-            User::changeBalance($user['id'],-$pay_amount,3,$orderRes->getData('id'),1);
+            if ($project['is_gift'] == 0) {
+                // 扣余额
+                User::changeBalance($user['id'],-$pay_amount,3,$orderRes->getData('id'),1);
 
-            $userRelation = UserRelation::where('sub_user_id', $user['id'])->select();
-            $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
-            foreach ($userRelation as $value) {
-                $rate = round(dbconfig($map[$value['level']])/100, 2);
-                $reward = bcmul($pay_amount, $rate, 2);
-                User::changeInc($value['user_id'],$reward,'balance',8,$user['id'],1,'团队奖励',0,1,$pay_amount);
+                $userRelation = UserRelation::where('sub_user_id', $user['id'])->select();
+                $map = [1 => 'first_team_reward_ratio', 2 => 'second_team_reward_ratio', 3 => 'third_team_reward_ratio'];
+                foreach ($userRelation as $value) {
+                    $rate = round(dbconfig($map[$value['level']])/100, 2);
+                    $reward = bcmul($pay_amount, $rate, 2);
+                    User::changeInc($value['user_id'],$reward,'balance',8,$user['id'],1,'团队奖励',0,1,$pay_amount);
+                }
+
+                //激活
+                User::where('id', $user['id'])->update(['is_active' => 1]);
+                UserRelation::where('sub_user_id', $user['id'])->update(['is_active' => 1]);
             }
-
-            //激活
-            User::where('id', $user['id'])->update(['is_active' => 1]);
-            UserRelation::where('sub_user_id', $user['id'])->update(['is_active' => 1]);
 
             Db::commit();
         } catch (Exception $e) {
