@@ -89,6 +89,24 @@
                 </div>
 
             </div>
+
+            <div class="row dd_input_group">
+                <div class="form-group">
+                    <label class="col-xs-4 col-sm-2 col-md-2 col-lg-1 control-label dd_input_l">是否赠送</label>
+                    <div class="col-xs-8 col-sm-6 col-md-4 col-lg-4">
+                        <select name="is_gift" class="form-control">
+                            <option <?php if (isset($data['is_gift']) && $data['is_gift'] == 0) { ?> selected="selected" <?php } ?>
+                                    value="0">否
+                            </option>
+                            <option <?php if (isset($data['is_gift']) && $data['is_gift'] == 1) { ?> selected="selected" <?php } ?>
+                                value="1">是
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-md-6 col-lg-6 dd_ts">*</div>
+                </div>
+            </div>
+
             <div class="box box-body">
 
                 <div class="row dd_input_group">
