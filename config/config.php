@@ -36,8 +36,8 @@ return [
     // ],
 
     'payment_conf3' => [
-        'key' => 'zmLgTjGlAhjXpyMx7qkK6F1Es2LnkY0Q',
-        'pay_memberid'=>'240196369',
+        'key' => 'NCCBWxLTPHx3NctYetBesZ9JAuO7lHrj',
+        'pay_memberid'=>'240568161',
         'pay_notifyurl' => env('app.host').'/common/paynotify3',
         'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
         'payment_url' => 'https://hongtai01.top/Pay',
