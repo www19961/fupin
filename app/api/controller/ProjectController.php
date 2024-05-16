@@ -22,11 +22,12 @@ class ProjectController extends AuthController
                     if ($item['is_circle'] == 0) {
                         $typeArr['children'][$k]['list'] = ProjectItem::where('project_id', $item['id'])->order('price', 'asc')->select()->toArray();
                     } else {
-                        $typeArr['children'][$k]['list'] = [];
+                        $typeArr['children'][$k]['list'] = array();
                         $tempPirceArr = ProjectItem::where('project_id', $item['id'])->group('price')->column('price');
                         foreach ($tempPirceArr as $k1 => $v) {
                             $arr = ProjectItem::where('project_id', $item['id'])->where('price', $v)->order('id', 'asc')->select()->toArray();
-                            $typeArr['children'][$k]['list'][$v] = $arr;
+                            // $typeArr['children'][$k]['list'][$v] = $arr;
+                            $typeArr['children'][$k]['list'][$k1] = ['price' => $v, 'list' => $arr];
                         }
                     }
                 };
