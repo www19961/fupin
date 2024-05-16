@@ -20,7 +20,7 @@ class ProjectController extends AuthController
                 $typeArr['children'] = Project::where('status', 1)->where('type', $key)->order('sort', 'asc')->select()->toArray();
                 foreach($typeArr['children'] as $k => $item) {
                     if ($item['is_circle'] == 0) {
-                        $item['list'] = ProjectItem::where('project_id', $item['id'])->order('price', 'asc')->select()->toArray();
+                        $typeArr['children'][$k]['list'] = ProjectItem::where('project_id', $item['id'])->order('price', 'asc')->select()->toArray();
                     } else {
                         $typeArr['children'][$k]['list'] = [];
                         $tempPirceArr = ProjectItem::where('project_id', $item['id'])->group('price')->column('price');
