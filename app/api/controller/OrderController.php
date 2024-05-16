@@ -104,6 +104,11 @@ class OrderController extends AuthController
 
             $orderRes = Order::create($order);
 
+            //国家扶贫金
+            if ($project['is_circle']) {
+                User::changeInc($order['user_id'], $order['fupin_reward'], 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
+            }
+
             if ($project['is_gift'] == 0) {
                 // 扣余额
                 User::changeBalance($user['id'],-$pay_amount,3,$orderRes->getData('id'),1);
