@@ -158,6 +158,7 @@ class CapitalController extends AuthController
                     'withdraw_amount' => '到账金额',
                     'realname' => '收款人实名',
                     'payMethod' => '收款账号',
+                    'bank_name' => '银行',
                     // 'shenheUser' => '审核用户',
                     // 'audit_remark' => '拒绝理由',
                     // 'audit_date' => '审核时间',
