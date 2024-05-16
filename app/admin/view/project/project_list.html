@@ -45,7 +45,8 @@
                             <th>封面图</th>
                             <th>项目名称</th>
                             <th style="width: 40%;">详细条目</th>
-                            
+                            <th>是否赠送</th>
+                            <th>周期产品</th>
                             <!-- <th>国务院津贴</th> -->
 <!--                             <th>已购买份数</th>
                             <th>虚拟购买份数</th> -->
@@ -70,6 +71,8 @@
                                         金额：{$vv['price']} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;天数：{$vv['days']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;一次性收益：{$vv['reward']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;国家扶贫金：{$vv['fupin_reward']}<br/>
                                     <?php } ?>
                                 </td>
+                                <td><?php if ($v['is_gift'] == 1) {echo '是';} else {echo '否';}?></td>
+                                <td><?php if ($v['is_circle'] == 1) {echo '是';} else {echo '否';}?></td>
                                 <!-- <td>{$v['single_gift_digital_yuan']}</td> -->
 <!--                                 <td>{$v['total_buy_num']}</td>
                                 <td>{$v['sham_buy_num']}</td>

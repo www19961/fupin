@@ -89,6 +89,7 @@ class ProjectController extends AuthController
             'reward|总收益金额' => 'require',
             'rate|进度' => 'require',
             'is_gift|赠送' => 'require',
+            'is_circle|周期产品' => 'require',
             // 'virtually_progress|虚拟进度' => 'integer',
             // 'total_quota|总名额' => 'max:32',
             // 'remaining_quota|剩余名额' => 'max:32',
@@ -122,6 +123,7 @@ class ProjectController extends AuthController
             $arr[$k]['days'] = $req['days'][$k];
             $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
             $arr[$k]['project_id'] = $insId;
+            $arr[$k]['is_circle'] = $req['is_circle'];
         }
         ProjectItem::insertAll($arr);
         
@@ -153,6 +155,7 @@ class ProjectController extends AuthController
             'reward|总收益金额' => 'require',
             'rate|进度' => 'require',
             'is_gift|赠送' => 'require',
+            'is_circle|周期产品' => 'require',
             //'bonus_multiple|奖励倍数' => 'require|>=:0',
             // 'virtually_progress|虚拟进度' => 'integer',
             // 'total_quota|总名额' => 'max:32',
@@ -190,6 +193,7 @@ class ProjectController extends AuthController
             $arr[$k]['days'] = $req['days'][$k];
             $arr[$k]['project_id'] = $req['id'];
             $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
+            $arr[$k]['is_circle'] = $req['is_circle'];
         }
         ProjectItem::where('project_id', $req['id'])->delete();
         ProjectItem::insertAll($arr);

@@ -100,6 +100,7 @@ class OrderController extends AuthController
             $order['end_time'] = time() + 86400 * $projectItem['days'];
             $order['fupin_reward'] = $projectItem['fupin_reward'];
             $order['is_gift'] = $project['is_gift'];
+            $order['is_circle'] = $project['is_circle'];
 
             $orderRes = Order::create($order);
 
