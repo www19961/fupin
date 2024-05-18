@@ -3,7 +3,7 @@
 namespace app\admin\controller;
 
 use app\model\Order;
-use app\model\OrderLog;
+use app\model\Project;
 use app\model\Payment;
 use app\model\PaymentConfig;
 use app\model\User;
@@ -57,6 +57,9 @@ class OrderController extends AuthController
         if (!empty($req['mark'])) {
             $builder->where('p.mark', $req['mark']);
         }
+        if (!empty($req['project'])) {
+            $builder->where('o.project_name', $req['project']);
+        }
 
         $builder1 = clone $builder;
         $total_buy_amount = round($builder1->sum('o.buy_num*o.price'), 2);
@@ -78,6 +81,7 @@ class OrderController extends AuthController
         $data = $builder->paginate(['query' => $req]);
         //var_dump($data);
         $this->assign('req', $req);
+        $this->assign('project', Project::field('name, id')->select());
         $this->assign('data', $data);
 
         return $this->fetch();

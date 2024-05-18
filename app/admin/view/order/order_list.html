@@ -3,6 +3,15 @@
         <input type="text" value="{$req['order_id']??''}" name="order_id" placeholder="搜索订单ID" class="form-control">
         <input type="text" value="{$req['user']??''}" name="user" placeholder="搜索用户ID/手机号" class="form-control">
         <input type="text" value="{$req['order_sn']??''}" name="order_sn" placeholder="搜索订单号" class="form-control">
+        <select name="project" class="form-control">
+            <option value="">搜索项目</option>
+            <?php foreach ($project as $k => $v) { ?>
+                <option <?php if (isset($req['project']) && $req['project'] == $v['name']) {
+                    echo 'selected = "selected"';
+                } ?> value="{$v['name']}">{$v['name']}
+                </option>
+            <?php } ?>
+        </select>
         <select name="status" class="form-control">
             <option value="">搜索订单状态</option>
             <?php foreach (config('map.order')['status_map'] as $k => $v) { ?>
