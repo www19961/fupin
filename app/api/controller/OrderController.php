@@ -152,7 +152,7 @@ class OrderController extends AuthController
         // if (!empty($req['project_group_id'])) {
         //     $builder->where('project_group_id', $req['project_group_id']);
         // }
-        $data = $builder->order('id', 'desc')->field(['id', 'order_sn', 'status', 'created_at', 'price', 'days', 'reward', 'project_name', 'is_transfer'])->paginate(10,false,['query'=>request()->param()]);
+        $data = $builder->order('id', 'desc')->field(['id', 'order_sn', 'status', 'created_at', 'price', 'days', 'reward', 'project_name', 'is_transfer', 'type'])->paginate(10,false,['query'=>request()->param()]);
 
         return out($data);
     }
