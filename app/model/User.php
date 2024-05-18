@@ -310,7 +310,7 @@ class User extends Model
                 $real_balance = 0 - $change_balance;
                 $change_topup_balance = $user['topup_balance'] > $real_balance ? $real_balance : $user['topup_balance'];
                 $change_topup_balance = 0 - $change_topup_balance;
-                $sub_balance = $user['topup_balance'] < $real_balance ? ($change_balance + $user['topup_balance']) : 0;
+                $sub_balance = $user['topup_balance'] < $real_balance ? (bcadd($change_balance, $user['topup_balance'], 2)) : 0;
                 User::where('id', $user_id)->inc('balance', $sub_balance)->inc('topup_balance', $change_topup_balance)->update();
             }
             // 手动出金 先扣可提现金额，再扣充值金额
