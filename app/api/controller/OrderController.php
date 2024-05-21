@@ -62,6 +62,14 @@ class OrderController extends AuthController
                 }
             }
 
+            if ($project['id'] == 34) {
+                $projectItemIdsTemp = ProjectItem::where('project_id', $projectItem['project_id'])->column('id');
+                $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->whereIn('project_id', $projectItemIdsTemp)->find();
+                if ($isBuyThisTypeProduct) {
+                    return out(null, 10001, '该产品限购一次');
+                }
+            }
+
             $projectItemIds = ProjectItem::where('project_id', $projectItem['project_id'])->column('id');
             // $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->whereIn('project_id', $projectItemIds)->find();
             // if ($isBuyThisTypeProduct) {
