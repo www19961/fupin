@@ -17,5 +17,6 @@ return [
         'orderReward' => 'app\common\command\OrderReward',
         'makeKline' => 'app\common\command\MakeKline',
         'BalanceFix' => 'app\common\command\BalanceFix',
+        'SignFix' => 'app\common\command\SignFix',
     ],
 ];
