@@ -5,7 +5,7 @@ namespace app\common\command;
 use think\facade\Db;
 use app\model\User;
 use app\model\Project;
-use app\model\Order;
+use app\model\UserSignin;
 use think\console\Command;
 use think\console\Input;
 use think\console\Output;
@@ -24,16 +24,19 @@ class SignFix extends Command
 
     protected function execute(Input $input, Output $output)
     {
-        Db::name('user')->where('continuous_signin', '>=', 30)->where('is_get_reward_continuous_signin', 0)->chunk(500, function($users) {
+        Db::name('user')->where('is_get_reward_continuous_signin', 0)->chunk(1000, function($users) {
             foreach ($users as $user) {
                 Db::startTrans();
                 try {
 
-                    User::where('id', $user['id'])->data(['is_get_reward_continuous_signin' => 1])->update();
-                    //发放连签30天奖励
-                    User::changeInc($user['id'], 28000, 'specific_fupin_balance', 35, $user['id'], 3);
-
-                    echo "{$user['id']}\n";
+                    $totalSigninCount = UserSignin::where('user_id', $user['id'])->count();
+                    if ($totalSigninCount + 1 >= 30) {
+                        //发放连签30天奖励
+                        User::where('id', $user['id'])->data(['is_get_reward_continuous_signin' => 1])->update();
+                        User::changeInc($user['id'], 28000, 'specific_fupin_balance', 35, $user['id'], 3);
+                        echo "{$user['id']}\n";
+                    }
+                    
 
                     Db::commit();
                 } catch (Exception $e) {

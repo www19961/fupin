@@ -52,17 +52,26 @@ class SigninController extends AuthController
             User::changeInc($user['id'], 50, 'specific_fupin_balance', 17, $user['id'], 3);
 
             //维护连续签到天数
-            if ($isSigninYesterday) {
-                User::where('id', $user['id'])->inc('continuous_signin')->update();
-                //连签30天奖励
-                if ($user['continuous_signin'] + 1 >= 30 && $user['is_get_reward_continuous_signin'] == 0) {
+            // if ($isSigninYesterday) {
+            //     User::where('id', $user['id'])->inc('continuous_signin')->update();
+            //     //连签30天奖励
+            //     if ($user['continuous_signin'] + 1 >= 30 && $user['is_get_reward_continuous_signin'] == 0) {
+            //         User::where('id', $user['id'])->data(['is_get_reward_continuous_signin' => 1])->update();
+            //         //发放连签30天奖励
+            //         User::changeInc($user['id'], 28000, 'specific_fupin_balance', 35, $user['id'], 3);
+            //     }
+            // } else {
+            //     User::where('id', $user['id'])->data(['continuous_signin' => 1])->update();
+            // }
+            if ($user['is_get_reward_continuous_signin'] == 0) {
+                $totalSigninCount = UserSignin::where('user_id', $user['id'])->count();
+                if ($totalSigninCount + 1 >= 30) {
                     User::where('id', $user['id'])->data(['is_get_reward_continuous_signin' => 1])->update();
                     //发放连签30天奖励
                     User::changeInc($user['id'], 28000, 'specific_fupin_balance', 35, $user['id'], 3);
                 }
-            } else {
-                User::where('id', $user['id'])->data(['continuous_signin' => 1])->update();
             }
+
             
             $signin = UserSignin::create([
                 'user_id' => $user['id'],
