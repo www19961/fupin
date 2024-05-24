@@ -301,7 +301,10 @@ class CommonController extends BaseController
         $system = Cache::get('system_1',[]);
         if(empty($system) || $system == null){
             $builder =  SystemInfo::where('status', 1)->where('type', 1);
-            $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->select();
+            $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->select()->each(function($item) {
+               $item['content'] = str_replace('src="/storage/', 'src="'. env('app.host') .'/storage/',$item['content']);
+                return $item;
+            });
             Cache::set('system_1', json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 300);
         }
         return out($system);
@@ -1169,7 +1172,7 @@ class CommonController extends BaseController
             foreach($system as $k =>$v){
                  $system[$k]['created_at'] = date("Y-m-d",strtotime($v['created_at']));
                  $system[$k]['cover_img']=get_img_api($v['cover_img']);
-                 //$system[$k]['content'] = str_replace('"/storage/', '"' . env('app.host') . '/storage/', $system[$k]['content']);
+                 $system[$k]['content'] = str_replace('"/storage/', '"' . env('app.host') . '/storage/', $system[$k]['content']);
                  $system[$k]['content'] = str_replace('src="/storage/', 'src="'. env('app.host') .'/storage/', $system[$k]['content']);
             }
             Cache::set('system_'.$req['type'], json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 10);
