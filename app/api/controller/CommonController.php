@@ -299,10 +299,12 @@ class CommonController extends BaseController
 
         $system =[];
         $system = Cache::get('system_1',[]);
+        $system = '';
         if(empty($system) || $system == null){
             $builder =  SystemInfo::where('status', 1)->where('type', 1);
             $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->select()->each(function($item) {
-               $item['content'] = str_replace('src="/storage/', 'src="'. env('app.host') .'/storage/',$item['content']);
+                $reg = '/(https):\/\/([^\/]+)/i';
+                $item['content'] = preg_replace($reg, env('app.host'), $item['content']);
                 return $item;
             });
             Cache::set('system_1', json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 300);
