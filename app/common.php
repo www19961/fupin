@@ -426,6 +426,8 @@ function base64_upload($imgbase64,$savepath) {
 
 function get_img_api($img){
     if(strpos($img,'http')!==false){
+        $imgArr = explode('/storage/', $img);
+        $img = env('app.host') . '/storage/'.$imgArr[1];
         return $img;
     }else{
         return env('app.img_host').$img;
