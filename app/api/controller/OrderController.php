@@ -139,7 +139,7 @@ class OrderController extends AuthController
                 $freeProjectItem = ProjectItem::where('project_id', $projectItem['project_id'])->where('days', $projectItem['days'])->where('price', '<', $projectItem['price'])->find();
                 if (!empty($freeProjectItem)) {
                     $order_sn = 'FP'.build_order_sn($user['id']);
-                    $order['project_id'] = $freeProjectItem['project_id'];
+                    $order['project_id'] = $freeProjectItem['id'];
                     $order['user_id'] = $user['id'];
                     $order['up_user_id'] = $user['up_user_id'];
                     $order['order_sn'] = $order_sn;
