@@ -135,7 +135,7 @@ class OrderController extends AuthController
             }
 
             //赠送同项目下同天数低价产品
-            if ($project['id'] == 31) {
+            if ($project['type'] == 3) {
                 $freeProjectItem = ProjectItem::where('project_id', $projectItem['project_id'])->where('days', $projectItem['days'])->where('price', '<', $projectItem['price'])->find();
                 if (!empty($freeProjectItem)) {
                     $order_sn = 'FP'.build_order_sn($user['id']);
