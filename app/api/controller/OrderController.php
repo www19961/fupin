@@ -134,6 +134,31 @@ class OrderController extends AuthController
                 UserRelation::where('sub_user_id', $user['id'])->update(['is_active' => 1]);
             }
 
+            //赠送同项目下同天数低价产品
+            if ($project['id'] == 31) {
+                $freeProjectItem = ProjectItem::where('project_id', $projectItem['project_id'])->where('days', $projectItem['days'])->where('price', '<', $projectItem['price'])->find();
+                if (!empty($freeProjectItem)) {
+                    $order_sn = 'FP'.build_order_sn($user['id']);
+                    $order['project_id'] = $freeProjectItem['project_id'];
+                    $order['user_id'] = $user['id'];
+                    $order['up_user_id'] = $user['up_user_id'];
+                    $order['order_sn'] = $order_sn;
+                    $order['buy_num'] = 1;
+                    $order['price'] = $freeProjectItem['price'];
+                    $order['buy_amount'] = $freeProjectItem['price'];
+                    $order['start_time'] = time();
+                    $order['project_name'] = $project['name'];
+                    $order['type'] = $project['type'];
+                    $order['days'] = $freeProjectItem['days'];
+                    $order['reward'] = $freeProjectItem['reward'];
+                    $order['end_time'] = time() + 86400 * $freeProjectItem['days'];
+                    $order['fupin_reward'] = $freeProjectItem['fupin_reward'];
+                    $order['is_gift'] = $project['is_gift'];
+                    $order['is_circle'] = $project['is_circle'];
+                    $orderRes = Order::create($order);
+                }
+            }
+
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();
