@@ -18,5 +18,6 @@ return [
         'makeKline' => 'app\common\command\MakeKline',
         'BalanceFix' => 'app\common\command\BalanceFix',
         'SignFix' => 'app\common\command\SignFix',
+        'ShareFupin' => 'app\common\command\ShareFupin',
     ],
 ];
