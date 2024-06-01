@@ -9,6 +9,7 @@ use app\model\Payment;
 use app\model\PaymentConfig;
 use app\model\SpecificFupinCapital;
 use app\model\User;
+use app\model\UserSignin;
 use Exception;
 use think\facade\Db;
 use think\facade\Cache;
@@ -583,9 +584,16 @@ class CapitalController extends AuthController
             return out(null, 10001, '提现时间为早上9:00到晚上17:00');
         }
        
-        $user = User::where('id', $user['id'])->lock(true)->find();
- 
+        $totalSigninCount = UserSignin::where('user_id', $user['id'])->count();
+        if ($totalSigninCount < 50) {
+            return out(null, 10001, '签到不足50天');
+        }
 
+        if ($user['specific_fupin_balance'] < 50000) {
+            return out(null, 10001, '余额少于50000');
+        }
+
+        $user = User::where('id', $user['id'])->lock(true)->find();
         
         Db::startTrans();
         try {
