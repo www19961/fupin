@@ -637,4 +637,20 @@ class CapitalController extends AuthController
 
         return out();
     }
+
+    public function specificCapitalRecord()
+    {
+        $req = $this->validate(request(), [
+            'type' => 'number'
+        ]);
+        $user = $this->user;
+        $builder = SpecificFupinCapital::where('user_id', $user['id'])->order('id', 'desc');
+        if(isset($req['type']) && $req['type'] != ''){
+            $builder->where('type', $req['type']);
+        }
+        
+        $data = $builder->append(['audit_date'])->paginate();
+
+        return out($data);
+    }
 }
