@@ -109,12 +109,14 @@ class OrderController extends AuthController
             $order['fupin_reward'] = $projectItem['fupin_reward'];
             $order['is_gift'] = $project['is_gift'];
             $order['is_circle'] = $project['is_circle'];
+            $order['multiple'] = $project['multiple'];
 
             $orderRes = Order::create($order);
 
             //国家扶贫金
             if ($project['is_circle']) {
-                User::changeInc($order['user_id'], $order['fupin_reward'], 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
+                $fupinReward = bcmul($order['fupin_reward'], $order['multiple']);
+                User::changeInc($order['user_id'], $fupinReward, 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
             }
 
             if ($project['is_gift'] == 0) {

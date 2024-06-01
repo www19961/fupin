@@ -47,6 +47,7 @@
                             <th style="width: 40%;">详细条目</th>
                             <th>是否赠送</th>
                             <th>周期产品</th>
+                            <th>收益倍数</th>
                             <!-- <th>国务院津贴</th> -->
 <!--                             <th>已购买份数</th>
                             <th>虚拟购买份数</th> -->
@@ -73,6 +74,7 @@
                                 </td>
                                 <td><?php if ($v['is_gift'] == 1) {echo '是';} else {echo '否';}?></td>
                                 <td><?php if ($v['is_circle'] == 1) {echo '是';} else {echo '否';}?></td>
+                                <td>{$v['multiple']}</td>
                                 <!-- <td>{$v['single_gift_digital_yuan']}</td> -->
 <!--                                 <td>{$v['total_buy_num']}</td>
                                 <td>{$v['sham_buy_num']}</td>
