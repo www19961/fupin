@@ -6,6 +6,7 @@ use app\model\Apply;
 use app\model\AssetOrder;
 use app\model\Message;
 use app\model\Coin;
+use app\model\UserSignin;
 use app\model\Order;
 use app\model\PaymentConfig;
 use app\model\Project;
@@ -66,7 +67,7 @@ class UserController extends AuthController
             } catch (\Throwable $th) {}
             $user['avatar'] = $avatar;
         }
-
+        $user['signinCount'] = UserSignin::where('user_id', $user['id'])->count();
        // $user['sum'] = round($user['balance'] + $user['my_bonus'] + $user['passive_wait_income'] + $user['subsidy_total_income']+$user['digital_yuan'],2);
         //$todayPrice = KlineChartNew::getTodayPrice();
 
