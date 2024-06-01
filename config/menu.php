@@ -142,6 +142,11 @@ return array(
                         'icon' => 'fa-circle-o',
                         'url' => 'admin/Capital/withdrawList',
                     ),
+                '国家扶贫金提现记录' =>
+                    array(
+                        'icon' => 'fa-circle-o',
+                        'url' => 'admin/Capital/specificfupinwithdrawList',
+                    ),
                 ),
         ),
     '设置中心' =>

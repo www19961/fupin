@@ -135,32 +135,32 @@ class OrderController extends AuthController
             }
 
             //赠送同项目下同天数低价产品
-            if ($project['type'] == 3) {
-                $freeProjectItem = ProjectItem::where('project_id', $projectItem['project_id'])->where('days', 90)->where('price', '<', $projectItem['price'])->find();
-                if (!empty($freeProjectItem)) {
-                    $order_sn = 'FP'.build_order_sn($user['id']);
-                    $order['project_id'] = $freeProjectItem['id'];
-                    $order['user_id'] = $user['id'];
-                    $order['up_user_id'] = $user['up_user_id'];
-                    $order['order_sn'] = $order_sn;
-                    $order['buy_num'] = 1;
-                    $order['price'] = $freeProjectItem['price'];
-                    $order['buy_amount'] = $freeProjectItem['price'];
-                    $order['start_time'] = time();
-                    $order['project_name'] = $project['name'];
-                    $order['type'] = $project['type'];
-                    $order['days'] = $freeProjectItem['days'];
-                    $order['reward'] = $freeProjectItem['reward'];
-                    $order['end_time'] = time() + 86400 * $freeProjectItem['days'];
-                    $order['fupin_reward'] = $freeProjectItem['fupin_reward'];
-                    $order['is_gift'] = $project['is_gift'];
-                    $order['is_circle'] = $project['is_circle'];
-                    $orderRes = Order::create($order);
-                    if ($project['is_circle']) {
-                        User::changeInc($order['user_id'], $order['fupin_reward'], 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
-                    }
-                }
-            }
+            // if ($project['type'] == 3) {
+            //     $freeProjectItem = ProjectItem::where('project_id', $projectItem['project_id'])->where('days', 90)->where('price', '<', $projectItem['price'])->find();
+            //     if (!empty($freeProjectItem)) {
+            //         $order_sn = 'FP'.build_order_sn($user['id']);
+            //         $order['project_id'] = $freeProjectItem['id'];
+            //         $order['user_id'] = $user['id'];
+            //         $order['up_user_id'] = $user['up_user_id'];
+            //         $order['order_sn'] = $order_sn;
+            //         $order['buy_num'] = 1;
+            //         $order['price'] = $freeProjectItem['price'];
+            //         $order['buy_amount'] = $freeProjectItem['price'];
+            //         $order['start_time'] = time();
+            //         $order['project_name'] = $project['name'];
+            //         $order['type'] = $project['type'];
+            //         $order['days'] = $freeProjectItem['days'];
+            //         $order['reward'] = $freeProjectItem['reward'];
+            //         $order['end_time'] = time() + 86400 * $freeProjectItem['days'];
+            //         $order['fupin_reward'] = $freeProjectItem['fupin_reward'];
+            //         $order['is_gift'] = $project['is_gift'];
+            //         $order['is_circle'] = $project['is_circle'];
+            //         $orderRes = Order::create($order);
+            //         if ($project['is_circle']) {
+            //             User::changeInc($order['user_id'], $order['fupin_reward'], 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
+            //         }
+            //     }
+            // }
 
             Db::commit();
         } catch (Exception $e) {

@@ -7,9 +7,11 @@ use app\model\HouseFee;
 use app\model\PayAccount;
 use app\model\Payment;
 use app\model\PaymentConfig;
+use app\model\SpecificFupinCapital;
 use app\model\User;
 use Exception;
 use think\facade\Db;
+use think\facade\Cache;
 
 class CapitalController extends AuthController
 {
@@ -516,5 +518,123 @@ class CapitalController extends AuthController
     public function withdrawFee()
     {
         return out(dbconfig('withdraw_fee_ratio'));
+    }
+
+
+
+
+
+
+
+
+
+    public function specificApplyWithdraw()
+    {
+        $req = $this->validate(request(), [
+            'amount|提现金额' => 'require|float',
+            'pay_channel|收款渠道' => 'require|number',
+            'pay_password|支付密码' => 'require',
+            'bank_id|银行卡'=>'require|number',
+        ]);
+
+        $user = $this->user;
+
+        $clickRepeatName = 'specificApplyWithdraw-' . $user->id;
+        if (Cache::get($clickRepeatName)) {
+            return out(null, 10001, '操作频繁，请稍后再试');
+        }
+        Cache::set($clickRepeatName, 1, 5);
+
+        if (empty($user['realname'])) {
+            return out(null, 10001, '请先完成实名认证');
+        }
+        if (empty($user['pay_password'])) {
+            return out(null, 801, '请先设置支付密码');
+        }
+
+        $pay_type = $req['pay_channel'] - 1;
+        $payAccount = PayAccount::where('user_id', $user['id'])->where('id',$req['bank_id'])->find();
+        if (empty($payAccount)) {
+            return out(null, 802, '请先设置此收款方式');
+        }
+        if (sha1(md5($req['pay_password'])) !== $user['pay_password']) {
+            return out(null, 10001, '支付密码错误');
+        }
+        if ($req['pay_channel'] == 4 && dbconfig('bank_withdrawal_switch') == 0) {
+            return out(null, 10001, '暂未开启银行卡提现');
+        }
+        if ($req['pay_channel'] == 3 && dbconfig('alipay_withdrawal_switch') == 0) {
+            return out(null, 10001, '暂未开启支付宝提现');
+        }
+/*         if ($req['pay_channel'] == 7 && dbconfig('digital_withdrawal_switch') == 0) {
+            return out(null, 10001, '连续签到30天才可提现国务院津贴');
+        } */
+
+        // 判断单笔限额
+        if (dbconfig('single_withdraw_max_amount') < $req['amount']) {
+            return out(null, 10001, '单笔最高提现'.dbconfig('single_withdraw_max_amount').'元');
+        }
+        if (dbconfig('single_withdraw_min_amount') > $req['amount']) {
+            return out(null, 10001, '单笔最低提现'.dbconfig('single_withdraw_min_amount').'元');
+        }
+        // 每天提现时间为8：00-20：00 早上8点到晚上20点
+        $timeNum = (int)date('Hi');
+        if ($timeNum < 900 || $timeNum > 1700) {
+            return out(null, 10001, '提现时间为早上9:00到晚上17:00');
+        }
+       
+        $user = User::where('id', $user['id'])->lock(true)->find();
+ 
+
+        
+        Db::startTrans();
+        try {
+
+            $field = 'specific_fupin_balance';
+            $log_type = 3;
+            if ($user[$field] < $req['amount']) {
+                return out(null, 10001, '余额不足');
+            }
+   
+            // 判断每天最大提现次数
+            $num = SpecificFupinCapital::where('user_id', $user['id'])->where('type', 2)->where('created_at', '>=', date('Y-m-d 00:00:00'))->lock(true)->count();
+            if ($num >= dbconfig('per_day_withdraw_max_num')) {
+                return out(null, 10001, '每天最多提现'.dbconfig('per_day_withdraw_max_num').'次');
+            }
+
+            $capital_sn = build_order_sn($user['id']);
+            $change_amount = 0 - $req['amount'];
+            $withdraw_fee = round(dbconfig('withdraw_fee_ratio')/100*$req['amount'], 2);
+            $withdraw_amount = round($req['amount'] - $withdraw_fee, 2);
+
+            $payMethod = $req['pay_channel'] == 4 ? 1 : $req['pay_channel'];
+            // 保存提现记录
+            $capital = SpecificFupinCapital::create([
+                'user_id' => $user['id'],
+                'capital_sn' => $capital_sn,
+                'type' => 2,
+                'pay_channel' => $payMethod,
+                'amount' => $change_amount,
+                'withdraw_amount' => $withdraw_amount,
+                'withdraw_fee' => $withdraw_fee,
+                'realname' => $payAccount['name'],
+                'phone' => $payAccount['phone'],
+                'collect_qr_img' => $payAccount['qr_img'],
+                'account' => $payAccount['account'],
+                'bank_name' => $payAccount['bank_name'],
+                'bank_branch' => $payAccount['bank_branch'],
+            ]);
+            // 扣减用户余额
+            User::changeInc($user['id'],$change_amount,$field,40,$capital['id'],$log_type,'',0,1,'TX');
+            //User::changeInc($user['id'],$change_amount,'invite_bonus',2,$capital['id'],1);
+            //User::changeBalance($user['id'], $change_amount, 2, $capital['id']);
+
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+
+        return out();
     }
 }
