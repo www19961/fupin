@@ -133,7 +133,9 @@ class OrderController extends AuthController
                 foreach ($userRelation as $value) {
                     $rate = round(dbconfig($map[$value['level']])/100, 2);
                     $reward = bcmul($pay_amount, $rate, 2);
-                    User::changeInc($value['user_id'],$reward,'balance',8,$user['id'],1,'团队奖励',0,1,$pay_amount);
+                    if ($reward > 0) {
+                        User::changeInc($value['user_id'],$reward,'balance',8,$user['id'],1,'团队奖励',0,1,$pay_amount);
+                    }
                 }
 
                 //激活
