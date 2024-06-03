@@ -1354,7 +1354,8 @@ class UserController extends AuthController
         //账户余额
         $return['balance'] = $user['balance'] + $user['topup_balance'];
         //专项基金收益
-        $return['specific_balance'] = UserBalanceLog::where('user_id', $user['id'])->where('type', 31)->where('change_balance', '>', 0)->sum('change_balance'); 
+        // $return['specific_balance'] = UserBalanceLog::where('user_id', $user['id'])->where('type', 31)->where('change_balance', '>', 0)->sum('change_balance'); 
+        $return['specific_balance'] = $user['specific_balance'];
         //团队奖励
         $return['teamIncome'] = UserBalanceLog::where('user_id', $user['id'])->whereIn('type', [8])->where('change_balance', '>', 0)->sum('change_balance'); 
         //总资产
