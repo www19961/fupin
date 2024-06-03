@@ -79,6 +79,11 @@ class OrderController extends AuthController
             // if ($isBuyThisTypeProduct) {
             //     return out(null, 10001, '只能购买一次');
             // }
+
+            $buyLimit = Order::where('user_id', $user['id'])->where('type', 4)->count();
+            if ($buyLimit >= 2) {
+                return out(null, 10001, '只能购买两次');
+            }
         }
 
         Db::startTrans();
