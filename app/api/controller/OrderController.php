@@ -79,6 +79,11 @@ class OrderController extends AuthController
             // if ($isBuyThisTypeProduct) {
             //     return out(null, 10001, '只能购买一次');
             // }
+
+            $buyLimit = Order::where('user_id', $user['id'])->where('type', 4)->count();
+            if ($buyLimit >= 2) {
+                return out(null, 10001, '只能购买两次');
+            }
         }
 
         Db::startTrans();
@@ -128,7 +133,9 @@ class OrderController extends AuthController
                 foreach ($userRelation as $value) {
                     $rate = round(dbconfig($map[$value['level']])/100, 2);
                     $reward = bcmul($pay_amount, $rate, 2);
-                    User::changeInc($value['user_id'],$reward,'balance',8,$user['id'],1,'团队奖励',0,1,$pay_amount);
+                    if ($reward > 0) {
+                        User::changeInc($value['user_id'],$reward,'balance',8,$user['id'],1,'团队奖励',0,1,$pay_amount);
+                    }
                 }
 
                 //激活
@@ -187,6 +194,33 @@ class OrderController extends AuthController
         if (!empty($req['status'])) {
             $builder->where('status', $req['status']);
         }
+
+        $builder->where('type', '<>', 4);
+
+        // if (!empty($req['project_group_id'])) {
+        //     $builder->where('project_group_id', $req['project_group_id']);
+        // }
+        $data = $builder->order('id', 'desc')->field(['id', 'order_sn', 'status', 'created_at', 'price', 'days', 'reward', 'project_name', 'is_transfer', 'type', 'multiple'])->paginate(10,false,['query'=>request()->param()]);
+
+        return out($data);
+    }
+
+    public function orderListType4()
+    {
+        $req = $this->validate(request(), [
+            'status' => 'number',
+            // 'project_group_id' => 'number',
+        ]);
+        $user = $this->user;
+
+        $builder = Order::where('user_id', $user['id']);
+        
+        if (!empty($req['status'])) {
+            $builder->where('status', $req['status']);
+        }
+
+        $builder->where('type', 4);
+
         // if (!empty($req['project_group_id'])) {
         //     $builder->where('project_group_id', $req['project_group_id']);
         // }
