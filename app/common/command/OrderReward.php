@@ -32,7 +32,10 @@ class OrderReward extends Command
 
                     //专项基金收益
                     $newReward = bcmul($order['reward'], $order['multiple']);
-                    User::changeInc($order['user_id'],$newReward,'specific_balance',31,0);
+                    if ($newReward > 0) {
+                        User::changeInc($order['user_id'],$newReward,'specific_balance',31,0);
+                    }
+                    
                     //国家扶贫金
                     $newFupinReward = bcmul($order['fupin_reward'], $order['multiple']);
                     User::changeInc($order['user_id'], $newFupinReward, 'specific_fupin_balance', 37, $order['id'], 3);
