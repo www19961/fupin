@@ -206,20 +206,24 @@ class OrderController extends AuthController
         }
         Cache::set($clickRepeatName, 1, 5);
 
-        $resCount = Order::where('user_id', $user['id'])->where('status', 2)->where('is_transfer', 0)->sum('reward');
-        if ($resCount == 0) {
+        // $resCount = Order::where('user_id', $user['id'])->where('status', 2)->where('is_transfer', 0)->sum('reward');
+        // if ($resCount == 0) {
+        if ($user['specific_balance'] <= 0) {
             return out(null, 10001, '暂无可提现余额');
         }
 
         Db::startTrans();
         try {   
 
-            $list = Order::where('user_id', $user['id'])->where('status', 2)->where('is_transfer', 0)->select()->toArray();
-            foreach ($list as $key => $value) {
-                Order::where('id', $value['id'])->update(['is_transfer' => 1]);
-                User::changeInc($user['id'],-$value['reward'],'specific_balance',33,$value['id'],1,'',0,1,'TRS');
-                User::changeInc($user['id'],$value['reward'],'balance',34,$value['id'],1,'',0,1,'TRR');
-            }
+            // $list = Order::where('user_id', $user['id'])->where('status', 2)->where('is_transfer', 0)->select()->toArray();
+            // foreach ($list as $key => $value) {
+            //     Order::where('id', $value['id'])->update(['is_transfer' => 1]);
+            //     User::changeInc($user['id'],-$value['reward'],'specific_balance',33,$value['id'],1,'',0,1,'TRS');
+            //     User::changeInc($user['id'],$value['reward'],'balance',34,$value['id'],1,'',0,1,'TRR');
+            // }
+
+            User::changeInc($user['id'],-$user['specific_balance'],'specific_balance',33,$user['id'],1,'',0,1,'TRS');
+            User::changeInc($user['id'],$user['specific_balance'],'balance',34,$user['id'],1,'',0,1,'TRR');
 
             Db::commit();
         } catch (Exception $e) {

@@ -1354,7 +1354,7 @@ class UserController extends AuthController
         //账户余额
         $return['balance'] = $user['balance'] + $user['topup_balance'];
         //专项基金收益
-        $return['specific_balance'] = $user['specific_balance'];
+        $return['specific_balance'] = UserBalanceLog::where('user_id', $user['id'])->where('type', 31)->where('change_balance', '>', 0)->sum('change_balance'); 
         //团队奖励
         $return['teamIncome'] = UserBalanceLog::where('user_id', $user['id'])->whereIn('type', [8])->where('change_balance', '>', 0)->sum('change_balance'); 
         //总资产
@@ -1364,7 +1364,7 @@ class UserController extends AuthController
         //认证状态
         $auth = Authentication::where('user_id', $user['id'])->where('status', 1)->find();
         //专项基金收益（未领取）
-        $return['countTransferable'] = Order::where('user_id', $user['id'])->where('status', 2)->where('is_transfer', 0)->sum('reward');
+        $return['countTransferable'] = $user['specific_balance'];
         //专项扶贫金
         $return['specific_fupin_balance'] = $user['specific_fupin_balance'];
         if ($auth) {
