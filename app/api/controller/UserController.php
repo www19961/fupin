@@ -1398,4 +1398,11 @@ class UserController extends AuthController
         }
         return out();
     }
+
+    public function upToken(){
+        $conf = config('filesystem.disks.qiniu');
+        $auth = new \Qiniu\Auth($conf['accessKey'], $conf['secretKey']);
+        $upToken = $auth->uploadToken($conf['bucket']);
+        return out(['upToken'=>$upToken]);
+    }
 }   
