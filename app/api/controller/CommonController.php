@@ -190,6 +190,12 @@ class CommonController extends BaseController
         return out(['url' => $url]);
     }
 
+    public function uploadFileQiniu()
+    {
+        $url = upload_file4('file');
+        return out(['url' => $url, 'domain' => config('filesystem.disks.qiniu.domain')]);
+    }
+
 /*     public function uploadFile2(){
         $url = upload_file2('file');
         return out(['url'=>$url]);   

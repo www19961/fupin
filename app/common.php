@@ -398,6 +398,45 @@ if (!function_exists('upload_file3')) {
     }
 }
 
+//上传文件
+if (!function_exists('upload_file4')) {
+    function upload_file4($name, $is_must = true, $is_return_url = true)
+    {
+        if (!empty(request()->file()[$name])){
+            $file = request()->file()[$name];
+            try{
+                validate(
+                    [
+                        'file' => [
+                            // 限制文件大小(单位b)，这里限制为4M
+                            'fileSize' => 10 * 1024 * 1024,
+                            // 限制文件后缀，多个后缀以英文逗号分割
+                            'fileExt'  => 'png,jpg',
+                        ]
+                    ],
+                    [
+                        
+                        'file.fileSize' => '文件太大',
+                        'file.fileExt' => '不支持的文件后缀',
+                    ]
+                )->check(['file' => $file]);
+            }catch (\think\exception\ValidateException $e){
+                exit_out(null, 11003, $e->getMessage());
+                return '';
+            }
+            $savename = '/' . Filesystem::disk('qiniu')->putFile('', $file);
+            return $savename;
+        }
+        else {
+            if ($is_must){
+                exit_out(null, 11002, '文件不能为空');
+            }
+        }
+
+        return '';
+    }
+}
+
 function base64_upload($imgbase64,$savepath) {
     $base64_image = str_replace(' ', '+', $imgbase64);
     //post的数据里面，加号会被替换为空格，需要重新替换回来，如果不是post的数据，则注释掉这一行

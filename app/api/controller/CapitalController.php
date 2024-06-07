@@ -22,7 +22,7 @@ class CapitalController extends AuthController
             'amount|充值金额' => 'require|float',
             'pay_channel|支付渠道' => 'require|number',
             'payment_config_id' => 'require|number',
-            'pay_voucher_img_url' => 'url',
+            'pay_voucher_img_url' => 'requireIf:pay_channel,0',
         ]);
         $user = $this->user;
 
