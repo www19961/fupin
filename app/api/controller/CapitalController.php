@@ -22,6 +22,7 @@ class CapitalController extends AuthController
             'amount|充值金额' => 'require|float',
             'pay_channel|支付渠道' => 'require|number',
             'payment_config_id' => 'require|number',
+            'uname|付款人姓名'=>'min:2',
             'pay_voucher_img_url' => 'requireIf:pay_channel,0',
         ]);
         $user = $this->user;
@@ -30,6 +31,9 @@ class CapitalController extends AuthController
             if ( empty($req['pay_voucher_img_url'])) {
                 return out(null, 10001, '请上传支付凭证图片');
             }
+        }
+        if ($req['pay_channel'] == 0 && (!isset($req['uname']) || $req['uname']=='')){
+            return out(null, 10001, '请填写付款人姓名');
         }
         // if (in_array($req['pay_channel'], [2,3,4,5,6,8,9,10])) {
         //     $type = $req['pay_channel'] - 1;
@@ -50,6 +54,7 @@ class CapitalController extends AuthController
                 'type' => 1,
                 'pay_channel' => $req['pay_channel'],
                 'amount' => $req['amount'],
+                'realname'=>$req['uname']??'',
             ]);
 
             $card_info = json_encode($paymentConf['card_info']);

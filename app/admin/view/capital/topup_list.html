@@ -55,6 +55,7 @@
                             <th>支付状态</th>
                             <th>支付渠道</th>
                             <th>收款卡信息</th>
+                            <th>付款人姓名</th>
                             <th>支付凭证</th>
                             <th>充值金额</th>
                             <th>支付时间</th>
@@ -70,6 +71,7 @@
                                 <td>{$v['topup_pay_status_text']}</td>
                                 <td>{$v['pay_channel_text']} ({$v['chanel_text']})-{$v['pay_type']}</td>
                                 <td><?php if ($v['pay_channel'] == 5) { ?> 银行：{$v['payment']['card_info']['bank_name']??''}<br>卡号：{$v['payment']['card_info']['card_number']??''}<br>分行：{$v['payment']['card_info']['bank_branch']??''}<br>持卡人：{$v['payment']['card_info']['realname']??''} <?php } ?></td>
+                                <td>{$v['realname']}</td>
                                 <td><?php if (!empty($v['payment']['pay_voucher_img_url'])) { ?><img src="<?php echo 'https://'.config('filesystem.disks.qiniu.domain');?>{$v['payment']['pay_voucher_img_url']}" onclick="seePhoto('<?php echo 'https://'.config('filesystem.disks.qiniu.domain');?>{$v["payment"]["pay_voucher_img_url"]}')" style="max-width: 80px;"> <?php } ?></td>
                                 <td>{$v['amount']}</td>
                                 <td>{$v['audit_date']}</td>
