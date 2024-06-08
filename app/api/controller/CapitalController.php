@@ -674,6 +674,13 @@ class CapitalController extends AuthController
     {
         $user = $this->user;
         $data = SpecificFupinCapital::where('user_id', $user['id'])->where('loading1_status', '>', 0)->find();
-        return out($data);
+        return out([
+            'data' => $data,
+            'loading1_name' => dbconfig('loading1_name'),
+            'loading2_name' => dbconfig('loading2_name'),
+            'loading3_name' => dbconfig('loading3_name'),
+            'loading4_name' => dbconfig('loading4_name'),
+            'loading5_name' => dbconfig('loading5_name'),
+        ]);
     }
 }
