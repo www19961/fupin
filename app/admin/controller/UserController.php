@@ -413,7 +413,7 @@ class UserController extends AuthController
             case 5:
                 $filed = 'balance';
                 $log_type = 1;
-                $balance_type = 39;
+                $balance_type = 38;
                 $text = '可提现余额';
                 break;
             default:
