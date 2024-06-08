@@ -410,6 +410,12 @@ class UserController extends AuthController
                 $balance_type = 38;
                 $text = '专项扶贫金';
                 break;
+            case 5:
+                $filed = 'balance';
+                $log_type = 1;
+                $balance_type = 39;
+                $text = '可提现余额';
+                break;
             default:
                 return out(null, 10001, '类型错误');
         }
