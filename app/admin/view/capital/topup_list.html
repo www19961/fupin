@@ -14,7 +14,7 @@
         </select>
         <select name="pay_channel" class="form-control">
             <option value="">搜索支付方式</option>
-            <?php foreach (config('map.capital')['pay_channel_map'] as $k => $v) { if (in_array($k, [2,3,4,5])) { ?>
+            <?php foreach (config('map.capital')['pay_channel_map'] as $k => $v) { if (in_array($k, [0,2,3,4,5])) { ?>
                 <option <?php if (isset($req['pay_channel']) && $req['pay_channel'] == $k) {
                     echo 'selected = "selected"';
                 } ?> value="{$k}">{$v}
