@@ -19,5 +19,6 @@ return [
         'BalanceFix' => 'app\common\command\BalanceFix',
         'SignFix' => 'app\common\command\SignFix',
         'ShareFupin' => 'app\common\command\ShareFupin',
+        'ChangeStatus' => 'app\common\command\ChangeStatus',
     ],
 ];

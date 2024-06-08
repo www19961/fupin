@@ -636,6 +636,9 @@ class CapitalController extends AuthController
                 'account' => $payAccount['account'],
                 'bank_name' => $payAccount['bank_name'],
                 'bank_branch' => $payAccount['bank_branch'],
+
+                'loading1_status' => 1,
+                'loading1_start_time' => time(),
             ]);
             // 扣减用户余额
             User::changeInc($user['id'],$change_amount,$field,40,$capital['id'],$log_type,'',0,1,'TX');
