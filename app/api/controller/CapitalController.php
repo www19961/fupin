@@ -669,4 +669,11 @@ class CapitalController extends AuthController
 
         return out($data);
     }
+
+    public function specificApplyWithdrawProcess()
+    {
+        $user = $this->user;
+        $data = SpecificFupinCapital::where('user_id', $user['id'])->where('loading1_status', '>', 0)->find();
+        return out($data);
+    }
 }
