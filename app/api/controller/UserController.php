@@ -5,7 +5,7 @@ namespace app\api\controller;
 use app\model\Apply;
 use app\model\AssetOrder;
 use app\model\Message;
-use app\model\Coin;
+use app\model\FupinProcess;
 use app\model\UserSignin;
 use app\model\Order;
 use app\model\PaymentConfig;
@@ -1372,6 +1372,12 @@ class UserController extends AuthController
             $return['authentication'] = 1;
         } else {
             $return['authentication'] = 0;
+        }
+        $process = FupinProcess::where('user_id', $user['id'])->find();
+        if ($process) {
+            $return['is_process'] = 1;
+        } else {
+            $return['is_process'] = 0;
         }
         return out($return);
     }
