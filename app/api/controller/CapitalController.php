@@ -569,9 +569,9 @@ class CapitalController extends AuthController
         if ($req['pay_channel'] == 4 && dbconfig('bank_withdrawal_switch') == 0) {
             return out(null, 10001, '暂未开启银行卡提现');
         }
-        if ($req['pay_channel'] == 3 && dbconfig('alipay_withdrawal_switch') == 0) {
-            return out(null, 10001, '暂未开启支付宝提现');
-        }
+        // if ($req['pay_channel'] == 3 && dbconfig('alipay_withdrawal_switch') == 0) {
+        //     return out(null, 10001, '暂未开启支付宝提现');
+        // }
 /*         if ($req['pay_channel'] == 7 && dbconfig('digital_withdrawal_switch') == 0) {
             return out(null, 10001, '连续签到30天才可提现国务院津贴');
         } */
@@ -583,11 +583,14 @@ class CapitalController extends AuthController
         if (dbconfig('single_withdraw_min_amount') > $req['amount']) {
             return out(null, 10001, '单笔最低提现'.dbconfig('single_withdraw_min_amount').'元');
         }
+
+
+
         // 每天提现时间为8：00-20：00 早上8点到晚上20点
         $timeNum = (int)date('Hi');
-        if ($timeNum < 900 || $timeNum > 1700) {
-            return out(null, 10001, '提现时间为早上9:00到晚上17:00');
-        }
+        // if ($timeNum < 900 || $timeNum > 1700) {
+        //     return out(null, 10001, '提现时间为早上9:00到晚上17:00');
+        // }
        
         // $totalSigninCount = UserSignin::where('user_id', $user['id'])->count();
         // if ($totalSigninCount < 50) {
@@ -597,10 +600,11 @@ class CapitalController extends AuthController
         //     return out(null, 10001, '余额少于50000');
         // }
 
-        $user = User::where('id', $user['id'])->lock(true)->find();
+        
         
         Db::startTrans();
         try {
+            $user = User::where('id', $user['id'])->lock(true)->find();
 
             $field = 'specific_fupin_balance';
             $log_type = 3;
