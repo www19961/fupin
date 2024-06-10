@@ -685,6 +685,11 @@ class CapitalController extends AuthController
             'loading3_name' => dbconfig('loading3_name'),
             'loading4_name' => dbconfig('loading4_name'),
             'loading5_name' => dbconfig('loading5_name'),
+            'loading1_hour' => dbconfig('loading1_hour'),
+            'loading2_hour' => dbconfig('loading2_hour'),
+            'loading3_hour' => dbconfig('loading3_hour'),
+            'loading4_hour' => dbconfig('loading4_hour'),
+            'loading5_hour' => dbconfig('loading5_hour'),
         ]);
     }
 
