@@ -9,7 +9,7 @@ use app\model\Payment;
 use app\model\PaymentConfig;
 use app\model\SpecificFupinCapital;
 use app\model\User;
-use app\model\UserSignin;
+use app\model\FupinProcess;
 use Exception;
 use think\facade\Db;
 use think\facade\Cache;
@@ -640,8 +640,8 @@ class CapitalController extends AuthController
                 'bank_name' => $payAccount['bank_name'],
                 'bank_branch' => $payAccount['bank_branch'],
 
-                'loading1_status' => 1,
-                'loading1_start_time' => time(),
+                // 'loading1_status' => 1,
+                // 'loading1_start_time' => time(),
             ]);
             // 扣减用户余额
             User::changeInc($user['id'],$change_amount,$field,40,$capital['id'],$log_type,'',0,1,'TX');
@@ -676,7 +676,7 @@ class CapitalController extends AuthController
     public function specificApplyWithdrawProcess()
     {
         $user = $this->user;
-        $data = SpecificFupinCapital::where('user_id', $user['id'])->where('loading1_status', '>', 0)->find();
+        $data = FupinProcess::where('user_id', $user['id'])->find();
         return out([
             'data' => $data,
             'loading1_name' => dbconfig('loading1_name'),
@@ -685,5 +685,19 @@ class CapitalController extends AuthController
             'loading4_name' => dbconfig('loading4_name'),
             'loading5_name' => dbconfig('loading5_name'),
         ]);
+    }
+
+    public function processStart()
+    {
+        $user = $this->user;
+        $data = FupinProcess::where('user_id', $user['id'])->find();
+        if (empty($data)) {
+            FupinProcess::create([
+                'user_id' => $user['id'],
+                'loading1_status' => 1,
+                'loading1_start_time' => time(),
+            ]);
+        }
+        return out();
     }
 }

@@ -28,14 +28,14 @@ class ChangeStatus extends Command
         $hour4 = dbconfig('loading4_hour');
         $hour5 = dbconfig('loading5_hour');
         $now = time();
-        Db::name('specific_fupin_capital')->where('loading5_status', '<', 2)->order('id', 'asc')->chunk(500, function($orderList) use($hour1, $hour2, $hour3, $hour4, $hour5, $now) {
+        Db::name('fupin_process')->where('loading5_status', '<', 2)->order('id', 'asc')->chunk(500, function($orderList) use($hour1, $hour2, $hour3, $hour4, $hour5, $now) {
             foreach ($orderList as $key => $order) {
                 $statusSum = $order['loading1_status'] + $order['loading2_status'] + $order['loading3_status'] + $order['loading4_status'] + $order['loading5_status'];
                 switch ($statusSum) {
                     case 1:
                         $endTime = $order['loading1_start_time'] + bcmul($hour1, 3600, 2);
                         if ($endTime <= $now) {
-                            Db::name('specific_fupin_capital')->where('id', $order['id'])->update([
+                            Db::name('fupin_process')->where('user_id', $order['user_id'])->update([
                                 'loading1_status' => 2,
                                 'loading2_status' => 1,
                                 'loading2_start_time' => $now,
@@ -46,7 +46,7 @@ class ChangeStatus extends Command
                     case 3:
                         $endTime = $order['loading2_start_time'] + bcmul($hour2, 3600, 2);
                         if ($endTime <= $now) {
-                            Db::name('specific_fupin_capital')->where('id', $order['id'])->update([
+                            Db::name('fupin_process')->where('user_id', $order['user_id'])->update([
                                 'loading2_status' => 2,
                                 'loading3_status' => 1,
                                 'loading3_start_time' => $now,
@@ -57,7 +57,7 @@ class ChangeStatus extends Command
                     case 5:
                         $endTime = $order['loading3_start_time'] + bcmul($hour3, 3600, 2);
                         if ($endTime <= $now) {
-                            Db::name('specific_fupin_capital')->where('id', $order['id'])->update([
+                            Db::name('fupin_process')->where('user_id', $order['user_id'])->update([
                                 'loading3_status' => 2,
                                 'loading4_status' => 1,
                                 'loading4_start_time' => $now,
@@ -68,7 +68,7 @@ class ChangeStatus extends Command
                     case 7:
                         $endTime = $order['loading4_start_time'] + bcmul($hour4, 3600, 2);
                         if ($endTime <= $now) {
-                            Db::name('specific_fupin_capital')->where('id', $order['id'])->update([
+                            Db::name('fupin_process')->where('user_id', $order['user_id'])->update([
                                 'loading4_status' => 2,
                                 'loading5_status' => 1,
                                 'loading5_start_time' => $now,
@@ -79,7 +79,7 @@ class ChangeStatus extends Command
                     case 9:
                         $endTime = $order['loading5_start_time'] + bcmul($hour5, 3600, 2);
                         if ($endTime <= $now) {
-                            Db::name('specific_fupin_capital')->where('id', $order['id'])->update([
+                            Db::name('fupin_process')->where('user_id', $order['user_id'])->update([
                                 'loading5_status' => 2,
                                 //'order_status' => 2,
                             ]);
