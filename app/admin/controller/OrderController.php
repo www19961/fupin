@@ -36,6 +36,9 @@ class OrderController extends AuthController
         if (isset($req['order_sn']) && $req['order_sn'] !== '') {
             $builder->where('o.order_sn', $req['order_sn']);
         }
+        if (isset($req['days']) && $req['days'] !== '') {
+            $builder->where('o.days', $req['days']);
+        }
         if (isset($req['status']) && $req['status'] !== '') {
             $builder->where('o.status', $req['status']);
         }

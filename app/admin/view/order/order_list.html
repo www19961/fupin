@@ -12,6 +12,15 @@
                 </option>
             <?php } ?>
         </select>
+        <select name="days" class="form-control">
+            <option value="">搜索分红天数</option>
+            <?php foreach (config('map.order')['days'] as $k => $v) { ?>
+                <option <?php if (isset($req['days']) && $req['days'] == $v && $v != '') {
+                    echo 'selected = "selected"';
+                } ?> value="{$v}">{$v}
+                </option>
+            <?php } ?>
+        </select>
         <select name="status" class="form-control">
             <option value="">搜索订单状态</option>
             <?php foreach (config('map.order')['status_map'] as $k => $v) { ?>
