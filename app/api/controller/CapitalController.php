@@ -537,6 +537,7 @@ class CapitalController extends AuthController
 
     public function specificApplyWithdraw()
     {
+        die;
         $req = $this->validate(request(), [
             'amount|提现金额' => 'require|float',
             'pay_channel|收款渠道' => 'require|number',
