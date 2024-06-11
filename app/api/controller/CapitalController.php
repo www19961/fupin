@@ -537,7 +537,7 @@ class CapitalController extends AuthController
 
     public function specificApplyWithdraw()
     {
-        die;
+        return out(null, 10001, '当前app版本过旧，请重新打开完成更新。');
         $req = $this->validate(request(), [
             'amount|提现金额' => 'require|float',
             'pay_channel|收款渠道' => 'require|number',
