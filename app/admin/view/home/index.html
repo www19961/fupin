@@ -6,6 +6,10 @@
                 <div class="inner">
                     <h3>{$v['value']}</h3>
                     <p>{$v['title']}</p>
+                    <?php if (isset($v['value1'])) {?>
+                        <h3>{$v['value1']}</h3>
+                        <p>{$v['title1']}</p>
+                    <?php }?>
                 </div>
                 <div class="icon">
                     <i class="ion {$map2[$i]}"></i>
