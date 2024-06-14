@@ -10,6 +10,8 @@ namespace app\api\controller;
 
 use app\common\controller\BaseController;
 use app\model\Banner;
+use app\model\ProjectItem;
+use app\model\Project;
 use app\model\Capital;
 use app\model\EquityYuanRecord;
 use app\model\Order;
@@ -171,6 +173,41 @@ class CommonController extends BaseController
 
         //注册送16000国家专项扶贫金
         User::changeInc($user['id'], 16000, 'specific_fupin_balance', 36, $user['id'], 3);
+
+        //赠送农业基金6000 90天
+        $projectItem = ProjectItem::where('project_id', 32)->where('price', 6000)->where('days', 90)->find();
+        $project = Project::find($projectItem['project_id']);
+        if (!empty($projectItem)) {
+            $isGetProduct = Order::where('user_id', $user['id'])->where('project_name', '农业强国专项扶贫基金')->where('price', 6000)->where('days', 90)->find();
+            if (empty($isGetProduct)) {
+                $order_sn = 'FP'.build_order_sn($user['id']);
+                $order['project_id'] = $projectItem['id'];
+                $order['user_id'] = $user['id'];
+                $order['up_user_id'] = $user['up_user_id'];
+                $order['order_sn'] = $order_sn;
+                $order['buy_num'] = 1;
+                $order['price'] = $projectItem['price'];
+                $order['buy_amount'] = $projectItem['price'];
+                $order['start_time'] = time();
+                $order['project_name'] = $project['name'];
+                $order['type'] = $project['type'];
+                $order['days'] = $projectItem['days'];
+                $order['reward'] = $projectItem['reward'];
+                $order['end_time'] = time() + 86400 * $projectItem['days'];
+                $order['fupin_reward'] = $projectItem['fupin_reward'];
+                $order['is_gift'] = $project['is_gift'];
+                $order['is_circle'] = $project['is_circle'];
+                $order['multiple'] = $project['multiple'];
+
+                $orderRes = Order::create($order);
+
+                //国家扶贫金
+                if ($project['is_circle']) {
+                    $fupinReward = bcmul($order['fupin_reward'], $order['multiple']);
+                    User::changeInc($order['user_id'], $fupinReward, 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
+                }
+            }
+        }
 
         $token = aes_encrypt(['id' => $user['id'], 'time' => time()]);
             Db::commit();
