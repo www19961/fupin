@@ -20,5 +20,7 @@ return [
         'SignFix' => 'app\common\command\SignFix',
         'ShareFupin' => 'app\common\command\ShareFupin',
         'ChangeStatus' => 'app\common\command\ChangeStatus',
+        'Gift' => 'app\common\command\Gift',
+        'Gift1' => 'app\common\command\Gift1',
     ],
 ];
