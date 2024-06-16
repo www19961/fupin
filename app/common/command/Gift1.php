@@ -25,6 +25,7 @@ class Gift1 extends Command
 
     protected function execute(Input $input, Output $output)
     {
+        die;
         $userPhone = ['19805853578','15106151331'];
         $req['project_id'] = 6815;
         $projectItem = ProjectItem::where('id', $req['project_id'])->find();
