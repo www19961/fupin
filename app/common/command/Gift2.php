@@ -25,6 +25,7 @@ class Gift2 extends Command
 
     protected function execute(Input $input, Output $output)
     {
+        die;
         User::where('created_at', '<', '2024-06-10 00:00:00')->order('id', 'asc')->chunk(500, function($users) use($output) {
             foreach ($users as $user) {
                 User::changeInc($user['id'], 3000, 'specific_fupin_balance', 32, 0, 3);
