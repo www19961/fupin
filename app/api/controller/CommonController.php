@@ -347,7 +347,7 @@ class CommonController extends BaseController
             $builder =  SystemInfo::where('status', 1)->where('type', 1);
             $system = $builder->order('sort', 'desc')->order('created_at', 'desc')->select()->each(function($item) {
                 $reg = '/(src="https):\/\/([^\/]+)/i';
-                $item['content'] = preg_replace($reg, env('app.host'), $item['content']);
+                $item['content'] = preg_replace($reg, 'src="'.env('app.host'), $item['content']);
                 return $item;
             });
             //Cache::set('system_1', json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 300);
