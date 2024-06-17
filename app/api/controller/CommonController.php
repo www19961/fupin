@@ -1204,7 +1204,7 @@ class CommonController extends BaseController
         
         $system =[];
         $system = Cache::get('system_'.$req['type'],[]);
-        
+        $system ='';
         if(empty($system) || $system == null){
             $builder =  SystemInfo::where('status', 1);
             if (!empty($req['type'])) {
