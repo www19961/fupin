@@ -1205,7 +1205,7 @@ class CommonController extends BaseController
         $system =[];
         $system = Cache::get('system_'.$req['type'],[]);
         $system ='';
-        if(empty($system) || $system == null){
+        // if(empty($system) || $system == null){
             $builder =  SystemInfo::where('status', 1);
             if (!empty($req['type'])) {
                 $builder->where('type', $req['type']);
@@ -1221,7 +1221,7 @@ class CommonController extends BaseController
                  $system[$k]['content'] = str_replace('src="/storage/', 'src="'. env('app.host') .'/storage/', $system[$k]['content']);
             }
             Cache::set('system_'.$req['type'], json_decode(json_encode($system, JSON_UNESCAPED_UNICODE),true), 10);
-        }
+        // }
         return out($system);
     }
     
