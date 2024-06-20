@@ -1,0 +1,93 @@
+<div class="search">
+    <form class="form-inline">
+        
+ 
+        <input type="text" value="{$req['name']??''}" name="name" placeholder="搜索姓名" class="form-control">
+        <input type="text" value="{$req['phone']??''}" name="phone" placeholder="搜索手机号" class="form-control">
+        <input type="text" value="{$req['qq']??''}" name="qq" placeholder="搜索qq" class="form-control">
+        <input class="btn btn-flat btn-primary m_10" type="submit" value="搜索">
+        <a {:auth_show_judge('Project/addProject')} class="btn btn-flat btn-success m_10 f_r"
+        href="{:url('admin/Project/showProject')}"><i class="fa fa-plus m-r-10"></i>添 加</a>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-bordered table-hover table-striped">
+                        <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <th>姓名</th>
+                            <th>手机号</th>
+                            <th>其他联系方式</th>
+                            <th>创建时间</th>
+                        </tr>
+                        <?php foreach ($data as $k => $v) { ?>
+                        <tr>
+                            <td>{$v['id']}</td>
+                            <td>{$v['name']}</td>
+                            <td>{$v['phone']}</td>
+                            <td>{$v['qq']}</td>
+                                <td>{$v['created_at']}</td>
+                                
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align:center;font-size: 14px;"><?php echo $data->render(); ?></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function delProject(id)
+    {
+        //确认框
+        layer.confirm('确定删除吗？', {icon: 3, title: '提示'}, function (index) {
+            layer.close(index);
+            $.post('{:url("admin/Project/delProject")}', {id: id}, function (res) {
+                if (res.code == '200') {
+                    location.reload(true);
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 3000});
+                }
+            });
+        });
+    }
+
+    function changeProject(id, field)
+    {
+        var value = 0;
+        if ($('#' + field + id).is(':checked')) {
+            value = 0;
+        } else {
+            value = 1;
+        }
+
+        //确认框
+        layer.confirm('确定操作吗', {icon: 3, title: '提示'}, function (index) {
+            layer.close(index);
+            $.post('{:url("admin/Project/changeProject")}', {"id": id, "value": value, "field": field}, function (res) {
+                if (res.code != 200) {
+                    if (value == 1) {
+                        $('#' + field + id).prop('checked', false);
+                    } else {
+                        $('#' + field + id).prop('checked', true);
+                    }
+                    layer.msg(res.msg, {icon: 5, time: 2500, offset: '80px'});
+                }
+            });
+        }, function (index2) {
+            if (value == 1) {
+                $('#' + field + id).prop('checked', false);
+            } else {
+                $('#' + field + id).prop('checked', true);
+            }
+        });
+    }
+</script>

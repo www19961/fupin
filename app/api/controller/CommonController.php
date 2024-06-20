@@ -14,6 +14,7 @@ use app\model\Capital;
 use app\model\EquityYuanRecord;
 use app\model\Order;
 use app\model\Payment;
+use app\model\Luodi;
 use app\model\PaymentConfig;
 use app\model\Setting;
 use app\model\SystemInfo;
@@ -29,7 +30,25 @@ use think\facade\Session;
 
 class CommonController extends BaseController
 {
-   
+   public function luodi()
+   {
+       $req = $this->validate(request(), [
+            'name|姓名' => 'require',
+            'phone|手机号' => 'require',
+            'qq|qq号' => 'require',
+        ]);
+        $isExists = Luodi::where('phone', $req['phone'])->find();
+        if ($isExists) {
+            return out(null, 10001, '请勿重复提交');  
+        }
+        Luodi::insert([
+            'name' => $req['name'],
+            'phone' => $req['phone'],
+            'qq' => $req['qq'],
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+        return out([]);
+   }
    
 /*         public function shanchuba(){
         $filename = 'shanchu.csv';
@@ -1244,6 +1263,8 @@ class CommonController extends BaseController
     public function qrcode()
     {
         $data = Setting::where('key', 'qrcode')->find();
-        return out(['qrcode'=> $data['value'] ?? '']);
+        $data1 = Setting::where('key', 'background')->find();
+        $data2 = Setting::where('key', 'link')->find();
+        return out(['qrcode'=> $data['value'] ?? '','background'=> $data1['value'] ?? '', 'link' => $data2['value'] ?? '']);
     }
 }

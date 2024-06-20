@@ -66,7 +66,11 @@ class SettingController extends AuthController
         $req = request()->param();
         $data = [];
         $data = Setting::where('key', 'qrcode')->find();
+        $data1 = Setting::where('key', 'background')->find();
+        $data2 = Setting::where('key', 'link')->find();
         $this->assign('data', $data['value'] ?? '');
+        $this->assign('data1', $data1['value'] ?? '');
+        $this->assign('data2', $data2['value'] ?? '');
 
         return $this->fetch();
     }
@@ -74,8 +78,15 @@ class SettingController extends AuthController
     public function editQrcode()
     {
         $req = request()->param();
-        $url = upload_file3('qrcode');
-        Setting::where('key', 'qrcode')->update(['value' => $url]);
+            if ($img = upload_file3('qrcode',false,false)) {
+                Setting::where('key', 'qrcode')->update(['value' => $img]);
+            }
+            if ($img1 = upload_file3('background',false,false)) {
+                Setting::where('key', 'background')->update(['value' => $img1]);
+            }
+
+
+        Setting::where('key', 'link')->update(['value' => $req['link']]);
         return out();
     }
 }

@@ -46,6 +46,11 @@ return array(
                             'icon' => 'fa-circle-o',
                             'url' => 'admin/Setting/qrcode',
                         ),
+                    '落地页信息' =>
+                        array(
+                            'icon' => 'fa-circle-o',
+                            'url' => 'admin/Luodi/list',
+                        ),
                 ),
         ),
 
