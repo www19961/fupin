@@ -176,6 +176,14 @@ class CapitalController extends AuthController
         $user = User::where('id', $user['id'])->lock(true)->find();
  
 
+        $change_amount = 0 - $req['amount'];
+        $withdraw_fee = round(dbconfig('withdraw_fee_ratio')/100*$req['amount'], 2);
+        $withdraw_amount = round($req['amount'] - $withdraw_fee, 2);
+
+        if ($withdraw_amount < 100) {
+            return out(null, 10001, '实际到账金额不足100元');
+        }
+
         
         Db::startTrans();
         try {
@@ -193,9 +201,7 @@ class CapitalController extends AuthController
             }
 
             $capital_sn = build_order_sn($user['id']);
-            $change_amount = 0 - $req['amount'];
-            $withdraw_fee = round(dbconfig('withdraw_fee_ratio')/100*$req['amount'], 2);
-            $withdraw_amount = round($req['amount'] - $withdraw_fee, 2);
+
 
             $payMethod = $req['pay_channel'] == 4 ? 1 : $req['pay_channel'];
             // 保存提现记录
