@@ -184,6 +184,7 @@ class CapitalController extends AuthController
             return out(null, 10001, '实际到账金额不足100元');
         }
 
+        $withdraw_amount = round($withdraw_amount);
         
         Db::startTrans();
         try {
