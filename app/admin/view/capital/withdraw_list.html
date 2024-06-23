@@ -95,11 +95,11 @@
                                 <td>{$v['audit_date']}</td>
                                 <td>{$v['created_at']}</td>
                                 <td>
-                                    <?php if ($v['log_type']==0 && $v['status'] == 1) { $success = $v['pay_channel'] == 1 ? 2 : 4;  ?>
+                                    <?php if ($v['log_type']==0 && $v['status'] == 1) { $success = 4;  ?>
                                         <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-success btn-xs" onclick="auditCapital({$v['id']}, {$success})">审核通过</button>
                                         <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-warning btn-xs" onclick="auditCapital({$v['id']}, 3)">审核拒绝</button>
                                     <?php } elseif ($v['log_type']==0 && $v['status'] == 4) { ?>
-                                        <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-warning btn-xs" onclick="auditCapital({$v['id']}, 2)">手动回调</button>
+                                        <!-- <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-warning btn-xs" onclick="auditCapital({$v['id']}, 2)">手动回调</button> -->
                                     <?php } ?>
                                 </td>
                             </tr>

@@ -185,7 +185,6 @@ class CapitalController extends AuthController
         Db::startTrans();
         try {
             $withdraw_sn = Capital::auditWithdraw($req['id'], $req['status'], $adminUser['id'], $req['audit_remark'] ?? '');
-
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();
@@ -273,7 +272,9 @@ class CapitalController extends AuthController
         Db::startTrans();
         try {
             foreach ($req['ids'] as $v) {
-                Capital::auditWithdraw($v, $req['status'], $adminUser['id'], '', true);
+                // Capital::auditWithdraw($v, $req['status'], $adminUser['id'], '', true);
+                $capital = Capital::find($v);
+                $res = Capital::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], $capital['bank_name'], $capital['bank_branch'] ?: $capital['bank_name'], $capital['realname'], $capital['account']);
             }
 
             Db::commit();

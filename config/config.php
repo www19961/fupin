@@ -220,4 +220,14 @@ return [
         76 => 7782.4,
         77 => 7884.8,
     ],
+
+    'withdraw_conf' => [
+        // 'key' => 'jashduwqd76738dd',
+        'account_id' => '5799',
+        'key' => 'yYJIvEM2mIsU1RzWP4rnaA6eEsIpEuhbt39lJ7E5db8HRI79QkIJAzo20mxvbRSP',
+        'pay_notifyurl' => env('app.host').'/common/paynotify2',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'https://shapi.worldp5599.com/v1/dfapi/add',
+        // 'query_url' => 'https://hongtai01.top/Query',
+    ],
 ];

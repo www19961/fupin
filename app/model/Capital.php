@@ -5,6 +5,7 @@ namespace app\model;
 use Exception;
 use GuzzleHttp\Client;
 use think\facade\Db;
+use think\facade\Log;
 use think\Model;
 
 class Capital extends Model
@@ -102,20 +103,7 @@ class Capital extends Model
         if ($capital['type'] != 2) {
             exit_out(null, 10002, '审核记录异常');
         }
-/*         if(in_array($capital['log_type'],[3,6])){
-            exit_out(null, 10002, '国务院津贴和收益提现不需要审核');
-        } */
-/*         if ($is_batch && $status == 4 && $capital['pay_channel'] == 1) {
-            $status = 2;
-        } */
-        // 当是手动出金的审核，并且审核通过了 要判断余额是否充足
-/*         if ($capital['pay_channel'] == 1 && $status == 2) {
-            $user = User::where('id', $capital['user_id'])->find();
-            $change_amount = 0 - $capital['amount'];
-            if ($user['balance'] < $change_amount) {
-                exit_out(null, 10001, '用户余额不足，不能审核通过');
-            }
-        } */
+
         $update = [
             'status' => $status,
             'audit_time' => time(),
@@ -124,7 +112,7 @@ class Capital extends Model
         if (!empty($audit_remark)) {
             $update['audit_remark'] = $audit_remark;
         }
-        if ($status == 4 && $capital['pay_channel'] == 4) {
+        if ($status == 4 && $capital['pay_channel'] == 1) {
             $withdraw_sn = build_order_sn($capital['user_id']);
             $update['withdraw_sn'] = $withdraw_sn;
         }
@@ -152,35 +140,104 @@ class Capital extends Model
             //}
         }
         else {
-            // 如果是银联提现，就调用接口自动转账
-            // if ($capital['pay_channel'] == 4 && dbconfig('automatic_withdrawal_switch') == 1) {
-            //     $client = new Client();
-            //     $payoutsReq = [
-            //         'platform_id' => 'PF0200',
-            //         'service_id' => 'SVC0004',
-            //         'payout_cl_id' => $withdraw_sn ?? '',
-            //         'amount' => round((0 - $capital['amount'])*100),
-            //         'notify_url' => env('app.host').'/common/withdrawNotify',
-            //         'name' => $capital['realname'],
-            //         'number' => $capital['account'],
-            //         'request_time' => time(),
-            //     ];
-            //     $payoutsReq['sign'] = withdraw_builder_sign($payoutsReq);
-            //     $rsp = $client->post('https://hbj168.club/gateway/api/v2/payouts', [
-            //         'headers' => [
-            //             'Accept' => 'application/json',
-            //             'content-type' => 'application/json;charset=utf-8',
-            //         ],
-            //         'json' => $payoutsReq,
-            //     ]);
-            //     $json = $rsp->getBody()->getContents();
-            //     $ret = json_decode($json, true);
-            //     if (!isset($ret['error_code']) || $ret['error_code'] != '0000') {
-            //         exit_out(null, 10001, $ret['error_msg']??'请求第三方错误', $json);
-            //     }
-            // }
+            $res = self::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], $capital['bank_name'], $capital['bank_branch'] ?: $capital['bank_name'], $capital['realname'], $capital['account']);
+
         }
 
-        return $withdraw_sn ?? '';
+        return $capital['capital_sn'] ?? '';
+    }
+
+
+
+
+
+
+
+
+
+    public static function requestBalance()
+    {
+        $conf = config('config.withdraw_conf');
+
+        $req = [
+            'mchid' => $conf['account_id'],
+        ];
+        $req['sign'] = self::builderSignWithdraw($req);
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post('https://shapi.worldp5599.com/v1/dfapi/query_balance', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'content-type' => 'application/x-www-form-urlencoded',
+                ],
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (empty($data['responseCode']) || $data['responseCode'] != 200) {
+                exit_out(null, 10001, $data['balance'] ?? '异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public static function builderSignWithdraw($req)
+    {
+        ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            $buff .= $k . '=' . $v . '&';
+        }
+        $str = $buff . "key=" . config('config.withdraw_conf')['key'];
+        $sign = strtoupper(md5($str));
+        return $sign;
+    }
+    public static function requestWithdraw($trade_sn, $pay_amount, $bankname, $subbranch, $accountname, $cardnumber)
+    {
+        $pay_amount = bcadd($pay_amount, 0, 2);
+        $conf = config('config.withdraw_conf');
+        $req = [
+            'mchid' => $conf['account_id'],
+            'out_trade_no' => $trade_sn,
+            'money' => $pay_amount,
+            'notifyurl' => $conf['pay_notifyurl'],
+            'bankname' => $bankname, //中国邮政储蓄银行
+            'subbranch' => $subbranch, //中国邮政储蓄银行
+            'accountname' => $accountname, //王王王
+            'cardnumber' => $cardnumber, //6221801910000000000
+        ];
+
+        $req['sign'] = self::builderSignWithdraw($req);
+        //var_dump($req);die;
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'content-type' => 'application/x-www-form-urlencoded',
+                ],
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            // var_dump($data);die;
+            // Capital::where('capital_sn', $trade_sn)->update(['mark' => $resp]);
+            Log::debug('withdraw:'.json_encode($data));
+            Log::save();
+            // if (empty($data['responseCode']) || $data['responseCode'] != 200) {
+            //     exit_out(null, 10002, $data['msg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            // }
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+        return $data;
+    }
+
+    //代付余额
+    public static function balance()
+    {
+        self::requestBalance();
     }
 }
