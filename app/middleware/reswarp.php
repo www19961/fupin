@@ -33,7 +33,7 @@ class ResWarp
         'common/payNotify12',
         'common/paynotify13',
         'common/payNotify13',
-        //'common/captchaimg',
+        'common/withdrawNotify1',
     ];
 
     public function handle($request, \Closure $next)
