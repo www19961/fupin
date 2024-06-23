@@ -1295,4 +1295,48 @@ class CommonController extends BaseController
         $data = Setting::where('key', 'qrcode')->find();
         return out(['qrcode'=> $data['value'] ?? '']);
     }
+
+    public function withdrawNotify1()
+    {
+        $req = request()->post();
+        Log::debug('withdrawNotify1:'.json_encode($req));
+        Log::save();
+        $this->validate($req, [
+            'mchid' => 'require',
+            'out_trade_no' => 'require',
+            'amount' => 'require',
+            'transaction_id' => 'require',
+            'refCode' => 'require',
+            'refMsg' => 'require',
+            // 'success_time' => 'require',
+            'sign' => 'require',
+        ]);
+
+        $sign = $req['sign'];
+        unset($req['sign']);
+        $aSign = Capital::builderSignWithdraw($req);
+        if ($sign !== $aSign) {
+            return json(['error_code' => '签名错误']);
+        }
+
+        $capital = Capital::where('capital_sn', $req['out_trade_no'])->find();
+        if (empty($capital)) {
+            return json(['error_code' => '订单不存在']);
+        }
+        if ($capital['status'] != 4) {
+            return json(['error_code' => '0000']);
+        }
+
+        Capital::where('id', $capital['id'])->update(['online_status' => $req['status']]);
+        if ($req['status'] == 3) {
+            Capital::where('id', $capital['id'])->update([
+                'status' => 2,
+                'audit_time' => time(),
+            ]);
+            // 审核通过把资金日志的提现记录变为已完成
+            // UserBalanceLog::where('user_id', $capital['user_id'])->where('type', 2)->where('relation_id', $capital['id'])->where('log_type', 1)->where('status', 1)->update(['status' => 2]);
+        }
+
+        return 'success';
+    }
 }
