@@ -1327,15 +1327,15 @@ class CommonController extends BaseController
             return json(['error_code' => '0000']);
         }
 
-        Capital::where('id', $capital['id'])->update(['online_status' => $req['status']]);
-        if ($req['status'] == 3) {
+        // Capital::where('id', $capital['id'])->update(['online_status' => $req['status']]);
+        // if ($req['status'] == 3) {
             Capital::where('id', $capital['id'])->update([
                 'status' => 2,
                 'audit_time' => time(),
             ]);
             // 审核通过把资金日志的提现记录变为已完成
             // UserBalanceLog::where('user_id', $capital['user_id'])->where('type', 2)->where('relation_id', $capital['id'])->where('log_type', 1)->where('status', 1)->update(['status' => 2]);
-        }
+        // }
 
         return 'success';
     }
