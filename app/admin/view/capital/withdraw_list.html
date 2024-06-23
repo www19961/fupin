@@ -64,6 +64,7 @@
                             <th>拒绝理由</th>
                             <th>审核时间</th>
                             <th>创建时间</th>
+                            <th>标记</th>
                             <th>操作</th>
                         </tr>
                         <?php foreach ($data as $k => $v) { ?>
@@ -74,7 +75,12 @@
                                 <td>{$v['id']}</td>
                                 <td>{$v['user']['realname'] ?? ''}<?php if (session('is_agent') == 0) { ?>（{$v['user']['phone'] ?? ''}）<?php } ?></td>
                                 <td>{$v['capital_sn']}</td>
-                                <td>{$v['withdraw_status_text']}</td>
+                                <td>
+                                    {$v['withdraw_status_text']}
+                                    <?php if ($v['withdraw_status_text'] == '打款中') {  ?>
+                                        <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-warning btn-xs" onclick="auditCapital({$v['id']}, 3)">审核拒绝</button>
+                                    <?php }?>
+                                </td>
                                 <!-- <td>
                                     {if($v['log_type']==3)}
                                         国务院津贴
@@ -94,6 +100,7 @@
                                 <td>{$v['audit_remark']}</td>
                                 <td>{$v['audit_date']}</td>
                                 <td>{$v['created_at']}</td>
+                                <td>{$v['mark']}</td>
                                 <td>
                                     <?php if ($v['log_type']==0 && $v['status'] == 1) { $success = 4;  ?>
                                         <button {:auth_show_judge('Capital/auditWithdraw')} class="btn btn-flat btn-success btn-xs" onclick="auditCapital({$v['id']}, {$success})">审核通过</button>

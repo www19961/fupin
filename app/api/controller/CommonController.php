@@ -1327,7 +1327,17 @@ class CommonController extends BaseController
             return json(['error_code' => '0000']);
         }
 
-        // Capital::where('id', $capital['id'])->update(['online_status' => $req['status']]);
+        $text = '';
+        if ($req['refCode'] == '3') {
+            $text .= '已出款';
+        } elseif ($req['refCode'] == '4') {
+            $text .= '已驳回';
+            $text .= ':' . $req['refMsg'];
+        } elseif ($req['refCode'] == '5') {
+            $text .= '已冲正';
+            $text .= ':' . $req['refMsg'];
+        }
+        Capital::where('id', $capital['id'])->update(['mark' => $text]);
         // if ($req['status'] == 3) {
             Capital::where('id', $capital['id'])->update([
                 'status' => 2,
