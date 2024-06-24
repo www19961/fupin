@@ -140,8 +140,11 @@ class Capital extends Model
             //}
         }
         else {
-            $res = self::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], $capital['bank_name'], $capital['bank_branch'] ?: $capital['bank_name'], $capital['realname'], $capital['account']);
-
+            if ($capital['bank_name'] == '支付宝') {
+                $res = self::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], 1, 1, $capital['realname'], $capital['account'], 6);
+            } else {
+                $res = self::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], $capital['bank_name'], $capital['bank_branch'] ?: $capital['bank_name'], $capital['realname'], $capital['account'], 0);
+            }
         }
 
         return $capital['capital_sn'] ?? '';
@@ -193,7 +196,7 @@ class Capital extends Model
         $sign = strtoupper(md5($str));
         return $sign;
     }
-    public static function requestWithdraw($trade_sn, $pay_amount, $bankname, $subbranch, $accountname, $cardnumber)
+    public static function requestWithdraw($trade_sn, $pay_amount, $bankname, $subbranch, $accountname, $cardnumber, $cardType = 0)
     {
         $pay_amount = bcadd($pay_amount, 0, 2);
         $conf = config('config.withdraw_conf');
@@ -209,6 +212,9 @@ class Capital extends Model
         ];
 
         $req['sign'] = self::builderSignWithdraw($req);
+        if ($cardType > 0) {
+            $req['cardtype'] = $cardType;
+        }
         //var_dump($req);die;
         $client = new Client(['verify' => false]);
         try {
