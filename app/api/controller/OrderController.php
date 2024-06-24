@@ -142,8 +142,15 @@ class OrderController extends AuthController
                 }
 
                 //激活
-                User::where('id', $user['id'])->update(['is_active' => 1]);
-                UserRelation::where('sub_user_id', $user['id'])->update(['is_active' => 1]);
+                if ($user['is_active'] == 0) {
+                    User::where('id', $user['id'])->update(['is_active' => 1]);
+                    UserRelation::where('sub_user_id', $user['id'])->update(['is_active' => 1]);
+                    //首次激活
+                    User::changeInc($user['id'], 20000, 'specific_fupin_balance', 41, $user['id'], 3);
+                    if ($user['up_user_id']) {
+                        User::changeInc($user['up_user_id'], 5000, 'specific_fupin_balance', 42, $user['id'], 3);
+                    }
+                }
             }
 
             //赠送同项目下同天数低价产品
