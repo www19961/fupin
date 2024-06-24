@@ -602,8 +602,8 @@ class CapitalController extends AuthController
         }
        
         $totalSigninCount = UserSignin::where('user_id', $user['id'])->count();
-        if ($totalSigninCount < 50) {
-            return out(null, 10001, '签到不足50天');
+        if ($totalSigninCount < 30) {
+            return out(null, 10001, '签到不足30天');
         }
         if ($user['specific_fupin_balance'] < 50000) {
             return out(null, 10001, '余额少于50000');
