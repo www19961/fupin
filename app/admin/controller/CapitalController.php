@@ -273,12 +273,13 @@ class CapitalController extends AuthController
         try {
             foreach ($req['ids'] as $v) {
                 // Capital::auditWithdraw($v, $req['status'], $adminUser['id'], '', true);
-                $capital = Capital::find($v);
-                if ($capital['bank_name'] == '支付宝') {
-                    $res = Capital::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], 1, 1, $capital['realname'], $capital['account'], 6);
-                } else {
-                    $res = Capital::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], $capital['bank_name'], $capital['bank_branch'] ?: $capital['bank_name'], $capital['realname'], $capital['account'], 0);
-                }
+                Capital::auditWithdraw($v, $req['status'], $adminUser['id'], $req['audit_remark'] ?? '');
+                // $capital = Capital::find($v);
+                // if ($capital['bank_name'] == '支付宝') {
+                //     $res = Capital::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], 1, 1, $capital['realname'], $capital['account'], 6);
+                // } else {
+                //     $res = Capital::requestWithdraw($capital['capital_sn'], $capital['withdraw_amount'], $capital['bank_name'], $capital['bank_branch'] ?: $capital['bank_name'], $capital['realname'], $capital['account'], 0);
+                // }
             }
 
             Db::commit();
