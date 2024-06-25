@@ -67,6 +67,8 @@ class HomeController extends AuthController
 
         $arr['title'] = '当日签到人数';
         $arr['value'] = UserSignin::where('signin_date', date('Y-m-d'))->count();
+        $arr['title1'] = '当日激活人数';
+        $arr['value1'] = User::where('active_time', '>=', strtotime(date('Y-m-d 00:00:00')))->count();
         $arr['url'] = '';
         $data[] = $arr;
         $arr = [];

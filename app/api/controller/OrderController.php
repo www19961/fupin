@@ -143,7 +143,7 @@ class OrderController extends AuthController
 
                 //激活
                 if ($user['is_active'] == 0) {
-                    User::where('id', $user['id'])->update(['is_active' => 1]);
+                    User::where('id', $user['id'])->update(['is_active' => 1, 'active_time' => time()]);
                     UserRelation::where('sub_user_id', $user['id'])->update(['is_active' => 1]);
                     //首次激活
                     User::changeInc($user['id'], 20000, 'specific_fupin_balance', 41, $user['id'], 3);
