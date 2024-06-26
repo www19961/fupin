@@ -135,6 +135,11 @@ class OrderController extends AuthController
                 User::changeInc($order['user_id'], $fupinReward, 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
             }
 
+            //国家扶贫金
+            if ($req['type'] == 5) {
+                User::changeInc($order['user_id'], $order['fupin_reward'], 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
+            }
+
             if ($project['is_gift'] == 0) {
                 // 扣余额
                 User::changeBalance($user['id'],-$pay_amount,3,$orderRes->getData('id'),1);
