@@ -24,7 +24,8 @@ class OrderController extends AuthController
         $req = $this->validate(request(), [
             'project_id' => 'require|number',
             //'price' => 'require|number',
-            'pay_password' => 'require'
+            'pay_password' => 'require',
+            'type' => 'require'
         ]);
 
         $user = $this->user;
@@ -43,10 +44,11 @@ class OrderController extends AuthController
         }
 
         $projectItem = ProjectItem::where('id', $req['project_id'])->find();
-        if(!$projectItem){
+        if(in_array($req['type'], [1, 2, 3, 4]) && !$projectItem){
             return out(null, 10001, '项目不存在');
         } else {
-            $project = Project::find($projectItem['project_id']);
+            if ($projectItem == NULL) $projectItem = [];
+            $project = Project::find($projectItem['project_id'] ?? $req['project_id']);
             if (!$project || $project['status'] == 0) {
                 return out(null, 10001, '项目不存在');
             }
@@ -70,12 +72,12 @@ class OrderController extends AuthController
                 }
             }
 
-            $projectItemIds = ProjectItem::where('project_id', $projectItem['project_id'])->column('id');
+            //$projectItemIds = ProjectItem::where('project_id', $projectItem['project_id'])->column('id');
             // $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->whereIn('project_id', $projectItemIds)->find();
             // if ($isBuyThisTypeProduct) {
             //     return out(null, 10001, '每个项目只能购买一份');
             // }
-            $isBuyThisTypeProduct = Order::where('user_id', $user['id'])->find();
+            //$isBuyThisTypeProduct = Order::where('user_id', $user['id'])->find();
             // if ($isBuyThisTypeProduct) {
             //     return out(null, 10001, '只能购买一次');
             // }
@@ -93,7 +95,12 @@ class OrderController extends AuthController
         try {
             $user = User::where('id', $user['id'])->lock(true)->find();
 
-            $pay_amount = $projectItem['price'];
+            if (in_array($req['type'], [1, 2, 3, 4])) {
+                $pay_amount = $projectItem['price'];
+            } elseif (in_array($req['type'], [5])) {
+                $pay_amount = $project['price'];
+            }
+            
 
             if ($pay_amount > $user['balance'] + $user['topup_balance']) {
                 exit_out(null, 10090, '余额不足');
@@ -111,13 +118,14 @@ class OrderController extends AuthController
             $order['start_time'] = time();
             $order['project_name'] = $project['name'];
             $order['type'] = $project['type'];
-            $order['days'] = $projectItem['days'];
-            $order['reward'] = $projectItem['reward'];
-            $order['end_time'] = time() + 86400 * $projectItem['days'];
-            $order['fupin_reward'] = $projectItem['fupin_reward'];
+            $order['days'] = $projectItem['days'] ?? 0;
+            $order['reward'] = $projectItem['reward'] ?? 0;
+            $order['end_time'] = time() + 86400 * ($projectItem['days'] ?? 0);
+            $order['fupin_reward'] = $projectItem['fupin_reward'] ?? $project['fupin_reward'];
             $order['is_gift'] = $project['is_gift'];
             $order['is_circle'] = $project['is_circle'];
             $order['multiple'] = $project['multiple'];
+            $order['daily_rate'] = $project['daily_rate'];
 
             $orderRes = Order::create($order);
 
@@ -125,6 +133,11 @@ class OrderController extends AuthController
             if ($project['is_circle']) {
                 $fupinReward = bcmul($order['fupin_reward'], $order['multiple']);
                 User::changeInc($order['user_id'], $fupinReward, 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
+            }
+
+            //国家扶贫金
+            if ($req['type'] == 5) {
+                User::changeInc($order['user_id'], $order['fupin_reward'], 'specific_fupin_balance', 37, $orderRes->getData('id'), 3);
             }
 
             if ($project['is_gift'] == 0) {

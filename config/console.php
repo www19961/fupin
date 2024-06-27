@@ -23,5 +23,6 @@ return [
         'Gift' => 'app\common\command\Gift',
         'Gift1' => 'app\common\command\Gift1',
         'Gift2' => 'app\common\command\Gift2',
+        'OrderRewardDaily' => 'app\common\command\OrderRewardDaily',
     ],
 ];

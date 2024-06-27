@@ -60,6 +60,10 @@
                              <th>排序号</th>
                              <th>进度</th>
                             <th>创建时间</th>
+                            <th>日收益率</th>
+                            <th>期限</th>
+                            <th>金额</th>
+                            <th>扶贫金</th>
                             <th>操作</th>
                         </tr>
                         <?php foreach ($data as $k => $v) { ?>
@@ -120,6 +124,10 @@
                                 <td>{$v['sort']}</td>
                                 <td>{$v['rate']}%</td>
                                 <td>{$v['created_at']}</td>
+                                <td>{$v['daily_rate']} %</td>
+                                <td>{$v['years']} 年</td>
+                                <td>{$v['price']}</td>
+                                <td>{$v['fupin_reward']}</td>
                                 <td>
                                     <a {:auth_show_judge('Project/editProject')} class="btn btn-flat btn-info btn-xs"
                                     href="{:url('admin/Project/showProject', ['id' => $v['id']])}"><i

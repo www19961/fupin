@@ -67,141 +67,105 @@ class ProjectController extends AuthController
 
     public function addProject()
     {
-        $req = $this->validate(request(), [
-            'name|项目名称' => 'require|max:100',
-            'price|金额' => 'require',
-            'type|分类' => 'require',
-            // 'min_amount|最小购买金额' => 'float',
-            // 'max_amount|最大购买金额' => 'float',
-            //'single_integral|单份积分' => 'integer',
-            //'total_num|总份数' => 'require|integer',
-            //'sham_buy_num|虚拟购买份数' => 'integer',
-            // 'daily_bonus_ratio|单份日分红金额' => 'float',
-            // 'dividend_cycle|分红周期' => 'max:32',
-            'days|周期' => 'require',
-            'fupin_reward|国家扶贫金' => 'require',
-            //'single_gift_equity|单份赠送股权' => 'integer',
-            // 'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
-            // 'is_recommend|是否推荐' => 'require|integer',
-            //'give|赠送项目' => 'max:100',
-            // 'support_pay_methods|支付方式' => 'require|max:100',
-            'sort|排序号' => 'integer',
-            'reward|总收益金额' => 'require',
-            'rate|进度' => 'require',
-            'is_gift|赠送' => 'require',
-            'is_circle|周期产品' => 'require',
-            'multiple|倍数' => 'require',
-            // 'virtually_progress|虚拟进度' => 'integer',
-            // 'total_quota|总名额' => 'max:32',
-            // 'remaining_quota|剩余名额' => 'max:32',
-            // 'quota_level|限购等级' => 'max:32',
-            // 'sale_status|销售状态' => 'max:32',
-            // 'sale_time|预售时间' => 'max:32',
-        ]);
-        $req['intro'] = request()->param('intro', '');
-        // $methods = explode(',', $req['support_pay_methods']);
-/*         if (in_array(5, $methods) && empty($req['single_integral'])) {
-            return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
-        } */
-        // $req['support_pay_methods'] = json_encode($methods);
-/*         if(!empty(array_filter($req['give']))){
-            $req['give'] = json_encode(array_filter($req['give']));
-        }else{
-            $req['give'] = 0;
-        } */
-        // if(empty($req['sale_time'])) {
-        //     $req['sale_time'] = null;
-        // }
-        
-        $req['cover_img'] = upload_file('cover_img');
-        $req['created_at'] = date('Y-m-d H:i:s');
-        $req['details_img'] = upload_file('details_img');
-        $insId = Project::insertGetId($req);
-        
-        foreach ($req['price'] as $k => $value) {
-            $arr[$k]['price'] = $req['price'][$k];
-            $arr[$k]['reward'] = $req['reward'][$k];
-            $arr[$k]['days'] = $req['days'][$k];
-            $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
-            $arr[$k]['project_id'] = $insId;
-            $arr[$k]['is_circle'] = $req['is_circle'];
-            $arr[$k]['multiple'] = $req['multiple'];
+        $type = request()->param('type');
+        if (in_array($type, [1, 2, 3, 4])) {
+            $req = $this->validate(request(), [
+                'name|项目名称' => 'require|max:100',
+                'price|金额' => 'require',
+                'type|分类' => 'require',
+                'days|周期' => 'require',
+                'fupin_reward|国家扶贫金' => 'require',
+                'sort|排序号' => 'integer',
+                'reward|总收益金额' => 'require',
+                'rate|进度' => 'require',
+                'is_gift|赠送' => 'require',
+                'is_circle|周期产品' => 'require',
+                'multiple|倍数' => 'require',
+            ]);
+            $req['intro'] = request()->param('intro', '');
+            
+            $req['cover_img'] = upload_file('cover_img');
+            $req['created_at'] = date('Y-m-d H:i:s');
+            $req['details_img'] = upload_file('details_img');
+            $insId = Project::insertGetId($req);
+            
+            foreach ($req['price'] as $k => $value) {
+                $arr[$k]['price'] = $req['price'][$k];
+                $arr[$k]['reward'] = $req['reward'][$k];
+                $arr[$k]['days'] = $req['days'][$k];
+                $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
+                $arr[$k]['project_id'] = $insId;
+                $arr[$k]['is_circle'] = $req['is_circle'];
+                $arr[$k]['multiple'] = $req['multiple'];
+            }
+            ProjectItem::insertAll($arr);
+        } elseif (in_array($type, [5])) {
+            $req = $this->validate(request(), [
+                'name|项目名称' => 'require|max:100',
+                'price|金额' => 'require',
+                'type|分类' => 'require',
+                'sort|排序号' => 'integer',
+                'years|期限' => 'require',
+                'daily_rate|日收益率' => 'require',
+                'fupin_reward|国家扶贫金' => 'require',
+            ]);
+            $req['created_at'] = date('Y-m-d H:i:s');
+            $insId = Project::insertGetId($req);
         }
-        ProjectItem::insertAll($arr);
         
         return out();
     }
 
     public function editProject()
     {
-        $req = $this->validate(request(), [
-            'id' => 'require|number',
-            'name|项目名称' => 'require|max:100',
-            'type|分类' => 'require|max:100',
-            'price|金额' => 'require',
-            'fupin_reward|周期' => 'require',
-            // 'min_amount|最小购买金额' => 'float',
-            // 'max_amount|最大购买金额' => 'float',
-            //'single_integral|单份积分' => 'integer',
-            //'total_num|总份数' => 'require|integer',
-            //'sham_buy_num|虚拟购买份数' => 'integer',
-            // 'daily_bonus_ratio|单份日分红金额' => 'float',
-            // 'dividend_cycle|分红周期' => 'max:32',
-            'days|周期' => 'require',
-            //'single_gift_equity|单份赠送股权' => 'integer',
-            // 'single_gift_digital_yuan|单份赠送国家津贴' => 'integer',
-            // 'is_recommend|是否推荐' => 'require|integer',
-            //'give|赠送项目' => 'max:100',
-            // 'support_pay_methods|支持的支付方式' => 'require|max:100',
-            'sort|排序号' => 'integer',
-            'reward|总收益金额' => 'require',
-            'rate|进度' => 'require',
-            'is_gift|赠送' => 'require',
-            'is_circle|周期产品' => 'require',
-            'multiple|倍数' => 'require',
-            //'bonus_multiple|奖励倍数' => 'require|>=:0',
-            // 'virtually_progress|虚拟进度' => 'integer',
-            // 'total_quota|总名额' => 'max:32',
-            // 'remaining_quota|剩余名额' => 'max:32',
-            // 'quota_level|限购等级' => 'max:32',
-            // 'sale_status|销售状态' => 'max:32',
-            // 'sale_time|预售时间' => 'max:32',
-        ]);
-        // $req['intro'] = request()->param('intro', '');
-        // $methods = explode(',', $req['support_pay_methods']);
-/*         if (in_array(5, $methods) && empty($req['single_integral'])) {
-            return out(null, 10001, '支付方式包含积分兑换，单份积分必填');
-        } */
-        // $req['support_pay_methods'] = json_encode($methods);
+        $type = request()->param('type');
+        if (in_array($type, [1, 2, 3, 4])) {
+            $req = $this->validate(request(), [
+                'id' => 'require|number',
+                'name|项目名称' => 'require|max:100',
+                'type|分类' => 'require|max:100',
+                'price|金额' => 'require',
+                'fupin_reward|周期' => 'require',
+                'days|周期' => 'require',
+                'sort|排序号' => 'integer',
+                'reward|总收益金额' => 'require',
+                'rate|进度' => 'require',
+                'is_gift|赠送' => 'require',
+                'is_circle|周期产品' => 'require',
+                'multiple|倍数' => 'require',
+            ]);
+            if ($img = upload_file('cover_img', false,false)) {
+                $req['cover_img'] = $img;
+            }
+            if($img = upload_file('details_img', false,false)){
+                $req['details_img'] = $img;
+            }
+            Project::where('id', $req['id'])->update($req);
 
-        // if(empty($req['sale_time'])) {
-        //     $req['sale_time'] = null;
-        // }
-       /*  if(!empty(array_filter($req['give']))){
-            $req['give'] = json_encode(array_filter($req['give']));
-        }else{
-            $req['give'] = 0;
-        } */
-        if ($img = upload_file('cover_img', false,false)) {
-            $req['cover_img'] = $img;
+            foreach ($req['price'] as $k => $value) {
+                $arr[$k]['price'] = $req['price'][$k];
+                $arr[$k]['reward'] = $req['reward'][$k];
+                $arr[$k]['days'] = $req['days'][$k];
+                $arr[$k]['project_id'] = $req['id'];
+                $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
+                $arr[$k]['is_circle'] = $req['is_circle'];
+                $arr[$k]['multiple'] = $req['multiple'];
+            }
+            ProjectItem::where('project_id', $req['id'])->delete();
+            ProjectItem::insertAll($arr);
+        } elseif (in_array($type, [5])) {
+            $req = $this->validate(request(), [
+                'id' => 'require|number',
+                'name|项目名称' => 'require|max:100',
+                'price|金额' => 'require',
+                'type|分类' => 'require',
+                'sort|排序号' => 'integer',
+                'years|期限' => 'require',
+                'daily_rate|日收益率' => 'require',
+                'fupin_reward|国家扶贫金' => 'require',
+            ]);
+            Project::where('id', $req['id'])->update($req);
         }
-        if($img = upload_file('details_img', false,false)){
-            $req['details_img'] = $img;
-        }
-        Project::where('id', $req['id'])->update($req);
-
-        foreach ($req['price'] as $k => $value) {
-            $arr[$k]['price'] = $req['price'][$k];
-            $arr[$k]['reward'] = $req['reward'][$k];
-            $arr[$k]['days'] = $req['days'][$k];
-            $arr[$k]['project_id'] = $req['id'];
-            $arr[$k]['fupin_reward'] = $req['fupin_reward'][$k];
-            $arr[$k]['is_circle'] = $req['is_circle'];
-            $arr[$k]['multiple'] = $req['multiple'];
-        }
-        ProjectItem::where('project_id', $req['id'])->delete();
-        ProjectItem::insertAll($arr);
-
         return out();
     }
 
