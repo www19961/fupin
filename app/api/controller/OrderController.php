@@ -126,6 +126,7 @@ class OrderController extends AuthController
             $order['is_circle'] = $project['is_circle'];
             $order['multiple'] = $project['multiple'];
             $order['daily_rate'] = $project['daily_rate'];
+            $order['years'] = $project['years'];
 
             $orderRes = Order::create($order);
 
@@ -212,7 +213,7 @@ class OrderController extends AuthController
         ]);
         $user = $this->user;
 
-        $builder = Order::where('user_id', $user['id']);
+        $builder = Order::where('user_id', $user['id'])->alias('o');
         
         if (!empty($req['status'])) {
             $builder->where('status', $req['status']);
@@ -223,7 +224,7 @@ class OrderController extends AuthController
         // if (!empty($req['project_group_id'])) {
         //     $builder->where('project_group_id', $req['project_group_id']);
         // }
-        $data = $builder->order('id', 'desc')->field(['id', 'order_sn', 'status', 'created_at', 'price', 'days', 'reward', 'project_name', 'is_transfer', 'type', 'multiple'])->paginate(10,false,['query'=>request()->param()]);
+        $data = $builder->order('id', 'desc')->field(['id', 'order_sn', 'status', 'created_at', 'price', 'days', 'reward', 'project_name', 'is_transfer', 'type', 'multiple', 'daily_rate', 'years'])->paginate(10,false,['query'=>request()->param()]);
 
         return out($data);
     }
