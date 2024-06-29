@@ -56,7 +56,7 @@ class OrderRewardDaily extends Command
                                 'type' => $order['type'],
                             ]); 
 
-                        User::changeInc($order['user_id'], $reward, 'specific_balance', 31, $order['id']);
+                        User::changeInc($order['user_id'], $reward, 'life_balance', 43, $order['id']);
 
                         Db::commit();
                         $output->writeln("【{$order['id']}】日收益发放完成");

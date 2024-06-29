@@ -220,12 +220,28 @@ class OrderController extends AuthController
         }
 
         $builder->where('type', '<>', 4);
+        $builder->where('type', '<>', 5);
 
         // if (!empty($req['project_group_id'])) {
         //     $builder->where('project_group_id', $req['project_group_id']);
         // }
         $data = $builder->order('id', 'desc')->field(['id', 'order_sn', 'status', 'created_at', 'price', 'days', 'reward', 'project_name', 'is_transfer', 'type', 'multiple', 'daily_rate', 'years'])->paginate(10,false,['query'=>request()->param()]);
 
+        return out($data);
+    }
+
+    public function orderListType5()
+    {
+        $req = $this->validate(request(), [
+            'status' => 'number',
+        ]);
+        $user = $this->user;
+        $builder = Order::where('user_id', $user['id'])->alias('o');
+        if (!empty($req['status'])) {
+            $builder->where('status', $req['status']);
+        }
+        $builder->where('type', 5);
+        $data = $builder->order('id', 'desc')->field(['id', 'order_sn', 'status', 'created_at', 'price', 'days', 'reward', 'project_name', 'is_transfer', 'type', 'multiple', 'daily_rate', 'years'])->paginate(10,false,['query'=>request()->param()]);
         return out($data);
     }
 
@@ -283,6 +299,33 @@ class OrderController extends AuthController
             User::changeInc($user['id'],-$user['specific_balance'],'specific_balance',33,$user['id'],1,'',0,1,'TRS');
             User::changeInc($user['id'],$user['specific_balance'],'balance',34,$user['id'],1,'',0,1,'TRR');
 
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+
+        return out();
+    }
+
+    //生活保障收益 提现到余额
+    public function lifeBalance2Balance()
+    {
+        $user = $this->user;
+        $clickRepeatName = 'lifeBalance2Balance-' . $user->id;
+        if (Cache::get($clickRepeatName)) {
+            return out(null, 10001, '操作频繁，请稍后再试');
+        }
+        Cache::set($clickRepeatName, 1, 5);
+
+        if ($user['life_balance'] <= 0) {
+            return out(null, 10001, '暂无余额');
+        }
+
+        Db::startTrans();
+        try {   
+            User::changeInc($user['id'],-$user['life_balance'],'life_balance',44,$user['id'],1,'',0,1,'TRS');
+            User::changeInc($user['id'],$user['life_balance'],'balance',45,$user['id'],1,'',0,1,'TRR');
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();
