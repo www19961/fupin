@@ -1189,7 +1189,7 @@ class CommonController extends BaseController
         $this->validate($req, [
             'payOrderId' => 'require',
             'mchId'=> 'require',
-            // 'appId' => '',
+            'appId' => '',
             'productId' => 'require',
             'mchOrderNo' => 'require',
             'amount' => 'require',
