@@ -37,6 +37,7 @@ class ReqWarp
         'common/payNotify13',
         'common/withdrawNotify1',
         'common/withdrawnotify1',
+        'common/paynotifyxinshidai',
     ];
     /**
      * 处理请求

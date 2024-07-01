@@ -131,6 +131,14 @@ return [
         'payment_url' => 'http://acrossthesea.champion999.one/api/newOrder',
         'query_url' => 'http://acrossthesea.champion999.one/api/queryOrder',
     ],
+    'payment_conf_xinshidai' => [
+        'key' => 'L9ETPZO07GNFSCTCHNSN6756Q0RMXP33QGCRNQ8V6WQJIRGUGP7YEERLJVRHECBNNJTXDMCSFDT0VUY43E2ACAFW5GOXKNVBNZ8IDZBE14HR1UM9XZCDCZG2A4TDHUMB',
+        'pay_memberid'=>'20000025',
+        'pay_notifyurl' => env('app.host').'/common/paynotifyxinshidai',
+        'pay_callbackurl' => env('common.callback_url').'/tradeSuccess',
+        'payment_url' => 'https://xswg.bbbzf.xyz/api/pay/create_order',
+        'query_url' => 'https://xswg.bbbzf.xyz/api/pay/query_order',
+    ],
     // 'payment_conf3' => [
     //     'key' => '9ypdnklv4u79vqt42n6ub9pnfb3e546c',
     //     'pay_memberid' => '220986355',

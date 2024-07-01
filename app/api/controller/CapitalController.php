@@ -110,6 +110,8 @@ class CapitalController extends AuthController
                 $ret = Payment::requestPayment13($capital_sn, $paymentConf['mark'], $req['amount']);
             }else if($paymentConf['channel']==18){
                 $ret = Payment::requestPayment_daxiang($capital_sn, $paymentConf['mark'], $req['amount']);
+            }else if($paymentConf['channel']==19){
+                $ret = Payment::requestPayment_xinshidai($capital_sn, $paymentConf['mark'], $req['amount']);
             }
 
             Db::commit();
