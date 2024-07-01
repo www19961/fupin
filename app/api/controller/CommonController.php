@@ -1211,7 +1211,7 @@ class CommonController extends BaseController
                 unset($key);
             }
         }
-        $my_sign = Payment::builderSign6($req);
+        $my_sign = Payment::builderSignxinshidai($req);
         if ($my_sign !== $sign) {
             return 'fail签名错误';
         }
