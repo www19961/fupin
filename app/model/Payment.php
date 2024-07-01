@@ -502,6 +502,43 @@ class Payment extends Model
         ];
     }
 
+    public static function requestPayment_xinshidai($trade_sn, $pay_bankcode, $pay_amount)
+    {
+        $conf = config('config.payment_conf_xinshidai');
+        $req = [
+            'mchId' => $conf['pay_memberid'],
+            //'appId'=>0,
+            'productId' => $pay_bankcode,
+            'mchOrderNo' => $trade_sn,
+            'amount' => $pay_amount*100,
+            //'currency' => 'cny',
+            'notifyUrl' => $conf['pay_notifyurl'],
+            //'returnurl' => $conf['pay_callbackurl'],
+            'subject' => 'subject',
+            'body' => 'body',
+            //'version' => '1.0',
+            //'reqTime' => date('YmdHis'),
+            //'userIp' => date('Y-m-d H:i:s'),
+        ];
+        $req['sign'] = self::builderSignxinshidai($req);
+        $client = new Client(['verify' => false]);
+        try {
+            $ret = $client->post($conf['payment_url'], [
+                'form_params' => $req,
+            ]);
+            $resp = $ret->getBody()->getContents();
+            $data = json_decode($resp, true);
+            if (!isset($data['retCode']) || $data['retCode']!='SUCCESS') {
+                exit_out(null, 10001, $data['retMsg'] ?? '支付异常，请稍后重试', ['请求参数' => $req, '返回数据' => $resp]);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+        return [
+            'data' => $data['payParams']['payUrl'],
+        ];
+    }
+
     public static function builderSign($req)
     {
         ksort($req);
@@ -705,6 +742,20 @@ class Payment extends Model
         }
         $str = $buff . "key=" . config('config.payment_conf_daxiang')['key'];
         $sign = md5($str);
+        return $sign;
+    }
+
+    public static function builderSignxinshidai($req)
+    {
+        ksort($req);
+        $buff = '';
+        foreach ($req as $k => $v) {
+            if($v!=''){
+            $buff .= $k . '=' . $v . '&';
+            }
+        }
+        $str = $buff . "key=" . config('config.payment_conf_xinshidai')['key'];
+        $sign = strtoupper(md5($str));
         return $sign;
     }
 
