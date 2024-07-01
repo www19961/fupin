@@ -1206,6 +1206,11 @@ class CommonController extends BaseController
 
         $sign = $req['sign'];
         unset($req['sign'], $req['attach']);
+        foreach ($req as $key => $value) {
+            if ($value == '') {
+                unset($key);
+            }
+        }
         $my_sign = Payment::builderSign6($req);
         if ($my_sign !== $sign) {
             return 'fail签名错误';
